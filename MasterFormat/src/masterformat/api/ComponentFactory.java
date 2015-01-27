@@ -1,5 +1,6 @@
 package masterformat.api;
 
+import thermalmoistureprotection.ThermalMoistureProtection;
 import Concrete.Concrete;
 import masonry.Masonry;
 
@@ -9,4 +10,6 @@ public abstract class ComponentFactory {
     public abstract Masonry getMasonry(String masonryType);
     
     public abstract Concrete getConcrete(String concreteType);
+    
+    public abstract ThermalMoistureProtection getThermalMoistureProtection(String thermalMoistureProtectionType);
 }

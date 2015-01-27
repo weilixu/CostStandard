@@ -1,5 +1,6 @@
 package masonry;
 
+import thermalmoistureprotection.ThermalMoistureProtection;
 import Concrete.Concrete;
 import masterformat.api.ComponentFactory;
 
@@ -25,6 +26,13 @@ public class MasonryFactory extends ComponentFactory{
     @Override
     public Concrete getConcrete(String concreteType) {
 	//this factory would not produce concrete
+	return null;
+    }
+
+    @Override
+    public ThermalMoistureProtection getThermalMoistureProtection(
+	    String thermalMoistureProtectionType) {
+	//this factory would not produce thermal and moisture protection
 	return null;
     }
     

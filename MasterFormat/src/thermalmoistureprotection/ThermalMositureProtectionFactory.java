@@ -1,24 +1,20 @@
-package Concrete;
+package thermalmoistureprotection;
 
-import thermalmoistureprotection.ThermalMoistureProtection;
+import Concrete.Concrete;
 import masonry.Masonry;
 import masterformat.api.ComponentFactory;
 
-public class ConcreteFactory extends ComponentFactory{
+public class ThermalMositureProtectionFactory extends ComponentFactory{
 
     @Override
     public Masonry getMasonry(String masonryType) {
-	// TODO Auto-generated method stub
+	//this factory would not produce any masonry products
 	return null;
     }
 
     @Override
     public Concrete getConcrete(String concreteType) {
-	if(concreteType.equalsIgnoreCase("CAST IN PLACE WALL")){
-	    return new CastInPlaceWall();
-	}else if(concreteType.equalsIgnoreCase("CAST IN PLACE SLAB ON GRADE")){
-	    return new CastInPlaceSlabOnGrade();
-	}
+	//this factory would not produce any concrete products
 	return null;
     }
 
