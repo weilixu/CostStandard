@@ -2,12 +2,73 @@ package Concrete;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 public class CastInPlaceSlabOnGrade extends AbstractConcrete{
     
     protected String unit = "m2";
     protected String hierarchy = "030000 Concrete|033000 Cast-In-Place Concrete|033053.40 Concrete In Place";
+    
+    private double area;
+    private double thickness;
 
+
+    @Override
+    public void selectCostVector() {
+	if(area>=1000.00){
+	    if(thickness<0.1){
+		description = "Slab on grade(3500 psi), incl.troweled finish, not incl.forms or reinforcing, over 1,000 m2, 100 mm thick";
+	    }else if(thickness<0.15){
+		description = "Slab on grade(3500 psi), incl.troweled finish, not incl.forms or reinforcing, over 1,000 m2, 150 mm thick";
+	    }else if(thickness<0.2){
+		description = "Slab on grade(3500 psi), incl.troweled finish, not incl.forms or reinforcing, over 1,000 m2, 200 mm thick";
+	    }else if(thickness<0.3){
+		description = "Slab on grade(3500 psi), incl.troweled finish, not incl.forms or reinforcing, over 1,000 m2, 300 mm thick";
+	    }else {
+		description = "Slab on grade(3500 psi), incl.troweled finish, not incl.forms or reinforcing, over 1,000 m2, 380 mm thick";
+	    }
+	}else{
+	    if(thickness<0.1){
+		description = "Slab on grade(3000 psi), incl.broom finish, not incl.forms or reinforcing, 100 mm thick";
+	    }else if(thickness<0.15){
+		description = "Slab on grade(3000 psi), incl.broom finish, not incl.forms or reinforcing, 150 mm thick";
+	    }else {
+		description = "Slab on grade(3000 psi), incl.broom finish, not incl.forms or reinforcing, 200 mm thick";
+	    }
+	}
+	costVector = priceData.get(description);
+    }
+
+    @Override
+    public void setUserInputs(HashMap<String, String> userInputsMap) {
+	Set<String> inputs = userInputsMap.keySet();
+	Iterator<String> iterator = inputs.iterator();
+	while(iterator.hasNext()){
+	    String temp = iterator.next();
+	    if(temp.equals("Area")){
+		area = Double.parseDouble(userInputsMap.get(temp));
+	    }else if(temp.equals("thickness")){
+		thickness = Double.parseDouble(userInputsMap.get(temp));
+	    }
+	}
+	
+    }
+
+    @Override
+    public void setVariable(String[] surfaceProperties) {
+	try{
+	    area = Double.parseDouble(surfaceProperties[0]);
+	}catch(NumberFormatException e){
+	    userInputs.add("Area");
+	}
+	try{
+	    thickness = Double.parseDouble(surfaceProperties[2]);
+	}catch(NumberFormatException e){
+	    userInputs.add("Thickness");
+	}
+    }
+    
     @Override
     protected void initializeData() {
 	//the data is in IP unit, conversion factor from S.F to m2 is 1sf = 0.092903 m3
@@ -21,28 +82,19 @@ public class CastInPlaceSlabOnGrade extends AbstractConcrete{
 		{ 2.70, 1.02, 0.01, 3.73, 4.50 }};
 	
 	ArrayList<String> typesOne = new ArrayList<String>();
-	ArrayList<String> typesTwo = new ArrayList<String>();
+	typesOne.add("Slab on grade(3500 psi), incl.troweled finish, not incl.forms or reinforcing, over 1,000 m2, 100 mm thick");
+	typesOne.add("Slab on grade(3500 psi), incl.troweled finish, not incl.forms or reinforcing, over 1,000 m2, 150 mm thick");
+	typesOne.add("Slab on grade(3500 psi), incl.troweled finish, not incl.forms or reinforcing, over 1,000 m2, 200 mm thick");
+	typesOne.add("Slab on grade(3500 psi), incl.troweled finish, not incl.forms or reinforcing, over 1,000 m2, 300 mm thick");
+	typesOne.add("Slab on grade(3500 psi), incl.troweled finish, not incl.forms or reinforcing, over 1,000 m2, 380 mm thick");
+	typesOne.add("Slab on grade(3000 psi), incl.broom finish, not incl.forms or reinforcing, 100 mm thick");
+	typesOne.add("Slab on grade(3000 psi), incl.broom finish, not incl.forms or reinforcing, 150 mm thick");
+	typesOne.add("Slab on grade(3000 psi), incl.broom finish, not incl.forms or reinforcing, 200 mm thick");
+
 	
-	typesOne.add("Slab on grade (3500 psi), incl. troweled finish, not incl.forms or reinforcing, over 1,000 m2");
-	typesOne.add("Slab on grade(3000 psi), incl.broom finish, not incl.forms or reinforcing");
-	typesTwo.add("100 mm thick");
-	typesTwo.add("150 mm thick");
-	typesTwo.add("200 mm thick");
-	typesTwo.add("300 mm thick");
-	typesTwo.add("380 mm thick");
-	
-	HashMap<String, Double[]> tempTable = new HashMap<String, Double[]>();
-	tempTable.put(typesTwo.get(0), unitConversion(costsMatrix[0]));
-	tempTable.put(typesTwo.get(1), unitConversion(costsMatrix[1]));
-	tempTable.put(typesTwo.get(2), unitConversion(costsMatrix[2]));
-	tempTable.put(typesTwo.get(3), unitConversion(costsMatrix[3]));
-	tempTable.put(typesTwo.get(4), unitConversion(costsMatrix[4]));
-	priceData.put(typesOne.get(0),tempTable);
-	tempTable = new HashMap<String, Double[]>();
-	tempTable.put(typesTwo.get(0), unitConversion(costsMatrix[5]));
-	tempTable.put(typesTwo.get(1), unitConversion(costsMatrix[6]));
-	tempTable.put(typesTwo.get(2), unitConversion(costsMatrix[7]));
-	priceData.put(typesOne.get(1),tempTable);
+	for(int i=0; i<typesOne.size(); i++){
+	    priceData.put(typesOne.get(i), unitConversion(costsMatrix[i]));
+	}
     }
     
     private Double[] unitConversion(Double[] data){
