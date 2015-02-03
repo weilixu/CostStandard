@@ -59,7 +59,6 @@ public class Client {
 	insulation.setVariable(core.createSurfaceProperties());
 	if (insulation.isUserInputsRequired()) {
 	    ArrayList<String> temp = insulation.getUserInputs();
-
 	}
 	userInputs.put("InsulationType","Fiberglass, 0.085#/m3, Foil faced");
 	userInputs.put("Thickness","0.04");
