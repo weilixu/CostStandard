@@ -70,7 +70,7 @@ abstract class AbstractConcrete implements Concrete{
     
     @Override
     public boolean isUserInputsRequired(){
-	return userInputs.isEmpty();
+	return !userInputs.isEmpty();
     }
     
     @Override

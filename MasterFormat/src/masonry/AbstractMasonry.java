@@ -69,7 +69,7 @@ abstract class AbstractMasonry implements Masonry{
     
     @Override
     public boolean isUserInputsRequired(){
-	return userInputs.isEmpty();
+	return !userInputs.isEmpty();
     }
     
     @Override

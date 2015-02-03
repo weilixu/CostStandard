@@ -74,6 +74,10 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
 	typesOne.add("Expanded polystyrene, 25.4 mm, R-Value: 1.13");
 	typesOne.add("Expanded polystyrene, 50.8 mm, R-Value: 2.25");
 	typesOne.add("Expanded polystyrene, 76.2 mm, R-Value: 3.37");
+	
+	for(int i=0; i<typesOne.size(); i++){
+	    priceData.put(typesOne.get(i), unitConversion(costsMatrix[i]));
+	}
     }
 
     @Override
@@ -135,6 +139,7 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
 		description = "Expanded polystyrene, 76.2 mm, R-Value: 3.37";
 	    }
 	}
+	System.out.println(description);
 	costVector = priceData.get(description);
     }
 
@@ -166,6 +171,16 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
 	}catch(NumberFormatException e){
 	    userInputs.add("INPUT|Rvalue|m2K/W");
 	}
+    }
+    
+    private Double[] unitConversion(Double[] data) {
+	// the data is in IP unit, conversion factor from S.F to m2 is 1sf =
+	// 0.092903 m2
+	Double[] temp = new Double[data.length];
+	for (int i = 0; i < temp.length; i++) {
+	    temp[i] = data[i] / 0.092903;
+	}
+	return temp;
     }
 
 }

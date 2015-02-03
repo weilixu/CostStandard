@@ -21,7 +21,9 @@ public class ThermalMositureProtectionFactory extends ComponentFactory{
     @Override
     public ThermalMoistureProtection getThermalMoistureProtection(
 	    String thermalMoistureProtectionType) {
-	// TODO Auto-generated method stub
+	if(thermalMoistureProtectionType.equalsIgnoreCase("RIGID INSULATION")){
+	    return new RigidInsulation();
+	}
 	return null;
     }
 

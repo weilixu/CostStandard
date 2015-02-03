@@ -84,7 +84,7 @@ abstract class AbstractThermalMoistureProtection implements ThermalMoistureProte
     
     @Override
     public boolean isUserInputsRequired(){
-	return userInputs.isEmpty();
+	return !userInputs.isEmpty();
     }
     
     @Override
