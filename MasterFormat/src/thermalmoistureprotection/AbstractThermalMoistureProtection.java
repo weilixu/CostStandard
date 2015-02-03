@@ -1,5 +1,6 @@
 package thermalmoistureprotection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 /**
  * This is an abstract class of all the materials relate to thermal adn moisture protection products.
@@ -9,62 +10,61 @@ import java.util.HashMap;
  * 
  * The Double[] in this class contains the R-Value information as well. This value will be added as the 6th element
  * Therefore, the first 5 are still material, labor, equipment, total and total with profit costs.
+ * 
+ * 
  * @author Weili
  *
  */
 abstract class AbstractThermalMoistureProtection implements ThermalMoistureProtection{
     
-    protected boolean horizontal = false;
-    protected boolean vertical = false;
+    private final int materialIndex = 0;
+    private final int laborIndex = 1;
+    private final int equipIndex = 2;
+    private final int totalIndex = 3;
+    private final int totalOPIndex = 4;
+    
     protected String unit = "m2";
     protected String hierarchy = "070000 Thermal & Moisture Protection";
-    protected HashMap<String, HashMap<String, Double[]>> priceData = new HashMap<String, HashMap<String, Double[]>>();
-    protected String firstKey;
-    protected String secondKey;
+    
+    
+    //price data structure to save the data
+    protected HashMap<String, Double[]> priceData = new HashMap<String, Double[]>();
+    //cost data after selected
+    protected Double[] costVector;
+    //recorde the inputs that required outside of mapping process
+    protected ArrayList<String> userInputs;
+    protected String description;
+    
     
     public AbstractThermalMoistureProtection(){
+	userInputs = new ArrayList<String>();
 	initializeData();
     }
     
     
     @Override
     public Double getMaterialPrice() {
-	if(firstKey!=null && secondKey!=null){
-	    return priceData.get(firstKey).get(secondKey)[0];
-	}
-	return 0.0;
+	return costVector[materialIndex];
     }
 
     @Override
     public Double getLaborPrice() {
-	if(firstKey!=null && secondKey!=null){
-	    return priceData.get(firstKey).get(secondKey)[1];
-	}
-	return 0.0;
+	return costVector[laborIndex];
     }
 
     @Override
     public Double getEquipmentPrice() {
-	if(firstKey!=null && secondKey!=null){
-	    return priceData.get(firstKey).get(secondKey)[2];
-	}
-	return 0.0;
+	return costVector[equipIndex];
     }
 
     @Override
     public Double getTotalPrice() {
-	if(firstKey!=null && secondKey!=null){
-	    return priceData.get(firstKey).get(secondKey)[3];
-	}
-	return 0.0;
+	return costVector[totalIndex];
     }
 
     @Override
     public Double getTotalInclOPPrice() {
-	if(firstKey!=null && secondKey!=null){
-	    return priceData.get(firstKey).get(secondKey)[4];
-	}
-	return 0.0;
+	return costVector[totalOPIndex];
     }
 
     @Override
@@ -73,66 +73,37 @@ abstract class AbstractThermalMoistureProtection implements ThermalMoistureProte
     }
 
     @Override
-    public String[] getFirstFilter() {
-	if (priceData != null) {
-	    return (String[]) priceData.keySet().toArray();
-	}
-	return null;
-    }
-
-    public void setFirstKey(String fk) {
-	String[] keys = getFirstFilter();
-	for (String s : keys) {
-	    if (fk.equals(s)) {
-		firstKey = fk;
-	    }
-	}
-    }
-
-    @Override
-    public String[] getSecondFilter() {
-	if (priceData != null) {
-	    HashMap<String, Double[]> temp = priceData.get(priceData.keySet()
-		    .iterator().next());
-	    return (String[]) temp.keySet().toArray();
-	}
-	return null;
-    }
-    
-    @Override
-    public void setSecondKey(String sk) {
-	String[] keys = getSecondFilter();
-	for (String s : keys) {
-	    if (sk.equals(s)) {
-		secondKey = sk;
-	    }
-	}
-    }
-
-    @Override
     public String getHierarchy() {
 	return hierarchy;
     }
     
     @Override
-    public boolean isHorizontal() {
-	return horizontal;
+    public String getDescription(){
+	return description;
     }
-
+    
     @Override
-    public boolean isVertical() {
-	// TODO Auto-generated method stub
-	return vertical;
+    public boolean isUserInputsRequired(){
+	return userInputs.isEmpty();
     }
+    
+    @Override
+    public ArrayList<String> getUserInputs(){
+	return userInputs;
+    }
+    
+    @Override
+    abstract public void selectCostVector();
+  
+    @Override
+    abstract public void setUserInputs(HashMap<String, String> userInputsMap);
+    
+    @Override
+    abstract public void setVariable(String[] surfaceProperties);
     
     /**
      * This method is used to initialize the product's cost data
      */
     abstract protected void initializeData();
-
-    @Override
-    abstract public double getInsulationRValue();
     
-    
-
 }

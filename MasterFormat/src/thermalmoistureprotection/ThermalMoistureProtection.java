@@ -1,41 +1,18 @@
 package thermalmoistureprotection;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import masterformat.api.MasterFormat;
 
 public interface ThermalMoistureProtection extends MasterFormat{
     
     /**
-     * Get the first level of filters. the return value includes all the
-     * descriptions of the first level filters The selection of the filter at
-     * this level will affect the second level filters.
-     * 
-     * @return String[]
+     * input material properties that can be extract from energyplus,
+     * the data elements includes 0. FloorArea; 1. height; 2. thickness; 3. conductivity; 4. density;
+     * 5. specific heat; 6. Resistance
      */
-    public String[] getFirstFilter();
-
-    /**
-     * Set the first key to the data structure. It used when user types in the
-     * key value according to the first level filter values
-     * 
-     * @param fk
-     */
-    public void setFirstKey(String fk);
-
-    /**
-     * Get the second level of filters.
-     * 
-     * @return String []
-     */
-    public String[] getSecondFilter();
-
-    /**
-     * set the second level of filter. After this filter is being set, the
-     * object should be able to extract the correspondent cost for the component
-     * 
-     * @param sk
-     */
-    public void setSecondKey(String sk);
-    
+    public void setVariable(String[] surfaceProperties);
     /**
      * Get the object's hierarchy in the masterformat.
      * @return String 
@@ -43,21 +20,29 @@ public interface ThermalMoistureProtection extends MasterFormat{
     public String getHierarchy();
     
     /**
-     * request the R-value of the material
-     * @return double the R-value of the material
+     * Get the product description
+     * @return
      */
-    public double getInsulationRValue();
+    public String getDescription();
     
     /**
-     * test whether this material is used for horizontal surfaces includes floor/ceiling or roof
-     * @return true if the material can be applied to horizontal surfaces, false otherwise
+     * after set the variables, this method should be called to set the costs
      */
-    public boolean isHorizontal();
-    
+    public void selectCostVector();
     /**
-     * test whether this material is used for vertical surfaces includes walls
-     * @return true if the material can be applied to vertical surfaces, false otherwise
+     * Check whether there is user inputs required for defining the cost of this class
+     * @return
      */
-    public boolean isVertical();
+    public boolean isUserInputsRequired();
+    /**
+     * Get the descriptions for the user inputs
+     * @return
+     */
+    public ArrayList<String> getUserInputs();
+    /**
+     * Get the value of user inputs from the user
+     * @param userInputsMap
+     */
+    public void setUserInputs(HashMap<String, String> userInputsMap);
 
 }
