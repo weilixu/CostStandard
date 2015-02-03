@@ -25,12 +25,12 @@ public class CastInPlaceWall extends AbstractConcrete {
 	try {
 	    height = Double.parseDouble(surfaceProperties[1]);
 	} catch (NumberFormatException e) {
-	    userInputs.add("height");
+	    userInputs.add("INPUT|Height|m");
 	}
 	try {
 	    thickness = Double.parseDouble(surfaceProperties[2]);
 	} catch (NumberFormatException e) {
-	    userInputs.add("thickness");
+	    userInputs.add("INPUT|Thickness|m");
 	}
     }
     
@@ -40,9 +40,9 @@ public class CastInPlaceWall extends AbstractConcrete {
 	Iterator<String> iterator = inputs.iterator();
 	while(iterator.hasNext()){
 	    String temp = iterator.next();
-	    if(temp.equals("height")){
+	    if(temp.equals("Height")){
 		height = Double.parseDouble(userInputsMap.get(temp));
-	    }else if(temp.equals("thickness")){
+	    }else if(temp.equals("Thickness")){
 		thickness = Double.parseDouble(userInputsMap.get(temp));
 	    }
 	}

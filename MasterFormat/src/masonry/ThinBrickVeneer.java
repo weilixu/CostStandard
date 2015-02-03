@@ -2,14 +2,49 @@ package masonry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 public class ThinBrickVeneer extends AbstractMasonry {
+    
+    protected String unit = "m2";
+    protected String hierarchy = "042100 Clay Unit Masonry|042113 Brick Masonry|042113.14 Thin Brick Veneer";
 
-    public ThinBrickVeneer() {
-	hierarchy = "042100 Clay Unit Masonry|042113 Brick Masonry|042113.14 Thin Brick Veneer";
-	initializeData();
+    
+    //shows the tyep of the brick that selected
+    private String brickType;
+    //shows any special charactor the type of brick might have
+    private String specialCharacter;
+
+    @Override
+    public void selectCostVector() {
+	Double[] cost = priceData.get(brickType);
+	
+	if(specialCharacter.equals("For embedment into pre-cast concrete panels, add (155/m2)")){
+	    cost = addToTotal(cost,155.00);
+	}
+	costVector = cost;
     }
 
+    @Override
+    public void setUserInputs(HashMap<String, String> userInputsMap) {
+	Set<String> inputs = userInputsMap.keySet();
+	Iterator<String> iterator = inputs.iterator();
+	while(iterator.hasNext()){
+	    String temp = iterator.next();
+	    if(temp.equals("BrickType")){
+		brickType = userInputsMap.get(temp);
+	    }else if(temp.equals("SpecialCharacter")){
+		specialCharacter = userInputsMap.get(temp);
+	    }
+	}
+    }
+
+    @Override
+    public void setVariable(String[] surfaceProperties) {
+	//there is nothing to map it from EnergyPlus to this class
+    }
+    
     protected void initializeData(){
 	Double[][] costsMatrix = { { 9.00, 6.65, 0.0, 15.65, 19.70 },
 		{ 8.80, 5.55, 0.0, 14.35, 17.85 },
@@ -26,7 +61,6 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	
 	
 	ArrayList<String> typesOne = new ArrayList<String>();
-	ArrayList<String> typesTwo = new ArrayList<String>();
 	
 	typesOne.add("On & incl. metal panel support sys, modular, 68 x 16 x 200 (mm), red");
 	typesOne.add("On & incl. metal panel support sys, Closure, 100 x 16 x 200 (mm)");
@@ -41,16 +75,23 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	typesOne.add("On masonry/plaster back-up, Emperor, 100 x 20 x 400 (mm)");
 	typesOne.add("On masonry/plaster back-up, Super emperor, 200 x 20 x 400 (mm)");
 	
-	typesTwo.add("NONE");
-	typesTwo.add("For embedment into pre-cast concrete panels, add (14.40/SF)");
-	//add on the top of the total cost
-	Double addition = 14.40;
+	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, modular, 68 x 16 x 200 (mm), red");
+	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, Closure, 100 x 16 x 200 (mm)");
+	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, Norman, 68 x 16 x 300 (mm)");
+	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, Utility, 100 x 16 x 300 (mm)");
+	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, Emperor, 100 x 20 x 400 (mm)");
+	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, Super emperor, 200 x 20 x 400 (mm)");
+	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, modular, 68 x 16 x 200 (mm), red");
+	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, Closure, 100 x 16 x 200 (mm)");
+	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, Norman, 68 x 16 x 300 (mm)");
+	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, Utility, 100 x 16 x 300 (mm)");
+	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, Emperor, 100 x 20 x 400 (mm)");
+	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, Super emperor, 200 x 20 x 400 (mm)");
+	
+	userInputs.add("OPTION|SpecialCharacter|For embedment into pre-cast concrete panels, add (155/m2)");
 	
 	for(int i = 0; i<typesOne.size();i++){
-	    HashMap<String, Double[]> tempTable = new HashMap<String, Double[]>();
-	    tempTable.put(typesTwo.get(0),unitConversion(costsMatrix[i]));
-	    tempTable.put(typesTwo.get(1), addToTotal(unitConversion(costsMatrix[i]),addition));
-	    priceData.put(typesOne.get(i), tempTable);
+	    priceData.put(typesOne.get(i), unitConversion(costsMatrix[i]));
 	}
     }
     

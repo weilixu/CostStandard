@@ -60,12 +60,12 @@ public class CastInPlaceSlabOnGrade extends AbstractConcrete{
 	try{
 	    area = Double.parseDouble(surfaceProperties[0]);
 	}catch(NumberFormatException e){
-	    userInputs.add("Area");
+	    userInputs.add("INPUT|Area|m2");
 	}
 	try{
 	    thickness = Double.parseDouble(surfaceProperties[2]);
 	}catch(NumberFormatException e){
-	    userInputs.add("Thickness");
+	    userInputs.add("INPUT|Thickness|m");
 	}
     }
     
