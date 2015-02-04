@@ -22,7 +22,6 @@ public class Client {
 	try {
 	    reader.readEplusFile();
 	} catch (IOException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
     }
@@ -50,25 +49,25 @@ public class Client {
 	return temp;
     }
 
-    public static void main(String[] args) {
-	HashMap<String, String> userInputs = new HashMap<String, String>();
-	Client core = new Client();
-	ComponentFactory productFactory = new ThermalMositureProtectionFactory();
-	ThermalMoistureProtection insulation = productFactory
-		.getThermalMoistureProtection("Rigid insulation");
-	insulation.setVariable(core.createSurfaceProperties());
-	if (insulation.isUserInputsRequired()) {
-	    ArrayList<String> temp = insulation.getUserInputs();
-	}
-	userInputs.put("InsulationType","Fiberglass, 0.085#/m3, Foil faced");
-	userInputs.put("Thickness","0.04");
-
-	insulation.setUserInputs(userInputs);
-	insulation.selectCostVector();
-	
-	Double total = insulation.getTotalPrice();
-
-	System.out.println(total);
-    }
+//    public static void main(String[] args) {
+//	HashMap<String, String> userInputs = new HashMap<String, String>();
+//	Client core = new Client();
+//	ComponentFactory productFactory = new ThermalMositureProtectionFactory();
+//	ThermalMoistureProtection insulation = productFactory
+//		.getThermalMoistureProtection("Rigid insulation");
+//	insulation.setVariable(core.createSurfaceProperties());
+//	if (insulation.isUserInputsRequired()) {
+//	    ArrayList<String> temp = insulation.getUserInputs();
+//	}
+//	userInputs.put("InsulationType","Fiberglass, 0.085#/m3, Foil faced");
+//	userInputs.put("Thickness","0.04");
+//
+//	insulation.setUserInputs(userInputs);
+//	insulation.selectCostVector();
+//	
+//	Double total = insulation.getTotalPrice();
+//
+//	System.out.println(total);
+//    }
 
 }

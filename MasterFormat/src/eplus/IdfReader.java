@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 /**
  * This object represents an data structure of a typical sorted idf file. The
  * file has to read a valid and sorted idf file first. And it can remove an
@@ -431,6 +433,34 @@ public class IdfReader {
 	    }
 	}
     }
+    
+    /**
+     * create a default mutable tree node for display purpose
+     * @return
+     */
+    public DefaultMutableTreeNode createTree(){
+	DefaultMutableTreeNode energyPlus = new DefaultMutableTreeNode("EnergyPlus");
+	
+	Set<String> objectName = eplusMap.keySet();
+	Iterator<String> oIterator = objectName.iterator();
+	while(oIterator.hasNext()){
+	    String temp = oIterator.next();
+	    //create object level node
+	    DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(temp);
+	    energyPlus.add(objectNode);
+	    
+	    //getting the next level information
+	    Set<String> elementCount = eplusMap.get(temp).keySet();
+	    Iterator<String> eIterator = elementCount.iterator();
+	    while(eIterator.hasNext()){
+		String name = eIterator.next();
+		ElementList list = new ElementList(name, eplusMap.get(temp).get(name));
+		DefaultMutableTreeNode elementNode = new DefaultMutableTreeNode(list);
+		objectNode.add(elementNode);
+	    }
+	}
+	return energyPlus;
+    }
 
     public void modifySpecialCharactor(String specialCharactor, String value) {
 	if (dataFilled) {
@@ -452,6 +482,29 @@ public class IdfReader {
 	    writer.writeIdf();
 	} catch (IOException e) {
 	    // do something!
+	}
+    }
+    
+    /**
+     * This is a wrapper class that wraps the element its correspondent data
+     * @author Weili
+     *
+     */
+    public class ElementList{
+	private String name;
+	private final ArrayList<ValueNode> infoList;
+	
+	public ElementList(String n, ArrayList<ValueNode> il){
+	    name = n;
+	    infoList = il;
+	}
+	
+	public ArrayList<ValueNode> getInfo(){
+	    return infoList;
+	}
+	
+	public String toString(){
+	    return "Object "+name;
 	}
     }
 
@@ -548,7 +601,7 @@ public class IdfReader {
      * @author Weili
      *
      */
-    private class ValueNode {
+    public class ValueNode {
 	/**
 	 * Invariance: Each node should contains information includes an
 	 * original attribute and the input description
@@ -596,33 +649,33 @@ public class IdfReader {
 	}
 
 	// gets the attribute of the this line
-	private String getAttribute() {
+	public String getAttribute() {
 	    return attribute;
 	}
 
 	// reset the attribute for this object
 	// can be used to replace the parametric values in the EnergyPlus
-	private void setAttribute(String attr) {
+	public void setAttribute(String attr) {
 	    attribute = attr;
 	}
 
 	// check whether this line is the end statment
-	private boolean isEndStatement() {
+	public boolean isEndStatement() {
 	    return isEnd;
 	}
 
 	// get the description of this line
-	private String getDescription() {
+	public String getDescription() {
 	    return description;
 	}
 	
 	//get the unit of this node
-	private String getUnit(){
+	public String getUnit(){
 	    return unit;
 	}
 
 	// check whether there is a parametric value defined in this line
-	private boolean isCritical() {
+	public boolean isCritical() {
 	    return isCriticalLine;
 	}
 
