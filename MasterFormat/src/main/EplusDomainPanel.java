@@ -23,15 +23,15 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
-import eplus.IdfReader;
-import eplus.IdfReader.ElementList;
-import eplus.IdfReader.ValueNode;
+import eplus.IdfTreeMap;
+import eplus.IdfTreeMap.ElementList;
+import eplus.IdfTreeMap.ValueNode;
 
 public class EplusDomainPanel extends JPanel implements TreeSelectionListener {
 
-    private static final String FILE_PATH = "C://Users//Weili//Desktop//New folder//JIH_ProposedCase.idf";
+    private static final String FILE_PATH = "/Users/xwl19880326/Desktop/updatedIDF.idf";
 
-    private final IdfReader eplusData;
+    private final IdfTreeMap eplusData;
     private JTree tree;
 
     private final JPanel editorPanel;
@@ -40,7 +40,7 @@ public class EplusDomainPanel extends JPanel implements TreeSelectionListener {
 	super(new GridLayout(1, 0));
 
 	// initialize the data
-	eplusData = new IdfReader();
+	eplusData = new IdfTreeMap();
 	eplusData.setFilePath(FILE_PATH);
 
 	try {
