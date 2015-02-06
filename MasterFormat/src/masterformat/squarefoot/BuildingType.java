@@ -3,7 +3,7 @@ package masterformat.squarefoot;
 public enum BuildingType {
 	APARTMENTSLOWRISE, //Apartments Low Rise (1 to 3 story)
 	APARTMENTSMIDRISE, //Apartments Mid Rise (4 to 7 story)
-	APRTMENTSHIGHRISE, //Apartments High Rise (8 to 24 story)
+	APARTMENTSHIGHRISE, //Apartments High Rise (8 to 24 story)
 	BANKS, // Banks
 	FIRESTATIONS, //Fire Stations
 	HOSPITALS, //Hospitals
