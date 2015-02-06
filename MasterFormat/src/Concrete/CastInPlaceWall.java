@@ -22,6 +22,7 @@ public class CastInPlaceWall extends AbstractConcrete {
      */
     @Override
     public void setVariable(String[] surfaceProperties) {
+	System.out.println("got here!");
 	try {
 	    height = Double.parseDouble(surfaceProperties[1]);
 	} catch (NumberFormatException e) {

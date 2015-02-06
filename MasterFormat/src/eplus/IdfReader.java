@@ -39,7 +39,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * is one key-value pair. The key in a line should be the text after ! symbol,
  * which represents the information of the data. Value should be the data, which
  * shows at the begining of each line. e.g. 5.456, !- Thermal Resistance
- * {m2-K/W} "5.456" is the value and "Thermal Resistance {m2-K/W}" is the key
+ * {m2-K/W} "5.456" is the value and "Thermal Resistance" is the key
  * 
  * The data structure allows the delete an object, or duplicate an object or
  * edit an object.
@@ -248,6 +248,33 @@ public class IdfReader {
 	// if we cannot find it.
 	return null;
     }
+    
+    /**
+     * search for same values under same type of objects. It returns a string of grouped value
+     * @param object
+     * @param description
+     * @return
+     */
+    public String[] getListValue(String object, String description){
+	String[] list;
+	HashMap<String, ArrayList<ValueNode>> temp = eplusMap.get(object);
+	Set<String> elementSet = temp.keySet();
+	list = new String[elementSet.size()];
+	Iterator<String> iterator = elementSet.iterator();
+	int counter = 0;
+	while(iterator.hasNext()){
+	    String s = iterator.next();
+	    ArrayList<ValueNode> nodeList = eplusMap.get(object).get(s);
+	    for(ValueNode node: nodeList){
+		if(node.getDescription().equals(description)){
+		    list[counter]=node.getAttribute();
+		    counter++;
+		    break;
+		}
+	    }
+	}
+	return list;
+    }
 
     /**
      * get value from the database. This method will extract the value according
@@ -274,8 +301,7 @@ public class IdfReader {
 	    String elementCount = iterator.next();
 	    ArrayList<ValueNode> vnList = temp.get(elementCount);
 	    for (ValueNode vn : vnList) {
-		if (vn.getDescription().equals("Name")
-			&& vn.getAttribute().equals(name)) {
+		if (vn.getAttribute().equals(name)) {
 		    targetList = vnList;
 		    break;
 		}
@@ -503,8 +529,16 @@ public class IdfReader {
 	    return infoList;
 	}
 	
+	public void addValueNode(ValueNode node){
+	    infoList.add(node);
+	}
+	
+	public String getName(){
+	    return name;
+	}
+	
 	public String toString(){
-	    return "Object "+name;
+	    return infoList.get(0).getAttribute();
 	}
     }
 

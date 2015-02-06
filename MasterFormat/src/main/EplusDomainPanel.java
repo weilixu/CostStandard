@@ -8,9 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -23,15 +21,15 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
-import eplus.IdfTreeMap;
-import eplus.IdfTreeMap.ElementList;
-import eplus.IdfTreeMap.ValueNode;
+import eplus.IdfReader;
+import eplus.IdfReader.ElementList;
+import eplus.IdfReader.ValueNode;
 
 public class EplusDomainPanel extends JPanel implements TreeSelectionListener {
 
-    private static final String FILE_PATH = "/Users/xwl19880326/Desktop/updatedIDF.idf";
+    private static final String FILE_PATH = "C:\\Users\\Weili\\Desktop\\New folder\\JIH_ProposedCase.idf";
 
-    private final IdfTreeMap eplusData;
+    private final IdfReader eplusData;
     private JTree tree;
 
     private final JPanel editorPanel;
@@ -40,7 +38,7 @@ public class EplusDomainPanel extends JPanel implements TreeSelectionListener {
 	super(new GridLayout(1, 0));
 
 	// initialize the data
-	eplusData = new IdfTreeMap();
+	eplusData = new IdfReader();
 	eplusData.setFilePath(FILE_PATH);
 
 	try {
@@ -138,5 +136,4 @@ public class EplusDomainPanel extends JPanel implements TreeSelectionListener {
 	    }
 	});
     }
-
 }

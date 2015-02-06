@@ -1,0 +1,30 @@
+<masterformat>
+	<material>
+		<concrete tag = "030000" description = "Concrete" type = "concrete">
+			<cast_in_place tag = "033000" description = "Cast-In-Place Concrete" type = "concrete">
+				<concrete_in_place tage = "033053.40" description = "Cast In Place" type = "concrete">
+					<cast_wall tag = "033050.404200" description = "Cast In Place Wall" type = "concrete"/>
+					<cast_slab tag = "033050.404650" description = "Cast In Place Slab On Grade" type = "concrete"/>
+				</concrete_in_place>
+			</cast_in_place>
+		</concrete>
+		<masonry tag = "040000" description = "Masonry" type = "masonry">
+			<clay_masonry tag = "042100" description = "Clay Unit Masonry" type = "masonry">
+				<brick_masonry tag = "042113" description = "Brick Masonry" type = "masonry">
+					<venner tag = "042113.13" description = "Brick Veneer Masonry" type = "masonry"/>
+					<thin_veneer tag = "042113.14" description = "Thin Brick Veneer" type = "masonry"/>
+				</brick_masonry>
+			</clay_masonry>
+		</masonry>
+		<thermal_moisture tag = "070000" description = "Thermal Moisture Protection" type = "thermal moisture protection">
+			<thermal_insulation tag = "072100" description = "Thermal Insulation" type = "thermal moisture protection">
+				<board_insulation tag = "072113" description = "Board Insulation" type = "thermal moisture protection">
+					<rigid tag = "072113.10" description = "Rigid Insulation" type = "thermal moisture protection"/>
+				</board_insulation>
+			</thermal_insulation>
+		</thermal_moisture>
+	</material>
+</masterformat>
+
+
+

@@ -12,7 +12,7 @@ import masterformat.api.ComponentFactory;
 import eplus.IdfReader;
 
 public class Client {
-    private static final String FILE_PATH = "C://Users//Weili//Desktop//New folder//test.idf";
+    private static final String FILE_PATH = "C://Users//Weili//Desktop//New folder//JIH_ProposedCase.idf";
 
     private IdfReader reader;
 
@@ -25,9 +25,26 @@ public class Client {
 	    e.printStackTrace();
 	}
     }
+    
+    public void findZoneHVAC(){
+	String[] zoneList = reader.getListValue("Zone","Name");
+	for(String zone: zoneList){
+	    String ahu = findObject(zone.toUpperCase());
+	    System.out.println(zone+ " " + ahu);
+	}
+    }
 
-    public String findObject() {
-	return reader.getValue("Material", "Specific Heat");
+    public String findObject(String zoneName) {
+	String inletNode = reader.getValue("ZoneHVAC:EquipmentConnections",zoneName,"Zone Air Inlet Node or NodeList Name");
+	//System.out.println(inletNode);
+	String equipNode = reader.getValue("AirTerminal:SingleDuct:VAV:Reheat",inletNode, "Air Inlet Node Name");
+	//System.out.println(equipNode);
+	String supplyName = reader.getValue("AirLoopHVAC:ZoneSplitter",equipNode, "Name");
+	//System.out.println(supplyName);
+	String pathInlet = reader.getValue("AirLoopHVAC:SupplyPath",supplyName, "Supply Air Path Inlet Node Name");
+	//System.out.println(pathInlet);
+	String ahu = reader.getValue("AirLoopHVAC",pathInlet, "Name");
+	return ahu;
     }
 
     public String[] createSurfaceProperties() {
@@ -47,6 +64,11 @@ public class Client {
 
 	String[] temp = { floorArea, height, "", "", "", "", resistance };
 	return temp;
+    }
+    
+    public static void main(String[] args){
+	Client core = new Client();
+	core.findZoneHVAC();
     }
 
 //    public static void main(String[] args) {
