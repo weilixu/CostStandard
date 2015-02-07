@@ -8,7 +8,7 @@ public class SquareCostEstimationFactory {
 	this.buildingType = type;
     }
 
-    public AbstractBuildingTypes buildingType() {
+    public AbstractBuildingTypes getBuildingType() {
 	switch (buildingType) {
 	case APARTMENTSLOWRISE:
 	    return new ApartmentsLowRise();

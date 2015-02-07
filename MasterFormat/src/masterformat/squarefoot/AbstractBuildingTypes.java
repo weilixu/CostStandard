@@ -64,6 +64,7 @@ public abstract class AbstractBuildingTypes {
     }
     
     private double higherRegression(double ratio){
+	System.out.println(ratio);
 	return 1.0785+0.011786*ratio+(-0.09189)*Math.pow(ratio, 2);
     }
     
