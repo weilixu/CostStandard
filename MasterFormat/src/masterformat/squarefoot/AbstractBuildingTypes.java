@@ -45,27 +45,30 @@ public abstract class AbstractBuildingTypes {
     
     //get the cost multiplier for the building
     public double getCostMultiplier(double size){
+	//1.0 is default size factor when the size of building is exactly
+	//same as the typical estimation range
 	double sizeFactor = 1.0;
 	double ratio = size/typicalSize;
+	System.out.println(ratio);
 	if(ratio>1 && ratio<3.5){
-	    sizeFactor = lowerRegression(ratio);
-	}else if(ratio<1 && ratio>0.5){
 	    sizeFactor = higherRegression(ratio);
-	}else if(ratio<0.5){
+	}else if(ratio<1 && ratio>0.5){
+	    sizeFactor = lowerRegression(ratio);
+	}else if(ratio<=0.5){
 	    sizeFactor = 1.1;
-	}else if(ratio>3.5){
+	}else if(ratio>=3.5){
 	    sizeFactor = 0.90;
 	}
 	return sizeFactor;
     }
     
     private double lowerRegression(double ratio){
-	return 1.331387 + 0.291375*ratio +(-0.60706)*Math.pow(ratio, 2);
+	return 1.331387 + (-0.60706)*ratio +0.291375*Math.pow(ratio, 2);
     }
     
     private double higherRegression(double ratio){
 	System.out.println(ratio);
-	return 1.0785+0.011786*ratio+(-0.09189)*Math.pow(ratio, 2);
+	return 1.0785+(-0.09189)*ratio+0.011786*Math.pow(ratio, 2);
     }
     
 }
