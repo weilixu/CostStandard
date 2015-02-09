@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -16,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import eplus.htmlparser.BuildingAreaParser;
 import masterformat.listener.SquareMeterCostModelListener;
 import masterformat.squarefoot.BuildingType;
 import masterformat.squarefoot.SquareMeterModel;
@@ -23,6 +25,9 @@ import masterformat.squarefoot.SquareMeterModel;
 public class SquareMeterCostPanel extends JPanel implements SquareMeterCostModelListener{
     
     private final SquareMeterModel model;
+    private final BuildingAreaParser parser;
+    private final String FILE_PATH = "C:/Users/Weili/Desktop/New folder/Results/0Table.html";
+    
     private int simulationNumber;
     private Double buildingSize;
     
@@ -35,16 +40,18 @@ public class SquareMeterCostPanel extends JPanel implements SquareMeterCostModel
     
     
     private final JButton generateButton;
-    private final JComboBox selection;
+    private final JComboBox<BuildingType> selection;
     
     
     
     public SquareMeterCostPanel(SquareMeterModel m){
 	model = m;
+	File result = new File(FILE_PATH);
+	parser = new BuildingAreaParser(result);
 	model.addCostModelListener(this);
 	//for test only
 	simulationNumber = 1000;
-	buildingSize = 20000.0;
+	buildingSize = parser.getBuildingArea();
 	
 	// build the frame
 	frame = new JFrame();
@@ -56,7 +63,7 @@ public class SquareMeterCostPanel extends JPanel implements SquareMeterCostModel
 	
 	outerPanel = new JPanel(new BorderLayout());
 	
-	selection = new JComboBox(BuildingType.values());
+	selection = new JComboBox<BuildingType>(BuildingType.values());
 	outerPanel.add(selection, BorderLayout.PAGE_START);
 	
 	

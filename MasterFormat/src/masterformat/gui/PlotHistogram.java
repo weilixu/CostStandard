@@ -46,7 +46,7 @@ public class PlotHistogram {
 
 	private JFreeChart createChart(IntervalXYDataset intervalxydataset) {
 		JFreeChart jfreechart = ChartFactory.createHistogram(title,
-				 "Cost ($)", "Frequency",intervalxydataset,
+				 "Cost per Square Meter ($/m2)", "Frequency",intervalxydataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		XYPlot xyplot = (XYPlot) jfreechart.getPlot();
 		xyplot.setForegroundAlpha(0.85F);

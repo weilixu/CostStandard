@@ -97,7 +97,6 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 		thermal.setVariable(surfaceProperties);
 		userInput = thermal.getUserInputs();
 	    }
-
 	    disPlayData(userInput);
 	}
     }
