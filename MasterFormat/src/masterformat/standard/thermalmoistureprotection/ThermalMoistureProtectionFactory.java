@@ -1,10 +1,10 @@
-package thermalmoistureprotection;
+package masterformat.standard.thermalmoistureprotection;
 
-import Concrete.Concrete;
-import masonry.Masonry;
 import masterformat.api.ComponentFactory;
+import masterformat.standard.concrete.Concrete;
+import masterformat.standard.masonry.Masonry;
 
-public class ThermalMositureProtectionFactory extends ComponentFactory{
+public class ThermalMoistureProtectionFactory extends ComponentFactory{
 
     @Override
     public Masonry getMasonry(String masonryType) {
@@ -27,5 +27,4 @@ public class ThermalMositureProtectionFactory extends ComponentFactory{
 	}
 	return null;
     }
-
 }

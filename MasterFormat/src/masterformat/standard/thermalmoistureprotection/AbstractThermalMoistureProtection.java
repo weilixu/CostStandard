@@ -1,9 +1,21 @@
-package Concrete;
+package masterformat.standard.thermalmoistureprotection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-abstract class AbstractConcrete implements Concrete{
+/**
+ * This is an abstract class of all the materials relate to thermal adn moisture protection products.
+ * The key values includes whether this material can be applied to vertical surfaces or horizontal surfaces or both.
+ * <value>horizontal<value> and <value>vertical<value> indicates this properties.
+ * unit is default to m2 and this class owns <value>firstkey<value> and <value>secondkey<value> to access the cost information
+ * 
+ * The Double[] in this class contains the R-Value information as well. This value will be added as the 6th element
+ * Therefore, the first 5 are still material, labor, equipment, total and total with profit costs.
+ * 
+ * 
+ * @author Weili
+ *
+ */
+abstract class AbstractThermalMoistureProtection implements ThermalMoistureProtection{
     
     private final int materialIndex = 0;
     private final int laborIndex = 1;
@@ -11,9 +23,10 @@ abstract class AbstractConcrete implements Concrete{
     private final int totalIndex = 3;
     private final int totalOPIndex = 4;
     
-    
     protected String unit = "m2";
-    protected String hierarchy = "030000 Concrete";
+    protected String hierarchy = "070000 Thermal & Moisture Protection";
+    
+    
     //price data structure to save the data
     protected HashMap<String, Double[]> priceData = new HashMap<String, Double[]>();
     //cost data after selected
@@ -23,11 +36,12 @@ abstract class AbstractConcrete implements Concrete{
     protected String description;
     
     
-    public AbstractConcrete(){
+    public AbstractThermalMoistureProtection(){
 	userInputs = new ArrayList<String>();
 	initializeData();
     }
-
+    
+    
     @Override
     public Double getMaterialPrice() {
 	return costVector[materialIndex];
@@ -86,9 +100,10 @@ abstract class AbstractConcrete implements Concrete{
     
     @Override
     abstract public void setVariable(String[] surfaceProperties);
+    
     /**
      * This method is used to initialize the product's cost data
      */
     abstract protected void initializeData();
-
+    
 }

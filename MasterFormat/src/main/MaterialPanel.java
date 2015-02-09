@@ -15,13 +15,13 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
-import thermalmoistureprotection.ThermalMoistureProtection;
-import thermalmoistureprotection.ThermalMositureProtectionFactory;
-import Concrete.Concrete;
-import Concrete.ConcreteFactory;
-import masonry.Masonry;
-import masonry.MasonryFactory;
 import masterformat.api.ComponentFactory;
+import masterformat.standard.concrete.Concrete;
+import masterformat.standard.concrete.ConcreteFactory;
+import masterformat.standard.masonry.Masonry;
+import masterformat.standard.masonry.MasonryFactory;
+import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
+import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtectionFactory;
 import masterformat.tree.TreeBuilder;
 import masterformat.tree.TreeNode;
 
@@ -91,7 +91,7 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 		userInput = masonry.getUserInputs();
 	    } else if (tn.getType().equalsIgnoreCase(
 		    "THERMAL MOISTURE PROTECTION")) {
-		factory = new ThermalMositureProtectionFactory();
+		factory = new ThermalMoistureProtectionFactory();
 		ThermalMoistureProtection thermal = factory
 			.getThermalMoistureProtection(tn.getDescription());
 		thermal.setVariable(surfaceProperties);

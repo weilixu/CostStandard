@@ -1,9 +1,9 @@
-package masonry;
+package masterformat.standard.concrete;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-abstract class AbstractMasonry implements Masonry{
+abstract class AbstractConcrete implements Concrete{
     
     private final int materialIndex = 0;
     private final int laborIndex = 1;
@@ -11,9 +11,9 @@ abstract class AbstractMasonry implements Masonry{
     private final int totalIndex = 3;
     private final int totalOPIndex = 4;
     
-    protected String unit = "m2";
-    protected String hierarchy = "040000 Masonry";
     
+    protected String unit = "m2";
+    protected String hierarchy = "030000 Concrete";
     //price data structure to save the data
     protected HashMap<String, Double[]> priceData = new HashMap<String, Double[]>();
     //cost data after selected
@@ -22,7 +22,8 @@ abstract class AbstractMasonry implements Masonry{
     protected ArrayList<String> userInputs;
     protected String description;
     
-    public AbstractMasonry(){
+    
+    public AbstractConcrete(){
 	userInputs = new ArrayList<String>();
 	initializeData();
     }
@@ -85,10 +86,9 @@ abstract class AbstractMasonry implements Masonry{
     
     @Override
     abstract public void setVariable(String[] surfaceProperties);
-    
     /**
      * This method is used to initialize the product's cost data
      */
     abstract protected void initializeData();
-    
+
 }

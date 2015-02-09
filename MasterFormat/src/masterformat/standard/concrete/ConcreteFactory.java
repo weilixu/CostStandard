@@ -1,8 +1,8 @@
-package Concrete;
+package masterformat.standard.concrete;
 
-import thermalmoistureprotection.ThermalMoistureProtection;
-import masonry.Masonry;
 import masterformat.api.ComponentFactory;
+import masterformat.standard.masonry.Masonry;
+import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
 public class ConcreteFactory extends ComponentFactory{
 

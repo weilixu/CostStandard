@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import thermalmoistureprotection.ThermalMoistureProtection;
-import thermalmoistureprotection.ThermalMositureProtectionFactory;
 import masterformat.api.ComponentFactory;
+import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
+import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtectionFactory;
 import eplus.IdfReader;
 
 public class Client {

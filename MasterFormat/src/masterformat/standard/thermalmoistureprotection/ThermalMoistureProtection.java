@@ -1,4 +1,4 @@
-package thermalmoistureprotection;
+package masterformat.standard.thermalmoistureprotection;
 
 import java.util.ArrayList;
 import java.util.HashMap;

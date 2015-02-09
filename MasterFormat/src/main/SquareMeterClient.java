@@ -17,7 +17,7 @@ public class SquareMeterClient {
 	SquareCostEstimationFactory factory = new SquareCostEstimationFactory(
 		BuildingType.APARTMENTSHIGHRISE);
 
-	AbstractBuildingTypes costInfo = factory.getBuildingType();
+	AbstractBuildingTypes costInfo = factory.getBuilding();
 
 	Double multiplier = costInfo.getCostMultiplier(1000);
 	HashMap<String, Double[]> temp = costInfo.getDistParams();

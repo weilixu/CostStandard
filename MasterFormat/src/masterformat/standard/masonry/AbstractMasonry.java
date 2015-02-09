@@ -1,21 +1,9 @@
-package thermalmoistureprotection;
+package masterformat.standard.masonry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-/**
- * This is an abstract class of all the materials relate to thermal adn moisture protection products.
- * The key values includes whether this material can be applied to vertical surfaces or horizontal surfaces or both.
- * <value>horizontal<value> and <value>vertical<value> indicates this properties.
- * unit is default to m2 and this class owns <value>firstkey<value> and <value>secondkey<value> to access the cost information
- * 
- * The Double[] in this class contains the R-Value information as well. This value will be added as the 6th element
- * Therefore, the first 5 are still material, labor, equipment, total and total with profit costs.
- * 
- * 
- * @author Weili
- *
- */
-abstract class AbstractThermalMoistureProtection implements ThermalMoistureProtection{
+
+abstract class AbstractMasonry implements Masonry{
     
     private final int materialIndex = 0;
     private final int laborIndex = 1;
@@ -24,8 +12,7 @@ abstract class AbstractThermalMoistureProtection implements ThermalMoistureProte
     private final int totalOPIndex = 4;
     
     protected String unit = "m2";
-    protected String hierarchy = "070000 Thermal & Moisture Protection";
-    
+    protected String hierarchy = "040000 Masonry";
     
     //price data structure to save the data
     protected HashMap<String, Double[]> priceData = new HashMap<String, Double[]>();
@@ -35,13 +22,11 @@ abstract class AbstractThermalMoistureProtection implements ThermalMoistureProte
     protected ArrayList<String> userInputs;
     protected String description;
     
-    
-    public AbstractThermalMoistureProtection(){
+    public AbstractMasonry(){
 	userInputs = new ArrayList<String>();
 	initializeData();
     }
-    
-    
+
     @Override
     public Double getMaterialPrice() {
 	return costVector[materialIndex];
