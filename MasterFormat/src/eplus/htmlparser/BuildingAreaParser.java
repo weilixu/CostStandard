@@ -8,12 +8,20 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+/**
+ * HTML parser that searches for the building area in the result HTML file
+ * @author Weili
+ *
+ */
 public class BuildingAreaParser {
     
     private File htmlFile;
     private Document doc;
     
-    
+    /**
+     * constructor that builds the HTML file
+     * @param f
+     */
     public BuildingAreaParser(File f){
 	htmlFile = f;
 	
@@ -24,6 +32,10 @@ public class BuildingAreaParser {
 	}
     }
     
+    /**
+     * gets the building area
+     * @return
+     */
     public double getBuildingArea(){
 	double area;
 	Elements tables = doc.getElementsByTag("table");
