@@ -2,6 +2,7 @@ package masterformat.gui;
 
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -81,9 +82,10 @@ public class SquareMeterCostPanel extends JPanel implements SquareMeterCostModel
 	outerPanel.add(generateButton, BorderLayout.PAGE_END);
 	
 	displayPanel = new JPanel(new GridLayout(0,3));
+	displayPanel.setBackground(Color.WHITE);
 	displayView = new JScrollPane(displayPanel);
 	
-	outerPanel.add(displayPanel, BorderLayout.CENTER);
+	outerPanel.add(displayView, BorderLayout.CENTER);
 	
 	frame.add(outerPanel);
 	frame.pack();

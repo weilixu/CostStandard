@@ -50,5 +50,4 @@ public class BuildingAreaParser {
 	}
 	return -1;
     }
-
 }

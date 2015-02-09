@@ -12,5 +12,4 @@ public abstract class ComponentFactory {
     public abstract Concrete getConcrete(String concreteType);
     
     public abstract ThermalMoistureProtection getThermalMoistureProtection(String thermalMoistureProtectionType);
-    
 }

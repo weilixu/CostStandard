@@ -4,7 +4,7 @@ import javax.swing.SwingUtilities;
 import masterformat.gui.SquareMeterCostPanel;
 import masterformat.squarefoot.SquareMeterModel;
 
-
+//start the interface
 public class SquareMeterClient {
     
     public static void main(String[] args){
@@ -17,3 +17,4 @@ public class SquareMeterClient {
 	});
     }
 }
+

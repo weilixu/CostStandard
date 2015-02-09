@@ -49,7 +49,7 @@ public class PlotHistogram {
 				 "Cost per Square Meter ($/m2)", "Frequency",intervalxydataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		XYPlot xyplot = (XYPlot) jfreechart.getPlot();
-		xyplot.setForegroundAlpha(0.85F);
+		xyplot.setForegroundAlpha(0.65F);
 		XYBarRenderer xybarrenderer = (XYBarRenderer) xyplot
 				.getRenderer();
 		xybarrenderer.setDrawBarOutline(false);
