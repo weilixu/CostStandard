@@ -10,5 +10,11 @@
 	<classpathentry kind="lib" path="lib/commons-math3-3.4.1-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/commons-math3-3.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="lib/jsoup-1.8.1.jar" sourcepath="lib/jsoup-1.8.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/Weili/weilixu/CostStandard/MasterFormat/lib/jsoup-1.8.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

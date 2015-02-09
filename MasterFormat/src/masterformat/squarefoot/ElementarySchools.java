@@ -3,6 +3,7 @@ package masterformat.squarefoot;
 public class ElementarySchools extends AbstractBuildingTypes{
     @Override
     protected void initializeData() {
+	typicalSize = 41000*conversionFactor;
 	distParams.put(TOTAL, DistParametersGenerator.normalDistParameter(114.0,172.0,141.0));
 	distParams.put(MASONRY,DistParametersGenerator.normalDistParameter(8.0,25.50,17.30));
 	distParams.put(EQUIP,DistParametersGenerator.normalDistParameter(2.63,9.40,4.96));

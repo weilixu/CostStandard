@@ -4,6 +4,7 @@ public class FireStations extends AbstractBuildingTypes{
 
     @Override
     protected void initializeData() {
+	typicalSize = 5800*conversionFactor;
 	distParams.put(TOTAL, DistParametersGenerator.normalDistParameter(113.0,213.0,156.0));
 	distParams.put(MASONRY,DistParametersGenerator.normalDistParameter(15.40,38.0,30.0));
 	distParams.put(ROOF,DistParametersGenerator.normalDistParameter(3.68,11.35,9.95));

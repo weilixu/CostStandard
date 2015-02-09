@@ -4,7 +4,7 @@ public class Restaurants extends AbstractBuildingTypes {
 
     @Override
     protected void initializeData() {
-
+	typicalSize = 4400*conversionFactor;
 	distParams.put(TOTAL, DistParametersGenerator.normalDistParameter(
 		149.0,249.0,192.0));
 	distParams.put(EQUIP,DistParametersGenerator.normalDistParameter(8.80,35.50,23.50));

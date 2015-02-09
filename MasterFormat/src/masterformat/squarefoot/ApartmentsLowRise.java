@@ -1,13 +1,10 @@
 package masterformat.squarefoot;
 
 public class ApartmentsLowRise extends AbstractBuildingTypes{
-    
-    public ApartmentsLowRise(){
-	super();
-    }
 
     @Override
     protected void initializeData() {
+	typicalSize = 21000*conversionFactor;
 	distParams.put(TOTAL, DistParametersGenerator.normalDistParameter(74.50,125.0,94.0));
 	distParams.put(SITE, DistParametersGenerator.normalDistParameter(5.45,15.30,8.70));
 	distParams.put(MASONRY,DistParametersGenerator.normalDistParameter(1.47,5.95,3.62));

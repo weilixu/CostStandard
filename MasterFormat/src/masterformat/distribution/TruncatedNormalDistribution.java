@@ -21,7 +21,7 @@ public class TruncatedNormalDistribution extends NormalDistribution{
     
     public double truncatedSample(){
 	double rnd = sample();
-	while(rnd<lower||rnd>higher){
+	while(rnd<=0||rnd<lower||rnd>higher){
 	    rnd = sample();
 	}
 	return rnd;

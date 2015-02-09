@@ -4,6 +4,7 @@ public class Hospitals extends AbstractBuildingTypes{
 
     @Override
     protected void initializeData() {
+	typicalSize = 55000*conversionFactor;
 	distParams.put(TOTAL, DistParametersGenerator.normalDistParameter(206.0,355.0,258.0));
 	distParams.put(EQUIP,DistParametersGenerator.normalDistParameter(5.20,17.30,10.05));
 	distParams.put(PLUMB,DistParametersGenerator.normalDistParameter(17.70,32.0,25.0));

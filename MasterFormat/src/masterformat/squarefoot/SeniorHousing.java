@@ -4,6 +4,7 @@ public class SeniorHousing extends AbstractBuildingTypes{
 
     @Override
     protected void initializeData() {
+	typicalSize = 37000*conversionFactor;
 	distParams.put(TOTAL, DistParametersGenerator.normalDistParameter(101.0,157.0,128.0));
 	distParams.put(SITE,DistParametersGenerator.normalDistParameter(7.05,16.05,10.95));
 	distParams.put(MASONRY,DistParametersGenerator.normalDistParameter(1.91,16.85,11.55));

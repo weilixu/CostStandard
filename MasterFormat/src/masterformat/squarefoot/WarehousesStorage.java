@@ -4,6 +4,7 @@ public class WarehousesStorage extends AbstractBuildingTypes{
 
     @Override
     protected void initializeData() {
+	typicalSize = 25000*conversionFactor;
 	distParams.put(TOTAL, DistParametersGenerator.normalDistParameter(44.50,95.0,63.50));
 	distParams.put(SITE,DistParametersGenerator.normalDistParameter(4.62,13.80,9.15));
 	distParams.put(MASONRY,DistParametersGenerator.normalDistParameter(2.54,13.70,6.35));

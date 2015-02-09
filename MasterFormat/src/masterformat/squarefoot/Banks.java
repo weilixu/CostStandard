@@ -4,6 +4,7 @@ public class Banks extends AbstractBuildingTypes{
 
     @Override
     protected void initializeData() {
+	typicalSize = 4200*conversionFactor;
 	distParams.put(TOTAL, DistParametersGenerator.normalDistParameter(170.0,268.0,211.0));
 	distParams.put(SITE, DistParametersGenerator.normalDistParameter(19.40,43.0,30.50));
 	distParams.put(MASONRY,DistParametersGenerator.normalDistParameter(7.70,29.50,16.50));

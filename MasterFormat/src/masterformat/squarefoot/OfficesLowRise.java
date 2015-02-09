@@ -4,6 +4,7 @@ public class OfficesLowRise extends AbstractBuildingTypes{
 
     @Override
     protected void initializeData() {
+	typicalSize = 20000*conversionFactor;
 	distParams.put(TOTAL, DistParametersGenerator.normalDistParameter(103.0,135.0,175.0));
 	distParams.put(SITE,DistParametersGenerator.normalDistParameter(8.30,21.50,14.45));
 	distParams.put(MASONRY,DistParametersGenerator.normalDistParameter(4.0,14.70,8.05));

@@ -4,6 +4,7 @@ public class HighSchools extends AbstractBuildingTypes{
 
     @Override
     protected void initializeData() {
+	typicalSize = 101000*conversionFactor;
 	distParams.put(TOTAL, DistParametersGenerator.normalDistParameter(123.0,188.0,150.0));
 	distParams.put(EQUIP,DistParametersGenerator.normalDistParameter(3.24,10.45,7.55));
 	distParams.put(PLUMB,DistParametersGenerator.normalDistParameter(6.80,18.70,10.25));

@@ -6,9 +6,14 @@ import java.util.Set;
 
 public abstract class AbstractBuildingTypes {
     protected HashMap<String, Double[]> distParams;
+    //convert from square feet to square meter
     protected final double conversionFactor = 0.092903;
-    private double typicalSize = 1000.00;    
+    //default typical size
+    protected double typicalSize = 1000.00;    
     
+    /*
+     * typical divisions appears in the square foot estimation method
+     */
     protected final String TOTAL = "Total project cost";
     protected final String SITE = "Site work";
     protected final String MASONRY = "Mansory";
@@ -49,7 +54,6 @@ public abstract class AbstractBuildingTypes {
 	//same as the typical estimation range
 	double sizeFactor = 1.0;
 	double ratio = size/typicalSize;
-	System.out.println(ratio);
 	if(ratio>1 && ratio<3.5){
 	    sizeFactor = higherRegression(ratio);
 	}else if(ratio<1 && ratio>0.5){

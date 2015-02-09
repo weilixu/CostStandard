@@ -4,6 +4,7 @@ public class ApartmentsHighRise extends AbstractBuildingTypes{
 
     @Override
     protected void initializeData() {
+	typicalSize = 145000*conversionFactor;
 	distParams.put(TOTAL, DistParametersGenerator.normalDistParameter(112.0,155.0,129.0));
 	distParams.put(SITE, DistParametersGenerator.normalDistParameter(4.07,9.20,6.60));
 	distParams.put(MASONRY,DistParametersGenerator.normalDistParameter(6.50,14.65,11.80));
