@@ -51,7 +51,7 @@ public class SquareMeterCostPanel extends JPanel implements SquareMeterCostModel
 	parser = new BuildingAreaParser(result);
 	model.addCostModelListener(this);
 	//for test only
-	simulationNumber = 1000;
+	simulationNumber = 10000;
 	buildingSize = parser.getBuildingArea();
 	
 	// build the frame

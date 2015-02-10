@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import masterformat.distribution.TruncatedNormalDistribution;
+import masterformat.distribution.SquareMeterEstimationNormalDistribution;
 import masterformat.listener.SquareMeterCostModelListener;
 
 public class SquareMeterModel {
@@ -71,14 +71,13 @@ public class SquareMeterModel {
 	    String division = iterator.next();
 	    // get mean, variance and set the cut off criterias
 	    Double[] params = costInfo.get(division);
-	    TruncatedNormalDistribution generator = new TruncatedNormalDistribution(
-		    params[0], params[1], params[0] - cutOffFactor * params[1],
-		    params[0] + cutOffFactor * params[1]);
+	    SquareMeterEstimationNormalDistribution generator = new SquareMeterEstimationNormalDistribution(
+		    params[0], params[1]);
 
 	    // set the value
 	    double[] costData = new double[simulationNumber];
 	    for (int i = 0; i < simulationNumber; i++) {
-		costData[i] = generator.truncatedSample() * sizeMultiplier;
+		costData[i] = generator.squareMeterEstimationSample() * sizeMultiplier;
 	    }
 	    // put the value in the datastructure
 	    costDataMap.put(division, costData);
