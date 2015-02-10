@@ -59,7 +59,6 @@ public class FieldElement {
      * @return
      */
     public ArrayList<String> getOptionList(){
-	//System.out.println("here?");
 	for(String s: optionList){
 	    System.out.println("This is the options: "+s);
 	}
