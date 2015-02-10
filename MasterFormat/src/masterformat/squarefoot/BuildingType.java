@@ -24,10 +24,6 @@ public enum BuildingType {
 	    this.type = type;
 	}
 	
-	public String getTypes(){
-	    return type;
-	}
-	
 	@Override
 	public String toString(){
 	    return type;

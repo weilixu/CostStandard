@@ -81,7 +81,7 @@ public class SquareMeterCostPanel extends JPanel implements SquareMeterCostModel
 	});
 	outerPanel.add(generateButton, BorderLayout.PAGE_END);
 	
-	displayPanel = new JPanel(new GridLayout(0,3));
+	displayPanel = new JPanel(new GridLayout(0,2));
 	displayPanel.setBackground(Color.WHITE);
 	displayView = new JScrollPane(displayPanel);
 	

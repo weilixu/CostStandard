@@ -9,6 +9,11 @@ import java.util.Set;
 import masterformat.distribution.SquareMeterEstimationNormalDistribution;
 import masterformat.listener.SquareMeterCostModelListener;
 
+/**
+ * Square Meter Estimation Method data wrapper
+ * @author Weili
+ *
+ */
 public class SquareMeterModel {
 
     // size multiplier that deviates the typical size of the building
