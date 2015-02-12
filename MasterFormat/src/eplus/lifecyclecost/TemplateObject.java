@@ -26,4 +26,13 @@ public class TemplateObject {
     public String getObject(){
 	return object;
     }
+    
+    public String getReference(){
+	return reference;
+    }
+    
+    @Override
+    public String toString(){
+	return object+"//"+reference;
+    }
 }

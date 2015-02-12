@@ -1,5 +1,307 @@
 <economic>
-	<object description = "CurrencyType" reference = "Empty">
+	<utilitycost>
+		<object description = "UtilityCost:Tariff" reference = "Template" category = "Utility Cost">
+			<field description = "Name" type = "String"/>
+			<key description = "Output Meter Name" type = "String">
+				<electricity>Electricity:Facility</electricity>
+				<naturalgas>Heating:Gas</naturalgas>
+			</key>
+			<key description = "Conversion Factor Choice" type = "String">
+				<kwh>kWh</kwh>
+				<therm>Therm</therm>
+				<mmbtu>MMBtu</mmbtu>
+				<mj>MJ</mj>
+				<kBtu>kBtu</kBtu>
+				<mcf>MCF</mcf>
+				<ccf>CCF</ccf>
+			</key>
+			<field description = "Energy Conversion Factor" type = "Double" minimum = "" maximum = ""/>
+			<field description = "Demand Conversion Factor" type = "Double" minimum = "" maximum = ""/>
+			<field description = "Time of Use Period Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Season Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Month Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<key description = "Demand Window Length" type = "String">
+				<quarter>QuarterHour</quarter>
+				<half>HalfHour</half>
+				<full>FullHour</full>
+				<day>Day</day>
+				<week>Week</week>
+			</key>
+			<field description = "Monthly Charge or Variable Name" type = "String/Double" minimum = "" maximum = ""/>
+			<field description = "Minimum Monthly Charge or Variable Name" type = "String/Double" minimum = "" maximum = ""/>
+			<field description = "Real Time Pricing Charge Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Customer Baseline Load Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Group Name" type = "String" minimum = "" maximum = ""/>
+			<key description = "Buy Or Sell" type = "String">
+				<buy>BuyFromUtility</buy>
+				<sell>SellToUtility</sell>
+				<net>NetMetering</net>
+			</key>
+		</object>
+		<object description = "UtilityCost:Qualify" reference = "Template" category = "Utility Cost">
+			<field description = "Name" type = "String"/>
+			<field description = "Tariff Name" type = "String"/>
+			<field description = "Variable Name" type = "String"/>
+			<key description = "Qualify Type" type = "String">
+				<max>Maximum</max>
+				<min>Minimum</min>
+			</key>
+			<field description = "Threshold Value or Variable Name" type = "String"/>
+			<key description = "Season" type = "String">
+				<annual>Annual</annual>
+				<summer>Summer</summer>
+				<winter>Winter</winter>
+				<spring>Spring</spring>
+				<fall>Fall</fall>
+			</key>
+			<key description = "Threshold Test" type = "String">	
+				<consecutive>Consecutive</consecutive>
+				<count>Count</count>
+			</key>
+			<field description = "Number of Months" type = "Integer" minimum="1" maximum="12"/>
+		</object>
+		<object description = "UtilitCost:Charge:Simple" reference = "Template" category = "Utility Cost">
+			<field description = "Name" type = "String"/>
+			<field description = "Tariff Name" type = "String"/>
+			<field description = "Source Variable" type = "String"/>
+			<key description = "Season" type = "String">
+				<annual>Annual</annual>
+				<summer>Summer</summer>
+				<winter>Winter</winter>
+				<spring>Spring</spring>
+				<fall>Fall</fall>
+			</key>
+			<key description = "Category Variable Name" type = "String">
+				<energy>EnergyCharges</energy>
+				<demand>DemandCharges</demand>
+				<service>ServiceCharges</service>
+				<basis>Basis</basis>
+				<adjustment>Adjustment</adjustment>
+				<surcharge>Surcharge</surcharge>
+				<subtotal>Subtotal</subtotal>
+				<taxes>Taxes</taxes>
+				<total>Total</total>
+				<notincluded>NotIncluded</notincluded>
+			</key>
+			<field description = "Cost per Unit Value or Variable Name" type = "Double" minimum="" maximum=""/>
+		</object>
+		<object description = "UtilityCost:Charge:Block" reference = "Template" category = "Utility Cost">
+			<field description = "Name" type = "String"/>
+			<field description = "Tariff Name" type = "String"/>
+			<field description = "Source Variable" type = "String"/>
+			<key description = "Season" type = "String">
+				<annual>Annual</annual>
+				<summer>Summer</summer>
+				<winter>Winter</winter>
+				<spring>Spring</spring>
+				<fall>Fall</fall>
+			</key>
+			<key description = "Category Variable Name" type = "String">
+				<energy>EnergyCharges</energy>
+				<demand>DemandCharges</demand>
+				<service>ServiceCharges</service>
+				<basis>Basis</basis>
+				<adjustment>Adjustment</adjustment>
+				<surcharge>Surcharge</surcharge>
+				<subtotal>Subtotal</subtotal>
+				<taxes>Taxes</taxes>
+				<total>Total</total>
+				<notincluded>NotIncluded</notincluded>
+			</key>
+			<field description = "Remaining Into Variable" type = "String"/>
+			<field description = "Block Size Multiplier Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 1 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 1 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 2 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 2 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 3 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 3 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 4 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 4 Cost per Unit Value or Variable Name" type = "String/Double"/>			
+			<field description = "Block Size 5 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 5 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 6 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 6 Cost per Unit Value or Variable Name" type = "String/Double"/>			
+			<field description = "Block Size 7 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 7 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 8 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 8 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 9 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 9 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 10 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 10 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 11 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 11 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 12 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 12 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 13 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 13 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 14 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 14 Cost per Unit Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 15 Value or Variable Name" type = "String/Double"/>
+			<field description = "Block 15 Cost per Unit Value or Variable Name" type = "String/Double"/>
+		</object>
+		<object description = "UtilityCost:Ratchet" reference = "Template" category = "Utility Cost">
+			<field description = "Name" type = "String"/>
+			<field description = "Tariff Name" type = "String"/>
+			<field description = "Baseline Source Variable" type = "String"/>
+			<field description = "Adjustment Source Variable" type = "String"/>		
+			<key description = "Season From" type = "String">
+				<annual>Annual</annual>
+				<summer>Summer</summer>
+				<winter>Winter</winter>
+				<spring>Spring</spring>
+				<fall>Fall</fall>
+			</key>	
+			<key description = "Season To" type = "String">
+				<annual>Annual</annual>
+				<summer>Summer</summer>
+				<winter>Winter</winter>
+				<spring>Spring</spring>
+				<fall>Fall</fall>
+			</key>			
+			<field description = "Multiplier Value or Variable Name" type = "String/Double"/>
+			<field description = "Offset Value or Variable Name" type = "String/Double"/>
+		</object>
+		<object description = "UtilityCost:Variable" reference = "Template" category = "Utility Cost">
+			<field description = "Name" type = "String"/>
+			<field description = "Tariff Name" type = "String"/>
+			<field description = "January Value" type = "Double" minimum="" maximum=""/>
+			<field description = "February Value" type = "Double" minimum="" maximum=""/>
+			<field description = "March Value" type = "Double" minimum="" maximum=""/>
+			<field description = "April Value" type = "Double" minimum="" maximum=""/>
+			<field description = "May Value" type = "Double" minimum="" maximum=""/>
+			<field description = "June Value" type = "Double" minimum="" maximum=""/>
+			<field description = "July Value" type = "Double" minimum="" maximum=""/>
+			<field description = "August Value" type = "Double" minimum="" maximum=""/>
+			<field description = "September Value" type = "Double" minimum="" maximum=""/>
+			<field description = "October Value" type = "Double" minimum="" maximum=""/>
+			<field description = "November Value" type = "Double" minimum="" maximum=""/>
+			<field description = "December Value" type = "Double" minimum="" maximum=""/>
+		</object>
+		<object description = "UtilityCost:Computation" reference = "Template" category = "Utility Cost">
+			<field description = "Name" type = "String"/>
+			<field description = "Tariff Name" type = "String"/>
+			<field description = "Compute Step 1" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 2" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 3" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 4" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 5" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 6" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 7" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 8" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 9" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 10" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 11" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 12" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 13" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 14" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 15" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 16" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 17" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 18" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 19" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 20" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 21" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 22" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 23" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 24" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 25" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 26" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 27" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 28" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 29" type = "Double" minimum="" maximum=""/>
+			<field description = "Compute Step 30" type = "Double" minimum="" maximum=""/>
+		</object>
+		<object description = "UtilityCost:Tariff" reference = "PECO" category = "Utility Cost">
+			<field description = "Name" type = "String">PECO_HT</field>
+			<key description = "Output Meter Name" type = "String">Electricity:Facility</key>
+			<key description = "Conversion Factor Choice" type = "String">kWh</key>
+			<field description = "Energy Conversion Factor" type = "Double" minimum = "" maximum = ""/>
+			<field description = "Demand Conversion Factor" type = "Double" minimum = "" maximum = ""/>
+			<field description = "Time of Use Period Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Season Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Month Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<key description = "Demand Window Length" type = "String">QuarterHour</key>
+			<field description = "Monthly Charge or Variable Name" type = "String/Double" minimum = "" maximum = "">298.92</field>
+			<field description = "Minimum Monthly Charge or Variable Name" type = "String/Double" minimum = "" maximum = ""/>
+			<field description = "Real Time Pricing Charge Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Customer Baseline Load Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Group Name" type = "String" minimum = "" maximum = ""/>
+			<key description = "Buy Or Sell" type = "String">BuyFromUtility</key>
+		</object>
+		<object description = "UtilityCost:Tariff" reference = "PECO" category = "Utility Cost">
+			<field description = "Name" type = "String">PECO_Gas_GC</field>
+			<key description = "Output Meter Name" type = "String">Heating:Gas</key>
+			<key description = "Conversion Factor Choice" type = "String">MCF</key>
+			<field description = "Energy Conversion Factor" type = "Double" minimum = "" maximum = ""/>
+			<field description = "Demand Conversion Factor" type = "Double" minimum = "" maximum = ""/>
+			<field description = "Time of Use Period Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Season Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Month Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<key description = "Demand Window Length" type = "String">QuarterHour</key>
+			<field description = "Monthly Charge or Variable Name" type = "String/Double" minimum = "" maximum = "">28.55</field>
+			<field description = "Minimum Monthly Charge or Variable Name" type = "String/Double" minimum = "" maximum = ""/>
+			<field description = "Real Time Pricing Charge Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Customer Baseline Load Schedule Name" type = "String" minimum = "" maximum = ""/>
+			<field description = "Group Name" type = "String" minimum = "" maximum = ""/>
+			<key description = "Buy Or Sell" type = "String">BuyFromUtility</key>
+		</object>
+		<object description = "UtilitCost:Charge:Simple" reference = "PECO" category = "Utility Cost">
+			<field description = "Name" type = "String">Flat Energy Supply Charge</field>
+			<field description = "Tariff Name" type = "String">PECO_HT</field>
+			<field description = "Source Variable" type = "String">totalEnergy</field>
+			<key description = "Season" type = "String">Annual</key>
+			<key description = "Category Variable Name" type = "String">EnergyCharges</key>
+			<field description = "Cost per Unit Value or Variable Name" type = "Double" minimum="" maximum="">0.0748</field>
+		</object>
+		<object description = "UtilitCost:Charge:Simple" reference = "PECO" category = "Utility Cost">
+			<field description = "Name" type = "String">Energy Charge</field>
+			<field description = "Tariff Name" type = "String">PECO_HT</field>
+			<field description = "Source Variable" type = "String">totalDemand</field>
+			<key description = "Season" type = "String">Annual</key>
+			<key description = "Category Variable Name" type = "String">DemandCharges</key>
+			<field description = "Cost per Unit Value or Variable Name" type = "Double" minimum="" maximum="">3.55</field>
+		</object>
+		<object description = "UtilitCost:Charge:Simple" reference = "PECO" category = "Utility Cost">
+			<field description = "Name" type = "String">Transmission Charge</field>
+			<field description = "Tariff Name" type = "String">PECO_HT</field>
+			<field description = "Source Variable" type = "String">totalDemand</field>
+			<key description = "Season" type = "String">Annual</key>
+			<key description = "Category Variable Name" type = "String">DemandCharges</key>
+			<field description = "Cost per Unit Value or Variable Name" type = "Double" minimum="" maximum="">2.34</field>
+		</object>
+		<object description = "UtilitCost:Charge:Simple" reference = "PECO" category = "Utility Cost">
+			<field description = "Name" type = "String">Variable Distribution Service</field>
+			<field description = "Tariff Name" type = "String">PECO_HT</field>
+			<field description = "Source Variable" type = "String">totalEnergy</field>
+			<key description = "Season" type = "String">Annual</key>
+			<key description = "Category Variable Name" type = "String">EnergyCharges</key>
+			<field description = "Cost per Unit Value or Variable Name" type = "Double" minimum="" maximum="">0.0015</field>
+		</object>
+		<object description = "UtilitCost:Charge:Simple" reference = "PECO" category = "Utility Cost">
+			<field description = "Name" type = "String">Gas SurCharge</field>
+			<field description = "Tariff Name" type = "String">PECO_Gas_GC</field>
+			<field description = "Source Variable" type = "String">totalEnergy</field>
+			<key description = "Season" type = "String">Annual</key>
+			<key description = "Category Variable Name" type = "String">EnergyCharges</key>
+			<field description = "Cost per Unit Value or Variable Name" type = "Double" minimum="" maximum="">5.73</field>
+		</object>
+		<object description = "UtilityCost:Charge:Block" reference = "PECO" category = "Utility Cost">
+			<field description = "Name" type = "String">Gas_Rate</field>
+			<field description = "Tariff Name" type = "String">PECO_Gas_GC</field>
+			<field description = "Source Variable" type = "String">totalEnergy</field>
+			<key description = "Season" type = "String">Annual</key>
+			<key description = "Category Variable Name" type = "String">EnergyCharges</key>
+			<field description = "Remaining Into Variable" type = "String"/>
+			<field description = "Block Size Multiplier Value or Variable Name" type = "String/Double"/>
+			<field description = "Block Size 1 Value or Variable Name" type = "String/Double">200</field>
+			<field description = "Block 1 Cost per Unit Value or Variable Name" type = "String/Double">3.66</field>
+			<field description = "Block Size 2 Value or Variable Name" type = "String/Double">remaining</field>
+			<field description = "Block 2 Cost per Unit Value or Variable Name" type = "String/Double">2.507</field>
+		</object>			
+	</utilitycost>
+	<object description = "CurrencyType" reference = "Template" category = "Currency">
 		<key description="Monetary Unit">
 			<usd>USD</usd>
 			<eur>EUR</eur>
@@ -7,7 +309,7 @@
 		</key>
 	</object>
 	<lifecyclecost>
-		<object description = "LifeCycleCost:Parameters" reference="Empty">
+		<object description = "LifeCycleCost:Parameters" reference="Template" category = "Life Cycle Cost">
 			<field description = "Name" type = "String"/>
 			<key description = "Discounting Convention" type = "String">
 				<end>EndOfYear</end>
@@ -20,7 +322,7 @@
 			</key>
 			<field description = "Real Discount Rate" type = "Integer" minimum = "" maximum = ""/>
 			<field description = "Nominal Discount Rate" type = "Integer" minimum = "" maximum = ""/>
-			<field descrption = "Inflation" type = "Integer" minimum = "" maximum = ""/>
+			<field description = "Inflation" type = "Integer" minimum = "" maximum = ""/>
 			<key description = "Base Date Month" type = "String">
 				<jan>January</jan>
 				<feb>February</feb>
@@ -67,7 +369,7 @@
 				<year40>StraightLine-40year</year40>
 			</key>
 		</object>
-		<object description = "LifeCycleCost:RecurringCosts" reference = "Empty">
+		<object description = "LifeCycleCost:RecurringCosts" reference = "Template" category = "Life Cycle Cost">
 			<field description = "Name" type = "String"/>
 			<key description = "Category" type = "String">
 				<maintenance>Maintenance</maintenance>
@@ -89,7 +391,7 @@
 			<field description = "Repeat Period Months" type = "Integer" minimum="0" maximum="1200"/>
 			<field description = "Annual escalation rate" type = "Integer" minimum="-0.3" maximum="0.3"/>
 		</object>
-		<object description = "LifeCycleCost:NonrecurringCost" reference = "Empty">
+		<object description = "LifeCycleCost:NonrecurringCost" reference = "Template" category = "Life Cycle Cost">
 			<field description = "Name" type = "String"/>
 			<key description = "Category" type = "String">
 				<construction>Construction</construction>
@@ -104,7 +406,7 @@
 			<field description = "Years from Start" type = "Integer" minimum="0" maximum="100"/>
 			<field description = "Months from Start" type = "Integer" minimum="0" maximum="1200"/>
 		</object>
-		<object description = "LifeCycleCost:UsePriceEscalation" reference = "Empty">
+		<object description = "LifeCycleCost:UsePriceEscalation" reference = "Template" category = "Life Cycle Cost">
 			<field description = "Name" type = "String"/>
 			<key description = "Resource" type = "String">
 				<electricity>Electricity</electricity>
@@ -166,7 +468,7 @@
 			<field description = "Year 29 Escalation" type = "Double" minimum="" maximum=""/>
 			<field description = "Year 30 Escalation" type = "Double" minimum="" maximum=""/>
 		</object>
-		<object description = "LifeCycleCost:UseAdjustment" reference = "Empty">
+		<object description = "LifeCycleCost:UseAdjustment" reference = "Template" category = "Life Cycle Cost">
 			<field description = "Name" type = "String"/>
 			<key description = "Resource" type = "String">
 				<electricity>Electricity</electricity>
@@ -213,7 +515,7 @@
 			<field description = "Year 29 Multiplier" type = "Double" minimum="" maximum=""/>
 			<field description = "Year 30 Multiplier" type = "Double" minimum="" maximum=""/>
 		</object>
-		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 1;Commercial;Electricity">
+		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 1;Commercial;Electricity" category = "Life Cycle Cost">
 			<field description = "Name" type = "String">Electricity Price Indices</field>
 			<key description = "Resource" type = "String">Electricity</key>
 			<field description = "Escalation Start Year" type = "Integer" minimum="1900" maximum="2100">2014</field>
@@ -249,7 +551,7 @@
 			<field description = "Year 29 Escalation" type = "Double" minimum="" maximum="">1.24</field>
 			<field description = "Year 30 Escalation" type = "Double" minimum="" maximum="">1.25</field>
 		</object>
-		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 1;Commercial;Natural Gas">
+		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 1;Commercial;Natural Gas" category = "Life Cycle Cost">
 			<field description = "Name" type = "String">Natural Gas Price Indices</field>
 			<key description = "Resource" type = "String">NaturalGas</key>
 			<field description = "Escalation Start Year" type = "Integer" minimum="1900" maximum="2100">2014</field>
@@ -285,7 +587,7 @@
 			<field description = "Year 29 Escalation" type = "Double" minimum="" maximum="">1.63</field>
 			<field description = "Year 30 Escalation" type = "Double" minimum="" maximum="">1.65</field>
 		</object>
-		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 2;Commercial;Electricity">
+		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 2;Commercial;Electricity" category = "Life Cycle Cost">
 			<field description = "Name" type = "String">Electricity Price Indices</field>
 			<key description = "Resource" type = "String">Electricity</key>
 			<field description = "Escalation Start Year" type = "Integer" minimum="1900" maximum="2100">2014</field>
@@ -321,7 +623,7 @@
 			<field description = "Year 29 Escalation" type = "Double" minimum="" maximum="">1.16</field>
 			<field description = "Year 30 Escalation" type = "Double" minimum="" maximum="">1.17</field>
 		</object>
-		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 2;Commercial;Natural Gas">
+		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 2;Commercial;Natural Gas" category = "Life Cycle Cost">
 			<field description = "Name" type = "String">Natural Gas Price Indices</field>
 			<key description = "Resource" type = "String">NaturalGas</key>
 			<field description = "Escalation Start Year" type = "Integer" minimum="1900" maximum="2100">2014</field>
@@ -357,7 +659,7 @@
 			<field description = "Year 29 Escalation" type = "Double" minimum="" maximum="">1.48</field>
 			<field description = "Year 30 Escalation" type = "Double" minimum="" maximum="">1.51</field>
 		</object>
-		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 3;Commercial;Electricity">
+		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 3;Commercial;Electricity" category = "Life Cycle Cost">
 			<field description = "Name" type = "String">Electricity Price Indices</field>
 			<key description = "Resource" type = "String">Electricity</key>
 			<field description = "Escalation Start Year" type = "Integer" minimum="1900" maximum="2100">2014</field>
@@ -393,7 +695,7 @@
 			<field description = "Year 29 Escalation" type = "Double" minimum="" maximum="">1.16</field>
 			<field description = "Year 30 Escalation" type = "Double" minimum="" maximum="">1.16</field>
 		</object>
-		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 3;Commercial;Natural Gas">
+		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 3;Commercial;Natural Gas" category = "Life Cycle Cost">
 			<field description = "Name" type = "String">Natural Gas Price Indices</field>
 			<key description = "Resource" type = "String">NaturalGas</key>
 			<field description = "Escalation Start Year" type = "Integer" minimum="1900" maximum="2100">2014</field>
@@ -429,7 +731,7 @@
 			<field description = "Year 29 Escalation" type = "Double" minimum="" maximum="">1.47</field>
 			<field description = "Year 30 Escalation" type = "Double" minimum="" maximum="">1.49</field>
 		</object>
-		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 4;Commercial;Electricity">
+		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 4;Commercial;Electricity" category = "Life Cycle Cost">
 			<field description = "Name" type = "String">Electricity Price Indices</field>
 			<key description = "Resource" type = "String">Electricity</key>
 			<field description = "Escalation Start Year" type = "Integer" minimum="1900" maximum="2100">2014</field>
@@ -465,7 +767,7 @@
 			<field description = "Year 29 Escalation" type = "Double" minimum="" maximum="">1.00</field>
 			<field description = "Year 30 Escalation" type = "Double" minimum="" maximum="">1.00</field>
 		</object>
-		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 4;Commercial;Natural Gas">
+		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;Census Region 4;Commercial;Natural Gas" category = "Life Cycle Cost">
 			<field description = "Name" type = "String">Natural Gas Price Indices</field>
 			<key description = "Resource" type = "String">NaturalGas</key>
 			<field description = "Escalation Start Year" type = "Integer" minimum="1900" maximum="2100">2014</field>
@@ -501,7 +803,7 @@
 			<field description = "Year 29 Escalation" type = "Double" minimum="" maximum="">1.58</field>
 			<field description = "Year 30 Escalation" type = "Double" minimum="" maximum="">1.60</field>
 		</object>
-		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;US Average;Commercial;Electricity">
+		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;US Average;Commercial;Electricity" category = "Life Cycle Cost">
 			<field description = "Name" type = "String">Electricity Price Indices</field>
 			<key description = "Resource" type = "String">Electricity</key>
 			<field description = "Escalation Start Year" type = "Integer" minimum="1900" maximum="2100">2014</field>
@@ -537,7 +839,7 @@
 			<field description = "Year 29 Escalation" type = "Double" minimum="" maximum="">1.13</field>
 			<field description = "Year 30 Escalation" type = "Double" minimum="" maximum="">1.13</field>
 		</object>
-		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;US Average;Commercial;Natural Gas">
+		<object description = "LifeCycleCost:UsePriceEscalation" reference = "2014NISTIR85;US Average;Commercial;Natural Gas" category = "Life Cycle Cost">
 			<field description = "Name" type = "String">Natural Gas Price Indices</field>
 			<key description = "Resource" type = "String">NaturalGas</key>
 			<field description = "Escalation Start Year" type = "Integer" minimum="1900" maximum="2100">2014</field>

@@ -2,8 +2,10 @@ package eplus.lifecyclecost;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -20,7 +22,7 @@ public class EconomicParser {
     private final File economics;
     private Document document;
 
-    private ArrayList<TemplateObject> objects;
+    private HashMap<String,ArrayList<TemplateObject>> objects;
 
     private static final String FILE_NAME = "economic.xml";
 
@@ -28,7 +30,7 @@ public class EconomicParser {
 	builder = new SAXBuilder();
 	economics = new File(FILE_NAME);
 	
-	objects = new ArrayList<TemplateObject>();
+	objects = new HashMap<String,ArrayList<TemplateObject>>();
 
 	try {
 	    document = (Document) builder.build(economics);
@@ -38,7 +40,7 @@ public class EconomicParser {
 	economicBuilder();
     }
     
-    public ArrayList<TemplateObject> getObjects(){
+    public HashMap<String,ArrayList<TemplateObject>> getObjects(){
 	return objects;
     }
 
@@ -57,7 +59,12 @@ public class EconomicParser {
 			child.getAttributeValue("description"),
 			child.getAttributeValue("reference"));
 		buildFields(child, temp);
-		objects.add(temp);
+		String category = child.getAttributeValue("category");
+		if(!objects.containsKey(category)){
+		    objects.put(category, new ArrayList<TemplateObject>());
+		}
+		objects.get(category).add(temp);
+		
 	    } else {
 		builderHelper(child);
 	    }
@@ -102,13 +109,18 @@ public class EconomicParser {
 
 //    public static void main(String[] args){
 //	EconomicParser parser = new EconomicParser();
-//	ArrayList<TemplateObject> objects = parser.getObjects();
-//	for(TemplateObject object:objects){
-//	    System.out.println("This is the object: "+object.getObject());
-//	    ArrayList<FieldElement> elements = object.getFieldList();
-//	    for(FieldElement fe:elements){
-//		System.out.println("This is the field name: "+fe.getDescription() + "This is the value: "+fe.getValue());
-//		fe.getOptionList();
+//	HashMap<String,ArrayList<TemplateObject>> objects = parser.getObjects();
+//	Set<String> categories = objects.keySet();
+//	Iterator<String> iterator = categories.iterator();
+//	while(iterator.hasNext()){
+//	    String category = iterator.next();
+//	    ArrayList<TemplateObject> object = objects.get(category);
+//	    System.out.print(category+": ");
+//	    for(TemplateObject o: object){
+//		System.out.println(o.getObject());
+//		for(FieldElement e: o.getFieldList()){
+//		    System.out.println(e.getOptionList());
+//		}
 //	    }
 //	}
 //    }

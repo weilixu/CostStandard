@@ -95,5 +95,4 @@ public abstract class AbstractBuildingTypes {
 	System.out.println(ratio);
 	return 1.0785 + (-0.09189) * ratio + 0.011786 * Math.pow(ratio, 2);
     }
-
 }
