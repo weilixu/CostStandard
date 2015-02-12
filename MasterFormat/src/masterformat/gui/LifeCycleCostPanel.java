@@ -2,10 +2,13 @@ package masterformat.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -22,6 +25,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
+import eplus.lifecyclecost.DataObjects;
 import eplus.lifecyclecost.FieldElement;
 import eplus.lifecyclecost.LifeCycleCostModel;
 import eplus.lifecyclecost.TemplateObject;
@@ -33,6 +37,7 @@ public class LifeCycleCostPanel extends JPanel implements TreeSelectionListener 
     private final JScrollPane treeView;
 
     private final JPanel editorPanel;
+    private final JPanel tablePanel;
     private final JScrollPane editorView;
 
     private final JSplitPane splitPane;
@@ -57,6 +62,11 @@ public class LifeCycleCostPanel extends JPanel implements TreeSelectionListener 
 	editorPanel = new JPanel();
 	editorPanel.setLayout(new BorderLayout());
 	editorPanel.setBackground(Color.WHITE);
+
+	tablePanel = new JPanel();
+	tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.PAGE_AXIS));
+	tablePanel.setBackground(Color.WHITE);
+
 	editorView = new JScrollPane(editorPanel);
 
 	splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -81,97 +91,87 @@ public class LifeCycleCostPanel extends JPanel implements TreeSelectionListener 
 
 	Object nodeInfo = node.getUserObject();
 	if (node.isLeaf()) {
-	    TemplateObject object = (TemplateObject) nodeInfo;
-	    TemplateObject copiedObject = model.makeCopyOfObject(object);
+	    DataObjects object = (DataObjects) nodeInfo;
+	    DataObjects copiedObject = model.makeCopyOfObject(object);
 	    displayObject(copiedObject);
 	}
     }
 
-    private void displayObject(TemplateObject object) {
+    private void displayObject(DataObjects dataSet) {
 	editorPanel.removeAll();
-	JTextField objectName = new JTextField(object.getObject());
-	editorPanel.add(objectName,BorderLayout.PAGE_START);
-	
-	ArrayList<FieldElement> fields = object.getFieldList();
-	String[] columnNames = {"Field","Inputs","Minimum","Maximum"};
-	Object[][] data = new Object[fields.size()][4];
-	
-	if (object.getReference().equals("Template")){
-	    for (int i=0; i<fields.size(); i++){
-		data[i][0] = fields.get(i).getDescription();
-		data[i][2] = fields.get(i).getMinimum();
-		data[i][3] = fields.get(i).getMaximum();
-		if (fields.get(i).isKeyElement()){
-		    data[i][1]=new JComboBox<String>(fields.get(i).getOptionList()){
-			@Override
-			public String toString(){
-			    return "Options";
-			}
-		    };
-		}else{
-		    data[i][1] = fields.get(i).getType();
-		}
-	    }
-	}else{
-	    for (int i=0; i<fields.size(); i++){
-		data[i][0] = fields.get(i).getDescription();
-		data[i][1] = fields.get(i).getValue();
-	    }
-	}
-	JTable table = new JTable(data,columnNames){
-	    @Override
-	    public TableCellEditor getCellEditor(int row, int column) {
-		   Object value = super.getValueAt(row, column);
-		   if(value != null) {
-		      if(value instanceof JComboBox) {
-		           return new DefaultCellEditor((JComboBox)value);
-		      }
-		            return getDefaultEditor(value.getClass());
-		   }
-		   return super.getCellEditor(row, column);
-		}
-	};
-	
-	table.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer());
-	
-	JScrollPane scrollPane = new JScrollPane(table);
-	
-	editorPanel.add(scrollPane, BorderLayout.CENTER);
+	tablePanel.removeAll();
+	JTextField dataSetName = new JTextField(dataSet.getSetName());
+	dataSetName.setBackground(Color.darkGray);
+	dataSetName.setFont(new Font("Impact", Font.BOLD, 22));
+	dataSetName.setForeground(Color.WHITE);
+	dataSetName.setEditable(false);
+	editorPanel.add(dataSetName, BorderLayout.PAGE_START);
 
-//	ArrayList<FieldElement> fields = object.getFieldList();
-//	if (object.getReference().equals("Template")) {
-//	    for (FieldElement fe : fields) {
-//		if (fe.isKeyElement()) {
-//		    JPanel optionPanel = new JPanel(new BorderLayout());
-//		    JTextField optionText = new JTextField(fe.getDescription());
-//		    optionText.setEnabled(false);
-//		    JComboBox<String> selectionBox = new JComboBox<String>(
-//			    fe.getOptionList());
-//		    optionPanel.add(optionText, BorderLayout.PAGE_START);
-//		    optionPanel.add(selectionBox, BorderLayout.CENTER);
-//		    editorPanel.add(optionPanel);
-//		} else {
-//		    JPanel fieldPanel = new JPanel(new BorderLayout());
-//		    JTextField fieldText = new JTextField(fe.getDescription());
-//		    fieldText.setEnabled(false);
-//		    JTextField inputText = new JTextField(fe.getType());
-//		    fieldPanel.add(fieldText, BorderLayout.PAGE_START);
-//		    fieldPanel.add(inputText, BorderLayout.CENTER);
-//		    editorPanel.add(fieldPanel);
-//		}
-//	    }
-//	} else {
-//	    for (FieldElement fe : fields) {
-//		JPanel fieldPanel = new JPanel(new BorderLayout());
-//		JTextField fieldText = new JTextField(fe.getDescription());
-//		fieldText.setEnabled(false);
-//		JTextField inputText = new JTextField(fe.getValue());
-//		fieldPanel.add(fieldText, BorderLayout.PAGE_START);
-//		fieldPanel.add(inputText, BorderLayout.CENTER);
-//		editorPanel.add(fieldPanel);
-//	    }
-//	}
-	
+	ArrayList<TemplateObject> objects = dataSet.getObjects();
+	for (TemplateObject object : objects) {
+	    JPanel tempPanel = new JPanel(new BorderLayout());
+	    JTextField objectName = new JTextField(object.getObject());
+	    objectName.setBackground(Color.BLACK);
+	    objectName.setFont(new Font("Impact", Font.BOLD, 14));
+	    objectName.setForeground(Color.WHITE);
+	    objectName.setEditable(false);
+	    
+	    tempPanel.add(objectName,BorderLayout.PAGE_START);
+	    ArrayList<FieldElement> fields = object.getFieldList();
+	    String[] columnNames = { "Field", "Inputs", "Minimum", "Maximum" };
+	    Object[][] data = new Object[fields.size()][4];
+	    if (object.getReference().equals("Template")) {
+		for (int i = 0; i < fields.size(); i++) {
+		    data[i][0] = fields.get(i).getDescription();
+		    data[i][2] = fields.get(i).getMinimum();
+		    data[i][3] = fields.get(i).getMaximum();
+		    if (fields.get(i).isKeyElement()) {
+			data[i][1] = new JComboBox<String>(fields.get(i)
+				.getOptionList()) {
+			    @Override
+			    public String toString() {
+				return "Options";
+			    }
+			};
+		    } else {
+			data[i][1] = fields.get(i).getType();
+		    }
+		}
+	    } else {
+		for (int i = 0; i < fields.size(); i++) {
+		    data[i][0] = fields.get(i).getDescription();
+		    data[i][1] = fields.get(i).getValue();
+		}
+	    }
+
+	    JTable table = new JTable(data, columnNames) {
+		@Override
+		public TableCellEditor getCellEditor(int row, int column) {
+		    Object value = super.getValueAt(row, column);
+		    if (value != null) {
+			if (value instanceof JComboBox) {
+			    return new DefaultCellEditor((JComboBox) value);
+			}
+			return getDefaultEditor(value.getClass());
+		    }
+		    return super.getCellEditor(row, column);
+		}
+	    };
+
+	    table.getColumnModel().getColumn(1)
+		    .setCellRenderer(new DefaultTableCellRenderer());
+	    table.setAlignmentY(Component.TOP_ALIGNMENT);
+	    JScrollPane scrollPane = new JScrollPane(table);
+
+	    tempPanel.add(scrollPane, BorderLayout.CENTER);
+	    tablePanel.add(tempPanel);
+	    tablePanel.setBackground(Color.WHITE);
+
+	}
+
+	editorPanel.add(tablePanel, BorderLayout.CENTER);
+
+
 	editorPanel.revalidate();
 	editorPanel.repaint();
     }

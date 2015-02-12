@@ -9,7 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 public class LifeCycleCostModel {
     private final EconomicParser parser;
-    private final HashMap<String, ArrayList<TemplateObject>> dataMap;
+    private final HashMap<String, ArrayList<DataObjects>> dataMap;
 
     private DefaultMutableTreeNode root;
 
@@ -22,18 +22,24 @@ public class LifeCycleCostModel {
 	buildTreeFromMap();
 	return root;
     }
-    
-    public void addCostToIdfFile(){
-	
+
+    public void addCostToIdfFile() {
+
     }
-    
-    public TemplateObject makeCopyOfObject(TemplateObject object){
-	TemplateObject temp = new TemplateObject(object.getObject(), object.getReference());
-	ArrayList<FieldElement> fieldList = object.getFieldList();
-	for(FieldElement fe: fieldList){
-	    temp.insertFieldElement(fe.clone());
+
+    public DataObjects makeCopyOfObject(DataObjects dataset) {
+	DataObjects tempSet = new DataObjects(dataset.getSetName());
+	ArrayList<TemplateObject> objectList = dataset.getObjects();
+	for (TemplateObject object : objectList) {
+	    TemplateObject temp = new TemplateObject(object.getObject(),
+		    object.getReference());
+	    ArrayList<FieldElement> fieldList = object.getFieldList();
+	    for (FieldElement fe : fieldList) {
+		temp.insertFieldElement(fe.clone());
+	    }
+	    tempSet.addObject(object);
 	}
-	return temp;
+	return tempSet;
     }
 
     private void buildTreeFromMap() {
@@ -46,8 +52,8 @@ public class LifeCycleCostModel {
 		    category);
 	    root.add(categoryNode);
 
-	    ArrayList<TemplateObject> objects = dataMap.get(category);
-	    for (TemplateObject object : objects) {
+	    ArrayList<DataObjects> objects = dataMap.get(category);
+	    for (DataObjects object : objects) {
 		DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(
 			object);
 		categoryNode.add(objectNode);
