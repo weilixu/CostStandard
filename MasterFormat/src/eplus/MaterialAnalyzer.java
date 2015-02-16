@@ -21,6 +21,7 @@ import eplus.IdfReader.ValueNode;
 public class MaterialAnalyzer {
     private final IdfReader reader;
     private HashMap<String, ArrayList<Material>> constructionMap;
+    private HashMap<String, HashMap<String, String[]>> costInformation;
 
     private final int stringArraySize = 8;
 

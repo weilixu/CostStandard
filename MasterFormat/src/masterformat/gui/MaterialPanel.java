@@ -21,7 +21,9 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
+import eplus.EnergyPlusModel;
 import masterformat.api.ComponentFactory;
+import masterformat.api.MasterFormat;
 import masterformat.standard.concrete.Concrete;
 import masterformat.standard.concrete.ConcreteFactory;
 import masterformat.standard.masonry.Masonry;
@@ -45,14 +47,17 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 
     private final JSplitPane splitPane;
 
+    private final EnergyPlusModel model;
     // data
     private ArrayList<String> userInputs;
+    private MasterFormat material;
     
     private final String[] surfaceProperties;
     
-    public MaterialPanel(String[] properties) {
+    public MaterialPanel(EnergyPlusModel m, String[] properties) {
 	super(new GridLayout(1, 0));
 	
+	model = m;
 	surfaceProperties = properties;
 
 	builder = new TreeBuilder();
@@ -68,6 +73,7 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	editorPanel = new JPanel();
 	editorPanel.setLayout(new GridLayout(0, 6));
 	editorPanel.setBackground(Color.WHITE);
+	
 	editorView = new JScrollPane(editorPanel);
 
 	splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -92,21 +98,21 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	    TreeNode tn = (TreeNode) nodeInfo;
 	    if (tn.getType().equalsIgnoreCase("CONCRETE")) {
 		factory = new ConcreteFactory();
-		Concrete concrete = factory.getConcrete(tn.getDescription());
-		concrete.setVariable(surfaceProperties);
-		userInputs = concrete.getUserInputs();
+		material = factory.getConcrete(tn.getDescription());
+		material.setVariable(surfaceProperties);
+		userInputs = material.getUserInputs();
 	    } else if (tn.getType().equalsIgnoreCase("MASONRY")) {
 		factory = new MasonryFactory();
-		Masonry masonry = factory.getMasonry(tn.getDescription());
-		masonry.setVariable(surfaceProperties);
-		userInputs = masonry.getUserInputs();
+		material = factory.getMasonry(tn.getDescription());
+		material.setVariable(surfaceProperties);
+		userInputs = material.getUserInputs();
 	    } else if (tn.getType().equalsIgnoreCase(
 		    "THERMAL MOISTURE PROTECTION")) {
 		factory = new ThermalMoistureProtectionFactory();
-		ThermalMoistureProtection thermal = factory
+		material = factory
 			.getThermalMoistureProtection(tn.getDescription());
-		thermal.setVariable(surfaceProperties);
-		userInputs = thermal.getUserInputs();
+		material.setVariable(surfaceProperties);
+		userInputs = material.getUserInputs();
 	    }
 	    disPlayData(userInputs);
 	}
@@ -127,7 +133,6 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	    System.out.println("hello");
 	    JPanel optionPanel = createOptions(optionMap);
 	    editorPanel.add(optionPanel);
-
 	}
 
 	if (inputMap != null) {
