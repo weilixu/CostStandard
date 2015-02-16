@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class BrickVennerMasonry extends AbstractMasonry {
     protected String unit = "m2";
-    protected String hierarchy = "042100 Clay Unit Masonry|042113 Brick Masonry|042113.13 Brick Veneer Masonry";
+    protected String hierarchy = "042100 Clay Unit Masonry:042113 Brick Masonry:042113.13 Brick Veneer Masonry";
     //shows the tyep of the brick that selected
     private String brickType;
     //shows any special charactor the type of brick might have
@@ -120,63 +120,63 @@ public class BrickVennerMasonry extends AbstractMasonry {
 	typesOne.add("Utility, 100 x 100 x 300 (mm) (32.3/m2)");
 
 	userInputs
-		.add("OPTION|BrickType|Standard, sel. comon, 100 x 68 x 200 (mm), (72.55/m2)");
+		.add("OPTION:BrickType:Standard, sel. comon, 100 x 68 x 200 (mm), (72.55/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Red, 100 x 68 x 200 (mm), Running bond");
+		.add("OPTION:BrickType:Standard, Red, 100 x 68 x 200 (mm), Running bond");
 	userInputs
-		.add("OPTION|BrickType|Standard, Red, 100 x 68 x 200 (mm), Full header every 6th course(85/m2)");
+		.add("OPTION:BrickType:Standard, Red, 100 x 68 x 200 (mm), Full header every 6th course(85/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Red, 100 x 68 x 200 (mm), English, full header every 2nd course(109/m2)");
+		.add("OPTION:BrickType:Standard, Red, 100 x 68 x 200 (mm), English, full header every 2nd course(109/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Red, 100 x 68 x 200 (mm), Flemish, alternate header every course(96.87/m2)");
+		.add("OPTION:BrickType:Standard, Red, 100 x 68 x 200 (mm), Flemish, alternate header every course(96.87/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Red, 100 x 68 x 200 (mm), Flemish, alt, header every 6th course(76.75/m2)");
+		.add("OPTION:BrickType:Standard, Red, 100 x 68 x 200 (mm), Flemish, alt, header every 6th course(76.75/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Red, 100 x 68 x 200 (mm), Full headers throughout(145.31/m2)");
+		.add("OPTION:BrickType:Standard, Red, 100 x 68 x 200 (mm), Full headers throughout(145.31/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Red, 100 x 68 x 200 (mm), Rowlock course(145.31/m2)");
+		.add("OPTION:BrickType:Standard, Red, 100 x 68 x 200 (mm), Rowlock course(145.31/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Red, 100 x 68 x 200 (mm), Rowlock stretcher(48.44/m2)");
+		.add("OPTION:BrickType:Standard, Red, 100 x 68 x 200 (mm), Rowlock stretcher(48.44/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Red, 100 x 68 x 200 (mm), Soldier course(72.65/m2)");
+		.add("OPTION:BrickType:Standard, Red, 100 x 68 x 200 (mm), Soldier course(72.65/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Red, 100 x 68 x 200 (mm), Sailor course(48.44/m2)");
+		.add("OPTION:BrickType:Standard, Red, 100 x 68 x 200 (mm), Sailor course(48.44/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Buff or gray face, Running bond(72.65/m2)");
+		.add("OPTION:BrickType:Standard, Buff or gray face, Running bond(72.65/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Buff or gray face, glazed face brick, running bond(72.65/m2)");
+		.add("OPTION:BrickType:Standard, Buff or gray face, glazed face brick, running bond(72.65/m2)");
 	userInputs
-		.add("OPTION|BrickType|Standard, Buff or gray face, glazed face brick, running bond, fl header every 6th course(84.8/m2)");
+		.add("OPTION:BrickType:Standard, Buff or gray face, glazed face brick, running bond, fl header every 6th course(84.8/m2)");
 	userInputs
-		.add("OPTION|BrickType|Jumbo, 152 x 100 x 300 (mm) running bond (32.3/m2)");
+		.add("OPTION:BrickType:Jumbo, 152 x 100 x 300 (mm) running bond (32.3/m2)");
 	userInputs
-		.add("OPTION|BrickType|Norman, 100 x 68 x 300 (mm) running bond (48.44/m2)");
+		.add("OPTION:BrickType:Norman, 100 x 68 x 300 (mm) running bond (48.44/m2)");
 	userInputs
-		.add("OPTION|BrickType|Norwegian, 100 x 80 x 300 (mm) (40.36/m2)");
+		.add("OPTION:BrickType:Norwegian, 100 x 80 x 300 (mm) (40.36/m2)");
 	userInputs
-		.add("OPTION|BrickType|Economy, 100 x 100 x 200 (mm) (48.44/m2)");
+		.add("OPTION:BrickType:Economy, 100 x 100 x 200 (mm) (48.44/m2)");
 	userInputs
-		.add("OPTION|BrickType|Engineer, 100 x 80 x 200 (mm) (48.44/m2)");
+		.add("OPTION:BrickType:Engineer, 100 x 80 x 200 (mm) (48.44/m2)");
 	userInputs
-		.add("OPTION|BrickType|Roman, 100 x 50 x 300 (mm) (64.58/m2)");
+		.add("OPTION:BrickType:Roman, 100 x 50 x 300 (mm) (64.58/m2)");
 	userInputs
-		.add("OPTION|BrickType|SCR, 152 x 68 x 300 (mm) (48.44/m2)");
+		.add("OPTION:BrickType:SCR, 152 x 68 x 300 (mm) (48.44/m2)");
 	userInputs
-		.add("OPTION|BrickType|Utility, 100 x 100 x 300 (mm) (32.3/m2)");
+		.add("OPTION:BrickType:Utility, 100 x 100 x 300 (mm) (32.3/m2)");
 
 	userInputs
-		.add("OPTION|SpecialCharacter|For less than truck load lots (add 15%)");
+		.add("OPTION:SpecialCharacter:For less than truck load lots (add 15%)");
 	userInputs
-		.add("OPTION|SpecialCharacter|For battered walls, (add 30%))");
-	userInputs.add("OPTION|SpecialCharacter|For corbels, (add 75%)");
+		.add("OPTION:SpecialCharacter:For battered walls, (add 30%))");
+	userInputs.add("OPTION:SpecialCharacter:For corbels, (add 75%)");
 	userInputs
-		.add("OPTION|SpecialCharacter|For cavity wall construction, (add 15%)");
-	userInputs.add("OPTION|SpecialCharacter|For stacked bond, (add 10%)");
+		.add("OPTION:SpecialCharacter:For cavity wall construction, (add 15%)");
+	userInputs.add("OPTION:SpecialCharacter:For stacked bond, (add 10%)");
 	userInputs
-		.add("OPTION|SpecialCharacter|For interior veneer construction, (add 15%)");
+		.add("OPTION:SpecialCharacter:For interior veneer construction, (add 15%)");
 	userInputs
-		.add("OPTION|SpecialCharacter|For pits and trenches, (deduct 20%)");
-	userInputs.add("OPTION|SpecialCharacter|For curved walls, (add 30%)");
+		.add("OPTION:SpecialCharacter:For pits and trenches, (deduct 20%)");
+	userInputs.add("OPTION:SpecialCharacter:For curved walls, (add 30%)");
 
 	for (int i = 0; i < typesOne.size(); i++) {
 	    priceData.put(typesOne.get(i), unitConversion(costsMatrix[i]));

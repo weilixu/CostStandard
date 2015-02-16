@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class RigidInsulation extends AbstractThermalMoistureProtection {
 
-    protected String hierarchy = "070000 Thermal & Moisture Protection|072100 Thermal Insulation|072113 Board Insulation|072113.10 Rigid Insulation";
+    protected String hierarchy = "070000 Thermal & Moisture Protection:072100 Thermal Insulation:072113 Board Insulation:072113.10 Rigid Insulation";
     
     //see what's the insulation types
     private String insulationType;
@@ -45,12 +45,12 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
 		{ 0.75, 0.51, 0.00, 1.25, 1.62} };
 
 	ArrayList<String> typesOne = new ArrayList<String>();	
-	userInputs.add("OPTION|InsulationType|Fiberglass, 0.04#/m3, unfaced");
-	userInputs.add("OPTION|InsulationType|Fiberglass, 0.085#/m3, unfaced");
-	userInputs.add("OPTION|InsulationType|Fiberglass, 0.085#/m3, Foil faced");
-	userInputs.add("OPTION|InsulationType|Perlite");
-	userInputs.add("OPTION|InsulationType|Extruded polystyrene, 25 PSI compressive strength");
-	userInputs.add("OPTION|InsulationType|Expanded polystyrene");
+	userInputs.add("OPTION:InsulationType:Fiberglass, 0.04#/m3, unfaced");
+	userInputs.add("OPTION:InsulationType:Fiberglass, 0.085#/m3, unfaced");
+	userInputs.add("OPTION:InsulationType:Fiberglass, 0.085#/m3, Foil faced");
+	userInputs.add("OPTION:InsulationType:Perlite");
+	userInputs.add("OPTION:InsulationType:Extruded polystyrene, 25 PSI compressive strength");
+	userInputs.add("OPTION:InsulationType:Expanded polystyrene");
 	
 	typesOne.add("Fiberglass, 0.04#/m3, unfaced, 25.4 mm, R-Value: 1.2");
 	typesOne.add("Fiberglass, 0.04#/m3, unfaced, 38.1 mm, R-Value: 1.82");
@@ -164,12 +164,12 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
 	try{
 	    thickness = Double.parseDouble(surfaceProperties[2]);
 	}catch(NumberFormatException e){
-	    userInputs.add("INPUT|Thickness|m");
+	    userInputs.add("INPUT:Thickness:m");
 	}
 	try{
 	    rvalue = Double.parseDouble(surfaceProperties[6]);
 	}catch(NumberFormatException e){
-	    userInputs.add("INPUT|Rvalue|m2K/W");
+	    userInputs.add("INPUT:Rvalue:m2K/W");
 	}
     }
     

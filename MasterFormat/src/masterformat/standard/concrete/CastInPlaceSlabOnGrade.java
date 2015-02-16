@@ -8,7 +8,7 @@ import java.util.Set;
 public class CastInPlaceSlabOnGrade extends AbstractConcrete{
     
     protected String unit = "m2";
-    protected String hierarchy = "030000 Concrete|033000 Cast-In-Place Concrete|033053.40 Concrete In Place";
+    protected String hierarchy = "030000 Concrete:033000 Cast-In-Place Concrete:033053.40 Concrete In Place";
     
     private double area;
     private double thickness;
@@ -60,12 +60,12 @@ public class CastInPlaceSlabOnGrade extends AbstractConcrete{
 	try{
 	    area = Double.parseDouble(surfaceProperties[0]);
 	}catch(NumberFormatException e){
-	    userInputs.add("INPUT|Area|m2");
+	    userInputs.add("INPUT:Area:m2");
 	}
 	try{
 	    thickness = Double.parseDouble(surfaceProperties[2]);
 	}catch(NumberFormatException e){
-	    userInputs.add("INPUT|Thickness|m");
+	    userInputs.add("INPUT:Thickness:m");
 	}
     }
     

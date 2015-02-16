@@ -8,7 +8,7 @@ import java.util.Set;
 public class ThinBrickVeneer extends AbstractMasonry {
     
     protected String unit = "m2";
-    protected String hierarchy = "042100 Clay Unit Masonry|042113 Brick Masonry|042113.14 Thin Brick Veneer";
+    protected String hierarchy = "042100 Clay Unit Masonry:042113 Brick Masonry:042113.14 Thin Brick Veneer";
 
     
     //shows the tyep of the brick that selected
@@ -75,20 +75,20 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	typesOne.add("On masonry/plaster back-up, Emperor, 100 x 20 x 400 (mm)");
 	typesOne.add("On masonry/plaster back-up, Super emperor, 200 x 20 x 400 (mm)");
 	
-	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, modular, 68 x 16 x 200 (mm), red");
-	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, Closure, 100 x 16 x 200 (mm)");
-	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, Norman, 68 x 16 x 300 (mm)");
-	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, Utility, 100 x 16 x 300 (mm)");
-	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, Emperor, 100 x 20 x 400 (mm)");
-	userInputs.add("OPTION|BrickType|On & incl. metal panel support sys, Super emperor, 200 x 20 x 400 (mm)");
-	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, modular, 68 x 16 x 200 (mm), red");
-	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, Closure, 100 x 16 x 200 (mm)");
-	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, Norman, 68 x 16 x 300 (mm)");
-	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, Utility, 100 x 16 x 300 (mm)");
-	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, Emperor, 100 x 20 x 400 (mm)");
-	userInputs.add("OPTION|BrickType|On masonry/plaster back-up, Super emperor, 200 x 20 x 400 (mm)");
+	userInputs.add("OPTION:BrickType:On & incl. metal panel support sys, modular, 68 x 16 x 200 (mm), red");
+	userInputs.add("OPTION:BrickType:On & incl. metal panel support sys, Closure, 100 x 16 x 200 (mm)");
+	userInputs.add("OPTION:BrickType:On & incl. metal panel support sys, Norman, 68 x 16 x 300 (mm)");
+	userInputs.add("OPTION:BrickType:On & incl. metal panel support sys, Utility, 100 x 16 x 300 (mm)");
+	userInputs.add("OPTION:BrickType:On & incl. metal panel support sys, Emperor, 100 x 20 x 400 (mm)");
+	userInputs.add("OPTION:BrickType:On & incl. metal panel support sys, Super emperor, 200 x 20 x 400 (mm)");
+	userInputs.add("OPTION:BrickType:On masonry/plaster back-up, modular, 68 x 16 x 200 (mm), red");
+	userInputs.add("OPTION:BrickType:On masonry/plaster back-up, Closure, 100 x 16 x 200 (mm)");
+	userInputs.add("OPTION:BrickType:On masonry/plaster back-up, Norman, 68 x 16 x 300 (mm)");
+	userInputs.add("OPTION:BrickType:On masonry/plaster back-up, Utility, 100 x 16 x 300 (mm)");
+	userInputs.add("OPTION:BrickType:On masonry/plaster back-up, Emperor, 100 x 20 x 400 (mm)");
+	userInputs.add("OPTION:BrickType:On masonry/plaster back-up, Super emperor, 200 x 20 x 400 (mm)");
 	
-	userInputs.add("OPTION|SpecialCharacter|For embedment into pre-cast concrete panels, add (155/m2)");
+	userInputs.add("OPTION:SpecialCharacter:For embedment into pre-cast concrete panels, add (155/m2)");
 	
 	for(int i = 0; i<typesOne.size();i++){
 	    priceData.put(typesOne.get(i), unitConversion(costsMatrix[i]));
