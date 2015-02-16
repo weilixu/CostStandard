@@ -162,12 +162,12 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
     @Override
     public void setVariable(String[] surfaceProperties) {
 	try{
-	    thickness = Double.parseDouble(surfaceProperties[2]);
+	    thickness = Double.parseDouble(surfaceProperties[thicknessIndex]);
 	}catch(NumberFormatException e){
 	    userInputs.add("INPUT:Thickness:m");
 	}
 	try{
-	    rvalue = Double.parseDouble(surfaceProperties[6]);
+	    rvalue = Double.parseDouble(surfaceProperties[resistanceIndex]);
 	}catch(NumberFormatException e){
 	    userInputs.add("INPUT:Rvalue:m2K/W");
 	}

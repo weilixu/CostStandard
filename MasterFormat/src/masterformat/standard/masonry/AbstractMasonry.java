@@ -11,6 +11,15 @@ abstract class AbstractMasonry implements Masonry{
     private final int totalIndex = 3;
     private final int totalOPIndex = 4;
     
+    protected final int floorAreaIndex = 0;
+    protected final int heightIndex = 1;
+    protected final int surfaceTypeIndex=2;
+    protected final int thicknessIndex=3;
+    protected final int conductivityIndex=4;
+    protected final int densityIndex=5;
+    protected final int specificHeatIndex=6;
+    protected final int resistanceIndex=7;
+    
     protected String unit = "m2";
     protected String hierarchy = "040000 Masonry";
     

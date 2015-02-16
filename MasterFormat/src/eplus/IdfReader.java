@@ -275,6 +275,10 @@ public class IdfReader {
 	}
 	return list;
     }
+    
+    protected HashMap<String,HashMap<String, ArrayList<ValueNode>>> getObjectList(String object){
+	return deepCopyPartialMap(object);
+    }
 
     /**
      * get value from the database. This method will extract the value according
@@ -393,6 +397,22 @@ public class IdfReader {
 	    eplusMap.put(objectName, temp);
 	}
     }
+    
+    public String copyExistingEplusObject(String objectName, String elementCount){
+	HashMap<String, ArrayList<ValueNode>> objectMap = eplusMap.get(objectName);
+	Integer size = objectMap.size()+1;
+	ArrayList<ValueNode> nodeList = new ArrayList<ValueNode>();
+	ArrayList<ValueNode> temp = eplusMap.get(objectName).get(elementCount);
+	for(ValueNode vn: temp){
+	    ValueNode node = vn.clone();
+	    nodeList.add(node);
+	}
+	
+	HashMap<String, ArrayList<ValueNode>> tempMap = new HashMap<String, ArrayList<ValueNode>>();
+	tempMap.put(size.toString(), nodeList);
+	eplusMap.put(objectName, tempMap);
+	return size.toString();
+    }
 
     /**
      * Replace one specific inputs through all the same object
@@ -509,6 +529,52 @@ public class IdfReader {
 	} catch (IOException e) {
 	    // do something!
 	}
+    }
+    
+    
+    private HashMap<String, HashMap<String, ArrayList<ValueNode>>> deepCopyMap() {
+	HashMap<String, HashMap<String, ArrayList<ValueNode>>> tempMap = new HashMap<String, HashMap<String, ArrayList<ValueNode>>>();
+	Set<String> objectList = eplusMap.keySet();
+	Iterator<String> iterator = objectList.iterator();
+	while (iterator.hasNext()) {
+	    String object = iterator.next();
+
+	    HashMap<String, ArrayList<ValueNode>> objectMap = new HashMap<String, ArrayList<ValueNode>>();
+	    Set<String> elementList = eplusMap.get(object).keySet();
+	    Iterator<String> elementIterator = elementList.iterator();
+	    while (elementIterator.hasNext()) {
+		String element = elementIterator.next();
+		ArrayList<ValueNode> temp = eplusMap.get(object).get(element);
+		ArrayList<ValueNode> list = new ArrayList<ValueNode>();
+		for (ValueNode vn : temp) {
+		    ValueNode newNode = vn.clone();
+		    list.add(newNode);
+		}
+		objectMap.put(element, list);
+	    }
+	    tempMap.put(object, objectMap);
+	}
+	return tempMap;
+    }
+    
+    private HashMap<String, HashMap<String, ArrayList<ValueNode>>> deepCopyPartialMap(String object){
+	HashMap<String, HashMap<String, ArrayList<ValueNode>>> tempMap = new HashMap<String, HashMap<String, ArrayList<ValueNode>>>();
+	HashMap<String, ArrayList<ValueNode>> objectMap = new HashMap<String, ArrayList<ValueNode>>();
+	
+	Set<String> elementList = eplusMap.get(object).keySet();
+	Iterator<String> elementIterator = elementList.iterator();
+	while(elementIterator.hasNext()){
+	    String element = elementIterator.next();
+	    ArrayList<ValueNode> temp = eplusMap.get(object).get(element);
+	    ArrayList<ValueNode> list = new ArrayList<ValueNode>();
+	    for(ValueNode vn: temp){
+		ValueNode newNode = vn.clone();
+		list.add(newNode);
+	    }
+	    objectMap.put(element, list);
+	}
+	tempMap.put(object, objectMap);
+	return tempMap;
     }
     
     /**

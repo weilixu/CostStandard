@@ -58,12 +58,12 @@ public class CastInPlaceSlabOnGrade extends AbstractConcrete{
     @Override
     public void setVariable(String[] surfaceProperties) {
 	try{
-	    area = Double.parseDouble(surfaceProperties[0]);
+	    area = Double.parseDouble(surfaceProperties[floorAreaIndex]);
 	}catch(NumberFormatException e){
 	    userInputs.add("INPUT:Area:m2");
 	}
 	try{
-	    thickness = Double.parseDouble(surfaceProperties[2]);
+	    thickness = Double.parseDouble(surfaceProperties[thicknessIndex]);
 	}catch(NumberFormatException e){
 	    userInputs.add("INPUT:Thickness:m");
 	}
