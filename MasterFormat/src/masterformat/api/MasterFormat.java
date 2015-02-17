@@ -23,6 +23,8 @@ public interface MasterFormat {
     //get the standard unit for this product
     public String getUnit();
     
+    public Double[] getCostVector();
+    
     /**
      * input material properties that can be extract from energyplus,
      * the data elements includes 0. FloorArea; 1. height; 2. thickness; 3. conductivity; 4. density;

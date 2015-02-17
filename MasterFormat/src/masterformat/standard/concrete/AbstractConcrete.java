@@ -26,7 +26,7 @@ abstract class AbstractConcrete implements Concrete{
     //price data structure to save the data
     protected HashMap<String, Double[]> priceData = new HashMap<String, Double[]>();
     //cost data after selected
-    protected Double[] costVector;
+    protected Double[] costVector = null;
     //recorde the inputs that required outside of mapping process
     protected ArrayList<String> userInputs;
     protected String description;
@@ -60,6 +60,11 @@ abstract class AbstractConcrete implements Concrete{
     @Override
     public Double getTotalInclOPPrice() {
 	return costVector[totalOPIndex];
+    }
+    
+    @Override
+    public Double[] getCostVector(){
+	return costVector;
     }
 
     @Override

@@ -23,6 +23,7 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	if(specialCharacter.equals("For embedment into pre-cast concrete panels, add (155/m2)")){
 	    cost = addToTotal(cost,155.00);
 	}
+	description = brickType;
 	costVector = cost;
     }
 

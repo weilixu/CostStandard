@@ -22,15 +22,18 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
+import masterformat.listener.CostTableListener;
 import eplus.EnergyPlusModel;
 import eplus.MaterialAnalyzer.Material;
 
-public class MappingPanel extends JPanel {
+public class MappingPanel extends JPanel implements CostTableListener{
 
     private final JPanel EnergyPlusObjectPanel;
     private final JPanel itemPanel;
     private final JPanel tablePanel;
+    private final DefaultTableModel tableModel;
     private final JTable table;
 
     private final EnergyPlusModel model;
@@ -39,11 +42,13 @@ public class MappingPanel extends JPanel {
     private final JList<String> itemLists;
     private final DefaultListModel<String> listModel;
     
-    private final String[] costColumnName = {"Material Name","Material Cost ($)", "Labor Cost ($)","Equipment Cost ($)","Total ($)","Total Incl O&P ($)"};
-    private final String[][] costData = {{"Unknown","0","0","0","0","0"}}; //temp, will move to wrapper model class later
+    //private final String[] costColumnName = {"Material Name","Material Cost ($)", "Labor Cost ($)","Equipment Cost ($)","Total ($)","Total Incl O&P ($)"};
+    //private String[][] costData = {{"Unknown","0","0","0","0","0"}}; //temp, will move to wrapper model class later
 
     public MappingPanel(EnergyPlusModel m) {
 	model = m;
+	model.addTableListener(this);
+	
 	setLayout(new BorderLayout());
 	
 	itemPanel = new JPanel(new CardLayout());
@@ -73,8 +78,18 @@ public class MappingPanel extends JPanel {
 	EnergyPlusObjectPanel.add(itemLists, BorderLayout.CENTER);
 	add(EnergyPlusObjectPanel, BorderLayout.WEST);
 	
+	
 	tablePanel = new JPanel(new BorderLayout());
-	table = new JTable(costData,costColumnName);
+	
+	tableModel = new DefaultTableModel();
+	tableModel.addColumn("Material Name");
+	tableModel.addColumn("Material Cost ($/m2)");
+	tableModel.addColumn("Labor Cost ($/m2)");
+	tableModel.addColumn("Equipment Cost ($/m2)");
+	tableModel.addColumn("Total ($/m2)");
+	tableModel.addColumn("Total Incl O&P ($/m2)");
+	
+	table = new JTable(tableModel);
 	table.setEnabled(false);
 	table.setBackground(Color.WHITE);
 	JScrollPane scrollPane = new JScrollPane(table);
@@ -93,7 +108,7 @@ public class MappingPanel extends JPanel {
 	listModel.clear();
 	itemPanel.removeAll();
 	for (String s : cons) {
-	    JTabbedPane tp = makeTabbedPanel(model.getMaterialList(s));
+	    JTabbedPane tp = makeTabbedPanel(s);
 	    itemPanel.add(tp,s);
 	    
 	    listModel.addElement(s);
@@ -105,6 +120,7 @@ public class MappingPanel extends JPanel {
 		    if(selection.equals(s)){
 			cardLayout.show(itemPanel, selection);
 		    }
+		    model.getCostVector(selection);
 		}
 	    });
 	}
@@ -112,10 +128,11 @@ public class MappingPanel extends JPanel {
 	itemPanel.repaint();
     }
     
-    private JTabbedPane makeTabbedPanel(ArrayList<Material> materialList){
+    private JTabbedPane makeTabbedPanel(String construction){
 	JTabbedPane tp = new JTabbedPane();
+	ArrayList<Material> materialList = model.getMaterialList(construction);
 	for(int i=0; i<materialList.size(); i++){
-	    tp.addTab(materialList.get(i).getName(), new MaterialPanel(model,materialList.get(i).getProperties()));
+	    tp.addTab(materialList.get(i).getName(), new MaterialPanel(model,construction,i));
 	}
 	return tp;
     }
@@ -147,6 +164,19 @@ public class MappingPanel extends JPanel {
 		createAndShowGUI();
 	    }
 	});
+    }
+
+    @Override
+    public void onCostTableUpdated(String[][] data) {
+	if(tableModel.getRowCount()>0){
+	    for(int i=tableModel.getRowCount()-1; i>-1; i--){
+		tableModel.removeRow(i);
+	    }
+	}
+	for(int j=0; j<data.length; j++){
+	    tableModel.addRow(data[j]);
+	}
+	tableModel.fireTableDataChanged();
     }
 
 }

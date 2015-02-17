@@ -1,6 +1,7 @@
 package masterformat.standard.thermalmoistureprotection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -106,7 +107,7 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
 	    }
 	}else if(insulationType.equals("Fiberglass, 0.085#/m3, Foil faced")){
 	    if(thickness<=0.0254||rvalue<=1.26){
-		description = "Fiberglass, 0.085#/m3, Foil faced, 25.4 mm, R-Value: 1.266";
+		description = "Fiberglass, 0.085#/m3, Foil faced, 25.4 mm, R-Value: 1.26";
 	    }else if(thickness<=0.0381||rvalue<=1.90){
 		description = "Fiberglass, 0.085#/m3, Foil faced, 38.1 mm, R-Value: 1.90";
 	    }else if(thickness<=0.0508||rvalue<=2.55){
@@ -139,7 +140,6 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
 		description = "Expanded polystyrene, 76.2 mm, R-Value: 3.37";
 	    }
 	}
-	System.out.println(description);
 	costVector = priceData.get(description);
     }
 
@@ -161,14 +161,16 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
     
     @Override
     public void setVariable(String[] surfaceProperties) {
+	System.out.println(Arrays.toString(surfaceProperties));
+	
 	try{
 	    thickness = Double.parseDouble(surfaceProperties[thicknessIndex]);
-	}catch(NumberFormatException e){
+	}catch(NumberFormatException | NullPointerException e){
 	    userInputs.add("INPUT:Thickness:m");
 	}
 	try{
 	    rvalue = Double.parseDouble(surfaceProperties[resistanceIndex]);
-	}catch(NumberFormatException e){
+	}catch(NumberFormatException | NullPointerException e){
 	    userInputs.add("INPUT:Rvalue:m2K/W");
 	}
     }

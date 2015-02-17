@@ -2,10 +2,12 @@ package eplus;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.api.MasterFormat;
 import eplus.IdfReader.ValueNode;
 
 /**
@@ -21,24 +23,28 @@ import eplus.IdfReader.ValueNode;
 public class MaterialAnalyzer {
     private final IdfReader reader;
     private HashMap<String, ArrayList<Material>> constructionMap;
-    private HashMap<String, HashMap<String, String[]>> costInformation;
 
     private final int stringArraySize = 8;
+    private final DecimalFormat df = new DecimalFormat("###.##");
 
     private final static String construction = "Construction";
     private final static String material = "Material";
     private final static String materialnomass = "Material:NoMass";
     private final static String zone = "Zone";
     private final static String surface = "BuildingSurface:Detailed";
-    
+
     protected final int floorAreaIndex = 0;
     protected final int heightIndex = 1;
-    protected final int surfaceTypeIndex=2;
-    protected final int thicknessIndex=3;
-    protected final int conductivityIndex=4;
-    protected final int densityIndex=5;
-    protected final int specificHeatIndex=6;
-    protected final int resistanceIndex=7;
+    protected final int surfaceTypeIndex = 2;
+    protected final int thicknessIndex = 3;
+    protected final int conductivityIndex = 4;
+    protected final int densityIndex = 5;
+    protected final int specificHeatIndex = 6;
+    protected final int resistanceIndex = 7;
+
+    private static final String[] defaultCostData = { "Unknown", "0", "0", "0",
+	    "0", "0" };
+    private final Integer rowElement = 6;
 
     public MaterialAnalyzer(IdfReader reader) {
 	this.reader = reader;
@@ -46,73 +52,157 @@ public class MaterialAnalyzer {
 	processMaterialRawDatafromMaterials();
 	processMaterialRawDatafromSurface();
     }
-    
-    public HashMap<String, ArrayList<Material>> getMaterialData(){
+
+    /**
+     * get the whole map
+     * 
+     * @return
+     */
+    protected HashMap<String, ArrayList<Material>> getMaterialData() {
 	return constructionMap;
     }
-    
-    private void processMaterialRawDatafromMaterials(){
-	//require to do it again since the energyplus domain model may changed
+
+    /**
+     * get the material list under one particular construction
+     * 
+     * @param s
+     * @return
+     */
+    protected ArrayList<Material> getMaterialList(String s) {
+	return constructionMap.get(s);
+    }
+
+    protected String[][] getCostListForConstruction(String cons) {
+	ArrayList<Material> materialList = constructionMap.get(cons);
+	String[][] costList = new String[materialList.size() + 1][rowElement];
+	Double totalMaterial = 0.0;
+	Double totalLabor = 0.0;
+	Double totalEquipment = 0.0;
+	Double totalTotal = 0.0;
+	Double totalTotalOP = 0.0;
+
+	for (int i = 0; i < materialList.size(); i++) {
+	    Material m = materialList.get(i);
+	    String[] costVector = new String[rowElement];
+	    if (m.getCostInformation() != null) {
+		Double[] costInfo = m.getCostInformation();
+		costVector[0] = m.getMaterialDescription();
+		totalMaterial += costInfo[0];
+		totalLabor += costInfo[1];
+		totalEquipment += costInfo[2];
+		totalTotal += costInfo[3];
+		totalTotalOP += costInfo[4];
+		for (int j = 0; j < costInfo.length; j++) {
+		    costVector[j + 1] = df.format(costInfo[j]);
+		}
+		costList[i] = costVector;
+	    } else {
+		costList[i] = defaultCostData;
+	    }
+	}
+	String[] totalVector = { "Total", df.format(totalMaterial),
+		df.format(totalLabor), df.format(totalEquipment),
+		df.format(totalTotal), df.format(totalTotalOP) };
+	costList[costList.length - 1] = totalVector;
+	return costList;
+    }
+
+    /**
+     * get the entire construction list that is read from energyplus file
+     * 
+     * @return
+     */
+    protected String[] getConstructionList() {
+	Set<String> constructions = constructionMap.keySet();
+	String[] consArray = new String[constructions.size()];
+	Iterator<String> consIterator = constructions.iterator();
+
+	int counter = 0;
+	while (consIterator.hasNext() && counter < constructions.size()) {
+	    consArray[counter] = consIterator.next();
+	    counter++;
+	}
+	return consArray;
+    }
+
+    protected void setUserInput(HashMap<String, String> map,
+	    String construction, Integer index) {
+	Material m = constructionMap.get(construction).get(index);
+	m.setUserInputs(map);
+    }
+
+    private void processMaterialRawDatafromMaterials() {
+	// require to do it again since the energyplus domain model may changed
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> constructionList = reader
 		.getObjectList(construction);
-	Set<String> constructionCount = constructionList.get(construction).keySet();
+	Set<String> constructionCount = constructionList.get(construction)
+		.keySet();
 	Iterator<String> constructionIterator = constructionCount.iterator();
-	while(constructionIterator.hasNext()){
+	while (constructionIterator.hasNext()) {
 	    String count = constructionIterator.next();
-	    ArrayList<ValueNode> materialList=constructionList.get(construction).get(count);
+	    ArrayList<ValueNode> materialList = constructionList.get(
+		    construction).get(count);
 	    String name = materialList.get(0).getAttribute();
 
-	    //this is the unique name that we have in the construction object, so no need to check
+	    // this is the unique name that we have in the construction object,
+	    // so no need to check
 	    constructionMap.put(name, new ArrayList<Material>());
-	    
-	    for(int i=1; i<materialList.size(); i++){
+
+	    for (int i = 1; i < materialList.size(); i++) {
 		String materialName = materialList.get(i).getAttribute();
 		Material newMaterial = new Material(materialName);
 		fillInMaterialData(newMaterial);
 		constructionMap.get(name).add(newMaterial);
 	    }
-	    
 	}
     }
-    
+
     /**
      * checks material and material:nomass objects to fill up the data
+     * 
      * @param m
      */
-    private void fillInMaterialData(Material m){
+    private void fillInMaterialData(Material m) {
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> materialList = reader
 		.getObjectList(material);
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> materialnomassList = reader
 		.getObjectList(materialnomass);
-	//check material objects
+	// check material objects
 	Set<String> materialCount = materialList.get(material).keySet();
 	Iterator<String> materialIterator = materialCount.iterator();
-	while(materialIterator.hasNext()){
+	while (materialIterator.hasNext()) {
 	    String count = materialIterator.next();
-	    ArrayList<ValueNode> materials = materialList.get(material).get(count);
-	    if(materials.get(0).getAttribute().equals(m.getName())){
-		for(int i=1; i<materials.size(); i++){
-		    if(materials.get(i).getDescription().equals("Thickness")){
+	    ArrayList<ValueNode> materials = materialList.get(material).get(
+		    count);
+	    if (materials.get(0).getAttribute().equals(m.getName())) {
+		for (int i = 1; i < materials.size(); i++) {
+		    if (materials.get(i).getDescription().equals("Thickness")) {
 			m.setThickness(materials.get(i).getAttribute());
-		    }else if(materials.get(i).getDescription().equals("Conductivity")){
+		    } else if (materials.get(i).getDescription()
+			    .equals("Conductivity")) {
 			m.setConductivity(materials.get(i).getAttribute());
-		    }else if(materials.get(i).getDescription().equals("Density")){
+		    } else if (materials.get(i).getDescription()
+			    .equals("Density")) {
 			m.setDensity(materials.get(i).getAttribute());
-		    }else if(materials.get(i).getDescription().equals("Specific Heat")){
+		    } else if (materials.get(i).getDescription()
+			    .equals("Specific Heat")) {
 			m.setSpecificHeat(materials.get(i).getAttribute());
 		    }
 		}
 	    }
 	}
-	//check material no mass objects
-	Set<String> noMassCount = materialnomassList.get(materialnomass).keySet();
+	// check material no mass objects
+	Set<String> noMassCount = materialnomassList.get(materialnomass)
+		.keySet();
 	Iterator<String> noMassIterator = noMassCount.iterator();
-	while(noMassIterator.hasNext()){
+	while (noMassIterator.hasNext()) {
 	    String masscount = noMassIterator.next();
-	    ArrayList<ValueNode> nomassMaterials = materialnomassList.get(materialnomass).get(masscount);
-	    if(nomassMaterials.get(0).getAttribute().equals(m.getName())){
-		for(int j=1; j<nomassMaterials.size(); j++){
-		    if(nomassMaterials.get(j).getDescription().equals("Thermal Resistance")){
+	    ArrayList<ValueNode> nomassMaterials = materialnomassList.get(
+		    materialnomass).get(masscount);
+	    if (nomassMaterials.get(0).getAttribute().equals(m.getName())) {
+		for (int j = 1; j < nomassMaterials.size(); j++) {
+		    if (nomassMaterials.get(j).getDescription()
+			    .equals("Thermal Resistance")) {
 			m.setResistance(nomassMaterials.get(j).getAttribute());
 		    }
 		}
@@ -129,7 +219,8 @@ public class MaterialAnalyzer {
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> constructionList = reader
 		.getObjectList(construction);
 
-	Set<String> constructionCount = constructionList.get(construction).keySet();
+	Set<String> constructionCount = constructionList.get(construction)
+		.keySet();
 	Iterator<String> constructionIterator = constructionCount.iterator();
 	while (constructionIterator.hasNext()) {
 	    // find the construction
@@ -213,20 +304,24 @@ public class MaterialAnalyzer {
 			reader.editExistObjectsOnOneElement(surface,
 				surfaceCount, "Construction Name", copiedName);
 			// add this into the construction map
-			ArrayList<Material> temp = cloneExistingMaterialList(constructionMap.get(cons));
-			setForAll(temp, tempFloorArea, tempCeilingHeight, tempSurfaceType);
-			constructionMap.put(copiedName,temp);
+			ArrayList<Material> temp = cloneExistingMaterialList(constructionMap
+				.get(cons));
+			setForAll(temp, tempFloorArea, tempCeilingHeight,
+				tempSurfaceType);
+			constructionMap.put(copiedName, temp);
 		    } else {
 			ArrayList<Material> temp = constructionMap.get(cons);
-			setForAll(temp, tempFloorArea, tempCeilingHeight, tempSurfaceType);
+			setForAll(temp, tempFloorArea, tempCeilingHeight,
+				tempSurfaceType);
 		    }
 		}
 	    }
 	}
     }
-    
-    private void setForAll(ArrayList<Material> materialList, String fa, String ch, String st){
-	for(Material m: materialList){
+
+    private void setForAll(ArrayList<Material> materialList, String fa,
+	    String ch, String st) {
+	for (Material m : materialList) {
 	    m.setFloorArea(fa);
 	    m.setHeight(ch);
 	    m.setSurfaceType(st);
@@ -251,7 +346,7 @@ public class MaterialAnalyzer {
 			data[1] = vn.getAttribute();
 		    } else if (vn.getDescription().equals("Floor Area")) {
 			data[0] = vn.getAttribute();
-		    } else if(vn.getDescription().equals("Volume")){
+		    } else if (vn.getDescription().equals("Volume")) {
 			volume = vn.getAttribute();
 		    }
 		}
@@ -260,83 +355,130 @@ public class MaterialAnalyzer {
 	if (data[0] == null) {
 	    data[0] = "";
 	}
-	
-	if (data[1] == null||data[1].equals("autocalculate")) {
+
+	if (data[1] == null || data[1].equals("autocalculate")) {
 	    data[1] = "";
-	}else if(volume!=null && data[0]!=null){
+	} else if (volume != null && data[0] != null) {
 	    Double v = Double.parseDouble(volume);
 	    Double f = Double.parseDouble(data[0]);
-	    Double c = v/f;
-	    DecimalFormat df = new DecimalFormat("###.##");
+	    Double c = v / f;
 	    String ceiling = df.format(c);
-	    data[1]=ceiling;
+	    data[1] = ceiling;
 	}
-	
+
 	return data;
     }
-    
-    private ArrayList<Material> cloneExistingMaterialList(ArrayList<Material> exist){
+
+    private ArrayList<Material> cloneExistingMaterialList(
+	    ArrayList<Material> exist) {
 	ArrayList<Material> temp = new ArrayList<Material>();
-	for(Material m: exist){
+	for (Material m : exist) {
 	    temp.add(m.clone());
 	}
 	return temp;
     }
-    
-    public class Material{
+
+    public class Material {
 	private final String materialName;
 	private String[] properties = new String[stringArraySize];
-	
-	public Material(String name){
+	private MasterFormat material;
+
+	public Material(String name) {
 	    materialName = name;
 	}
-	
-	public void setFloorArea(String fa){
-	    properties[floorAreaIndex] =fa; 
+
+	public void setFloorArea(String fa) {
+	    properties[floorAreaIndex] = fa;
 	}
-	
-	public void setHeight(String h){
+
+	public void setHeight(String h) {
 	    properties[heightIndex] = h;
 	}
-	
-	public void setSurfaceType(String surface){
+
+	public void setSurfaceType(String surface) {
 	    properties[surfaceTypeIndex] = surface;
 	}
-	
-	public void setThickness(String thick){
-	    properties[thicknessIndex]=thick;
+
+	public void setThickness(String thick) {
+	    properties[thicknessIndex] = thick;
 	}
-	
-	public void setConductivity(String cond){
+
+	public void setConductivity(String cond) {
 	    properties[conductivityIndex] = cond;
 	}
-	
-	public void setDensity(String den){
+
+	public void setDensity(String den) {
 	    properties[densityIndex] = den;
 	}
-	
-	public void setSpecificHeat(String spec){
+
+	public void setSpecificHeat(String spec) {
 	    properties[specificHeatIndex] = spec;
 	}
-	
-	public void setResistance(String resist){
+
+	public void setResistance(String resist) {
 	    properties[resistanceIndex] = resist;
 	}
-	
-	public String[] getProperties(){
-	    for(int i=0; i<properties.length; i++){
-		if(properties[i]==null){
-		    properties[i]="";
-		}
-	    }
-	    return properties;
-	}
-	
-	public String getName(){
+
+	public String getName() {
 	    return materialName;
 	}
-	
-	public Material clone(){
+
+	public String getMaterialDescription() {
+	    if (material == null) {
+		return materialName;
+	    }
+	    return material.getDescription();
+	}
+
+	public void setMaterial(MasterFormat m) {
+	    // life cycle call, properties will always be filled before this
+	    // method
+	    material = m;
+
+	    properties = getProperties();
+	    // make sure the resistance won't be empty if conductivity and
+	    // thickness are there
+	    if (properties[resistanceIndex] == ""
+		    && properties[conductivityIndex] != ""
+		    && properties[thicknessIndex] != "") {
+		Double conductivity = Double
+			.parseDouble(properties[conductivityIndex]);
+		Double thickness = Double
+			.parseDouble(properties[thicknessIndex]);
+		Double resistance = thickness / conductivity;
+		properties[resistanceIndex] = df.format(resistance);
+	    }
+	    material.setVariable(properties);
+	}
+
+	public ArrayList<String> getUserInputs() {
+	    return material.getUserInputs();
+	}
+
+	public void setUserInputs(HashMap<String, String> map) {
+	    material.setUserInputs(map);
+	}
+
+	public Double[] getCostInformation() {
+	    if (material == null) {
+		return null;
+	    }
+
+	    try {
+		material.selectCostVector();
+		System.out.println(material.getDescription());
+	    } catch (NullPointerException e) {
+		return null;
+	    }
+
+	    if (material.getCostVector() == null) {
+		return null;
+	    }
+
+	    return material.getCostVector();
+	}
+
+	public Material clone() {
 	    Material temp = new Material(this.materialName);
 	    temp.setFloorArea(properties[floorAreaIndex]);
 	    temp.setHeight(properties[heightIndex]);
@@ -348,6 +490,14 @@ public class MaterialAnalyzer {
 	    temp.setResistance(properties[resistanceIndex]);
 	    return temp;
 	}
+
+	private String[] getProperties() {
+	    for (int i = 0; i < properties.length; i++) {
+		if (properties[i] == null) {
+		    properties[i] = "";
+		}
+	    }
+	    return properties;
+	}
     }
-    
 }

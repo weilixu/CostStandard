@@ -3,26 +3,33 @@ package eplus;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import eplus.MaterialAnalyzer.Material;
+import masterformat.api.MasterFormat;
+import masterformat.listener.CostTableListener;
+import masterformat.standard.model.MasterFormatModel;
 
 public class EnergyPlusModel {
 
     private final IdfReader idfDomain;
+    private final MasterFormatModel masterformat;
 
     private MaterialAnalyzer materialModule;
-    private HashMap<String, ArrayList<Material>> materialData;
 
     private final File eplusFile;
     
     private final String[] domainList = {"None","Construction"};
+    private String[][] costData;
+    
+    private List<CostTableListener> tableListeners;
     
     public EnergyPlusModel(File file) {
 	eplusFile = file;
+	masterformat = new MasterFormatModel();
+	tableListeners = new ArrayList<CostTableListener>();
+	
 	idfDomain = new IdfReader();
 	idfDomain.setFilePath(eplusFile.getAbsolutePath());
 	try {
@@ -33,47 +40,53 @@ public class EnergyPlusModel {
 	setUpMaterialAnalyzer();
     }
     
+    public void addTableListener(CostTableListener ct){
+	tableListeners.add(ct);
+    }
+    
     public String[] getDomainList(){
 	return domainList;
     }
     
     public ArrayList<Material> getMaterialList(String construction){
-	return materialData.get(construction);
+	return materialModule.getMaterialList(construction);
     }
     
     public String[] getConstructionList(){
-	Set<String> constructions = materialData.keySet();
-	String[] consArray = new String[constructions.size()];
-	Iterator<String> consIterator = constructions.iterator();
-	
-	int counter = 0;
-	while(consIterator.hasNext()&& counter<constructions.size()){
-	    consArray[counter] = consIterator.next();
-	    counter++;
-	}
-	return consArray;
+	return materialModule.getConstructionList();
     }
+    
+    public String[][] getMaterialTableData(String cons){
+	return materialModule.getCostListForConstruction(cons);
+    }
+    
+    public void setMasterFormat(String type, String description, String construction, Integer index){
+	MasterFormat mf = masterformat.getUserInputFromMap(type, description);
+	materialModule.getMaterialList(construction).get(index).setMaterial(mf);
+    }
+    
+    public ArrayList<String> getUserInputs(String construction, Integer index){
+	return materialModule.getMaterialList(construction).get(index).getUserInputs();
+    }
+    //temp, only has materials
+    public void getCostVector(String item){
+	costData=materialModule.getCostListForConstruction(item);
+	updateCostVectorInformation();
+    }
+    
+    public void setUserInput(HashMap<String, String> map, String construction, Integer index){
+	materialModule.setUserInput(map, construction, index);
+	getCostVector(construction);
+    }
+    
     
     private void setUpMaterialAnalyzer() {
 	materialModule = new MaterialAnalyzer(idfDomain);
-	materialData = materialModule.getMaterialData();
     }
-       
-    public void testPrinter(){
-	materialData = materialModule.getMaterialData();
-	
-	Set<String> construction = materialData.keySet();
-	Iterator<String> constructionIterator = construction.iterator();
-	while(constructionIterator.hasNext()){
-	    String name = constructionIterator.next();
-	    System.out.print(name);
-	    System.out.println();
-	    ArrayList<Material> materialList = materialData.get(name);
-	    for(Material m: materialList){
-		System.out.print(" "+m.getName());
-		System.out.print(" "+Arrays.toString(m.getProperties()));
-		System.out.println();
-	    }
+    
+    private void updateCostVectorInformation(){
+	for(CostTableListener ct: tableListeners){
+	    ct.onCostTableUpdated(costData);
 	}
     }
 }

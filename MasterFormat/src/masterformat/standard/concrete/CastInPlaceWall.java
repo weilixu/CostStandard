@@ -53,7 +53,6 @@ public class CastInPlaceWall extends AbstractConcrete {
 	if (thickness <= 0.3) {
 	    if (height <= 2.4) {
 		description = "Wall, free-standing (20 mPa), 200 mm thick, 2400 mm high";
-
 	    } else {
 		description = "Wall, free-standing (20 mPa), 200 mm thick, 4200 mm high";
 	    }
@@ -72,7 +71,12 @@ public class CastInPlaceWall extends AbstractConcrete {
 		description = "Wall, free-standing (20 mPa), 380 mm thick, 5500 mm high";
 	    }
 	}
-	costVector = priceData.get(description);
+	Double[] vector = priceData.get(description);
+	Double[] adjustedVector = new Double[vector.length];
+	for(int i=0; i<vector.length; i++){
+	    adjustedVector[i] = vector[i]*thickness;
+	}
+	costVector = adjustedVector;
     }
 
     @Override

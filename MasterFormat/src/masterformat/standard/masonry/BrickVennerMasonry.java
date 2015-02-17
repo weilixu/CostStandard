@@ -35,6 +35,7 @@ public class BrickVennerMasonry extends AbstractMasonry {
 	}else{
 	    cost = multiplyElements(cost,1.00);
 	}
+	description = brickType;
 	costVector = cost;
     }
 

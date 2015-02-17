@@ -2,6 +2,8 @@ package masterformat.gui;
 
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,17 +50,19 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
     private final JSplitPane splitPane;
 
     private final EnergyPlusModel model;
+    private final String constructionName;
+    private final Integer index;
     // data
     private ArrayList<String> userInputs;
-    private MasterFormat material;
-    
-    private final String[] surfaceProperties;
-    
-    public MaterialPanel(EnergyPlusModel m, String[] properties) {
+    private HashMap<String, String> userInputMap;
+
+    public MaterialPanel(EnergyPlusModel m, String construction, Integer i) {
 	super(new GridLayout(1, 0));
-	
+
 	model = m;
-	surfaceProperties = properties;
+	constructionName = construction;
+	index = i;
+	userInputMap = new HashMap<String, String>();
 
 	builder = new TreeBuilder();
 
@@ -73,8 +77,9 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	editorPanel = new JPanel();
 	editorPanel.setLayout(new GridLayout(0, 6));
 	editorPanel.setBackground(Color.WHITE);
-	
+
 	editorView = new JScrollPane(editorPanel);
+	editorView.getViewport().setBackground(Color.WHITE);
 
 	splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 	splitPane.setTopComponent(treeView);
@@ -94,33 +99,17 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	}
 	Object nodeInfo = node.getUserObject();
 	if (node.isLeaf()) {
-	    ComponentFactory factory;
 	    TreeNode tn = (TreeNode) nodeInfo;
-	    if (tn.getType().equalsIgnoreCase("CONCRETE")) {
-		factory = new ConcreteFactory();
-		material = factory.getConcrete(tn.getDescription());
-		material.setVariable(surfaceProperties);
-		userInputs = material.getUserInputs();
-	    } else if (tn.getType().equalsIgnoreCase("MASONRY")) {
-		factory = new MasonryFactory();
-		material = factory.getMasonry(tn.getDescription());
-		material.setVariable(surfaceProperties);
-		userInputs = material.getUserInputs();
-	    } else if (tn.getType().equalsIgnoreCase(
-		    "THERMAL MOISTURE PROTECTION")) {
-		factory = new ThermalMoistureProtectionFactory();
-		material = factory
-			.getThermalMoistureProtection(tn.getDescription());
-		material.setVariable(surfaceProperties);
-		userInputs = material.getUserInputs();
-	    }
+	    model.setMasterFormat(tn.getType(), tn.getDescription(),
+		    constructionName, index);
+	    userInputs = model.getUserInputs(constructionName, index);
+	    model.getCostVector(constructionName);
 	    disPlayData(userInputs);
 	}
     }
 
     private void disPlayData(ArrayList<String> inputs) {
 	editorPanel.removeAll();
-	StringBuffer sb = new StringBuffer();
 	HashMap<String, HashMap<String, ArrayList<String>>> mapData = stringToMap();
 
 	// currently only have these two options;
@@ -130,7 +119,6 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	HashMap<String, ArrayList<String>> inputMap = mapData.get(input);
 
 	if (optionMap != null) {
-	    System.out.println("hello");
 	    JPanel optionPanel = createOptions(optionMap);
 	    editorPanel.add(optionPanel);
 	}
@@ -146,6 +134,7 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 
     private JPanel createOptions(HashMap<String, ArrayList<String>> optionMap) {
 	JPanel optionPanel = new JPanel(new GridLayout(3, 0));
+	optionPanel.setBackground(Color.WHITE);
 
 	Set<String> optionList = optionMap.keySet();
 	Iterator<String> optionIterator = optionList.iterator();
@@ -155,6 +144,16 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 
 	    JComboBox<String> tempCombo = new JComboBox<String>(
 		    temp.toArray(new String[temp.size()]));
+	    tempCombo.addActionListener(new ActionListener(){
+
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+		    String input = (String)tempCombo.getSelectedItem();
+		    System.out.println(input);
+		    userInputMap.put(option, input);
+		    model.setUserInput(userInputMap, constructionName, index);
+		}
+	    });
 	    optionPanel.add(tempCombo);
 	}
 	return optionPanel;
@@ -169,6 +168,16 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	    String inputUnit = inputMap.get(input).get(0);
 
 	    JTextField inputField = new JTextField(input + " " + inputUnit);
+	    inputField.addActionListener(new ActionListener(){
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    String data = (String)inputField.getText();
+		    userInputMap.put(input, data);  
+		    model.setUserInput(userInputMap, constructionName, index);
+		}
+		
+	    });
 	    inputPanel.add(inputField);
 	}
 	return inputPanel;
@@ -179,11 +188,8 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	HashMap<String, HashMap<String, ArrayList<String>>> dataMap = new HashMap<String, HashMap<String, ArrayList<String>>>();
 
 	for (String s : userInputs) {
-	    System.out.println(s);
 	    String[] sList = s.split(":");
-	    System.out.println(Arrays.toString(sList));
 	    String sType = sList[0];
-	    System.out.println(sType);
 	    String sName = sList[1];
 	    String sInput = sList[2];
 
