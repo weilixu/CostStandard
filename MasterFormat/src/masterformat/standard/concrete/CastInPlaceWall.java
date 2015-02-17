@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class CastInPlaceWall extends AbstractConcrete {
 
-    protected String unit = "m3";
+    protected String unit = "$/m3";
     protected String hierarchy = "030000 Concrete:033000 Cast-In-Place Concrete:033053.40 Concrete In Place";
 
     private double thickness;
@@ -71,12 +71,12 @@ public class CastInPlaceWall extends AbstractConcrete {
 		description = "Wall, free-standing (20 mPa), 380 mm thick, 5500 mm high";
 	    }
 	}
-	Double[] vector = priceData.get(description);
-	Double[] adjustedVector = new Double[vector.length];
-	for(int i=0; i<vector.length; i++){
-	    adjustedVector[i] = vector[i]*thickness;
+	Double[] temp = priceData.get(description);
+	Double[] vector = new Double[temp.length];
+	for(int i=0; i<temp.length; i++){
+	    vector[i] = temp[i]*thickness;
 	}
-	costVector = adjustedVector;
+	costVector = vector;
     }
 
     @Override

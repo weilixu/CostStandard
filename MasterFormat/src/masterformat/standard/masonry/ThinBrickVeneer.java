@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class ThinBrickVeneer extends AbstractMasonry {
     
-    protected String unit = "m2";
+    protected String unit = "$/m2";
     protected String hierarchy = "042100 Clay Unit Masonry:042113 Brick Masonry:042113.14 Thin Brick Veneer";
 
     

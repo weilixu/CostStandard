@@ -661,7 +661,7 @@ public class IdfReader {
 			for (int i = 0; i < nodeList.size(); i++) {
 			    ValueNode n = nodeList.get(i);
 			    // end statement needs to be end by ;
-			    if (n.isEndStatement()) {
+			    if (i==nodeList.size()-1) {
 				writer.write(n.getAttribute() + "; \n");
 			    } else {
 				writer.write(n.getAttribute() + ", \n");

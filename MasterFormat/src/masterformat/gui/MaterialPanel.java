@@ -107,6 +107,10 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	    disPlayData(userInputs);
 	}
     }
+    
+    public String getConstruction(){
+	return constructionName;
+    }
 
     private void disPlayData(ArrayList<String> inputs) {
 	editorPanel.removeAll();

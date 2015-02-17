@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class CastInPlaceSlabOnGrade extends AbstractConcrete{
     
-    protected String unit = "m2";
+    protected String unit = "$/m3";
     protected String hierarchy = "030000 Concrete:033000 Cast-In-Place Concrete:033053.40 Concrete In Place";
     
     private double area;
