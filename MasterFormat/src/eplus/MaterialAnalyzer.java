@@ -33,6 +33,7 @@ public class MaterialAnalyzer {
     private final static String zone = "Zone";
     private final static String surface = "BuildingSurface:Detailed";
 
+    // the standard data format for mapping Energyplus model and masterformat
     protected final int floorAreaIndex = 0;
     protected final int heightIndex = 1;
     protected final int surfaceTypeIndex = 2;
@@ -44,7 +45,8 @@ public class MaterialAnalyzer {
 
     private static final String[] defaultCostData = { "Unknown", "0", "0", "0",
 	    "0", "0" };
-    private final Integer rowElement = 6;
+    // the size of cost items (for the table display purpose)
+    private final Integer rowElement = 7;
 
     public MaterialAnalyzer(IdfReader reader) {
 	this.reader = reader;
@@ -72,6 +74,12 @@ public class MaterialAnalyzer {
 	return constructionMap.get(s);
     }
 
+    /**
+     * get the cost list for a specific construction
+     * 
+     * @param cons
+     * @return
+     */
     protected String[][] getCostListForConstruction(String cons) {
 	ArrayList<Material> materialList = constructionMap.get(cons);
 	String[][] costList = new String[materialList.size() + 1][rowElement];
@@ -80,27 +88,31 @@ public class MaterialAnalyzer {
 	Double totalEquipment = 0.0;
 	Double totalTotal = 0.0;
 	Double totalTotalOP = 0.0;
-
+	
+	String generalUnit =materialList.get(0).getMaterialUnit();
+	
 	for (int i = 0; i < materialList.size(); i++) {
 	    Material m = materialList.get(i);
 	    String[] costVector = new String[rowElement];
 	    if (m.getCostInformation() != null) {
 		Double[] costInfo = m.getCostInformation();
+		// the first element in a vector is the material name
 		costVector[0] = m.getMaterialDescription();
+		costVector[1] = m.getMaterialUnit();
 		totalMaterial += costInfo[0];
 		totalLabor += costInfo[1];
 		totalEquipment += costInfo[2];
 		totalTotal += costInfo[3];
 		totalTotalOP += costInfo[4];
 		for (int j = 0; j < costInfo.length; j++) {
-		    costVector[j + 1] = df.format(costInfo[j]);
+		    costVector[j + 2] = df.format(costInfo[j]);
 		}
 		costList[i] = costVector;
 	    } else {
 		costList[i] = defaultCostData;
 	    }
 	}
-	String[] totalVector = { "Total", df.format(totalMaterial),
+	String[] totalVector = { "Total", generalUnit,df.format(totalMaterial),
 		df.format(totalLabor), df.format(totalEquipment),
 		df.format(totalTotal), df.format(totalTotalOP) };
 	costList[costList.length - 1] = totalVector;
@@ -108,7 +120,7 @@ public class MaterialAnalyzer {
     }
 
     /**
-     * get the entire construction list that is read from energyplus file
+     * get the entire construction list that is read from Energyplus file
      * 
      * @return
      */
@@ -125,12 +137,22 @@ public class MaterialAnalyzer {
 	return consArray;
     }
 
+    /**
+     * set the user input which is later be used to select the cost
+     * 
+     * @param map
+     * @param construction
+     * @param index
+     */
     protected void setUserInput(HashMap<String, String> map,
 	    String construction, Integer index) {
 	Material m = constructionMap.get(construction).get(index);
 	m.setUserInputs(map);
     }
 
+    /*
+     * BELOW ARE PRE-PROCESSING CODE FOR THE CONSTRUCTION CATEGORY
+     */
     private void processMaterialRawDatafromMaterials() {
 	// require to do it again since the energyplus domain model may changed
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> constructionList = reader
@@ -378,6 +400,16 @@ public class MaterialAnalyzer {
 	return temp;
     }
 
+    /**
+     * material object. This object carries: 1. Material's name 2. material
+     * property map, which contains the data extracted from EnergyPlus and will
+     * be used to map into MasterFormat cost. 3. MasterFormt object generated
+     * from MasterFormat factory that represents the correspondent MasterFormat
+     * object that Energyplus map to
+     * 
+     * @author Weili
+     *
+     */
     public class Material {
 	private final String materialName;
 	private String[] properties = new String[stringArraySize];
@@ -429,7 +461,27 @@ public class MaterialAnalyzer {
 	    }
 	    return material.getDescription();
 	}
+	
+	public String getMaterialUnit(){
+	    if(material==null){
+		return "";
+	    }
+	    return material.getUnit();
+	}
 
+	/**
+	 * set the material from EnergyPlus model into a MasterFormat object
+	 * This is start of the mapping, as part of the life cycle call. After
+	 * this call, then user can start extract cost information.
+	 * 
+	 * This method also tries to derive resistance from the extracted data,
+	 * if it is not available.
+	 * 
+	 * This method will try to fill the property list as full as possible.
+	 * If there is no data available, then "" will be used
+	 * 
+	 * @param m
+	 */
 	public void setMaterial(MasterFormat m) {
 	    // life cycle call, properties will always be filled before this
 	    // method
@@ -459,6 +511,13 @@ public class MaterialAnalyzer {
 	    material.setUserInputs(map);
 	}
 
+	/**
+	 * get the cost information. This method checks whether: material object
+	 * is null, if it is, then return null material cost vector is null, if
+	 * it is, then return null
+	 * 
+	 * @return cost vector
+	 */
 	public Double[] getCostInformation() {
 	    if (material == null) {
 		return null;
@@ -466,7 +525,6 @@ public class MaterialAnalyzer {
 
 	    try {
 		material.selectCostVector();
-		System.out.println(material.getDescription());
 	    } catch (NullPointerException e) {
 		return null;
 	    }

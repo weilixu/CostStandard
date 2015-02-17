@@ -6,11 +6,11 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class ThinBrickVeneer extends AbstractMasonry {
-    
-    protected String unit = "$/m2";
-    protected String hierarchy = "042100 Clay Unit Masonry:042113 Brick Masonry:042113.14 Thin Brick Veneer";
 
-    
+    public ThinBrickVeneer(){
+	unit = "$/m2";
+	hierarchy = "042100 Clay Unit Masonry:042113 Brick Masonry:042113.14 Thin Brick Veneer";
+    }
     //shows the tyep of the brick that selected
     private String brickType;
     //shows any special charactor the type of brick might have

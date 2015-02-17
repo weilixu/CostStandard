@@ -7,11 +7,13 @@ import java.util.Set;
 
 public class CastInPlaceWall extends AbstractConcrete {
 
-    protected String unit = "$/m3";
-    protected String hierarchy = "030000 Concrete:033000 Cast-In-Place Concrete:033053.40 Concrete In Place";
-
     private double thickness;
     private double height;
+    
+    public CastInPlaceWall(){
+	unit = "$/m2";
+	hierarchy = "030000 Concrete:033000 Cast-In-Place Concrete:033053.40 Concrete In Place";
+    }
 
     /**
      * For cast in place wall, the required attributes are thickness and height

@@ -8,9 +8,10 @@ import java.util.Set;
 
 public class RigidInsulation extends AbstractThermalMoistureProtection {
 
-    protected String hierarchy = "070000 Thermal & Moisture Protection:072100 Thermal Insulation:072113 Board Insulation:072113.10 Rigid Insulation";
-    
-    protected String unit = "$/m2";
+    public RigidInsulation(){
+	unit = "$/m2";
+	hierarchy = "070000 Thermal & Moisture Protection:072100 Thermal Insulation:072113 Board Insulation:072113.10 Rigid Insulation";
+    }
     //see what's the insulation types
     private String insulationType;
     //the R-value of the insulation

@@ -98,11 +98,12 @@ public class MappingPanel extends JPanel implements CostTableListener {
 
 	tableModel = new DefaultTableModel();
 	tableModel.addColumn("Material Name");
-	tableModel.addColumn("Material Cost ($/m2)");
-	tableModel.addColumn("Labor Cost ($/m2)");
-	tableModel.addColumn("Equipment Cost ($/m2)");
-	tableModel.addColumn("Total ($/m2)");
-	tableModel.addColumn("Total Incl O&P ($/m2)");
+	tableModel.addColumn("Unit");
+	tableModel.addColumn("Material Cost");
+	tableModel.addColumn("Labor Cost");
+	tableModel.addColumn("Equipment Cost");
+	tableModel.addColumn("Total");
+	tableModel.addColumn("Total Incl O&P");
 
 	table = new JTable(tableModel);
 	table.setEnabled(false);

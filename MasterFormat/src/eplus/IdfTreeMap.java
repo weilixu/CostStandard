@@ -443,7 +443,6 @@ public class IdfTreeMap {
 	Iterator<String> oIterator = objectName.iterator();
 	while(oIterator.hasNext()){
 	    String temp = oIterator.next();
-	    System.out.println(temp);
 	    //create object level node
 	    DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(temp);
 	    energyPlus.add(objectNode);
