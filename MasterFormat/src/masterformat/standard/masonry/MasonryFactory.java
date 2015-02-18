@@ -2,6 +2,7 @@ package masterformat.standard.masonry;
 
 import masterformat.api.ComponentFactory;
 import masterformat.standard.concrete.Concrete;
+import masterformat.standard.hvac.hvac;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
 public class MasonryFactory extends ComponentFactory{
@@ -33,6 +34,12 @@ public class MasonryFactory extends ComponentFactory{
     public ThermalMoistureProtection getThermalMoistureProtection(
 	    String thermalMoistureProtectionType) {
 	//this factory would not produce thermal and moisture protection
+	return null;
+    }
+
+    @Override
+    public hvac getHVAC(String hvac) {
+	// TODO Auto-generated method stub
 	return null;
     }
     

@@ -2,6 +2,7 @@ package masterformat.standard.thermalmoistureprotection;
 
 import masterformat.api.ComponentFactory;
 import masterformat.standard.concrete.Concrete;
+import masterformat.standard.hvac.hvac;
 import masterformat.standard.masonry.Masonry;
 
 public class ThermalMoistureProtectionFactory extends ComponentFactory{
@@ -24,6 +25,12 @@ public class ThermalMoistureProtectionFactory extends ComponentFactory{
 	if(thermalMoistureProtectionType.equalsIgnoreCase("RIGID INSULATION")){
 	    return new RigidInsulation();
 	}
+	return null;
+    }
+
+    @Override
+    public hvac getHVAC(String hvac) {
+	// TODO Auto-generated method stub
 	return null;
     }
 }

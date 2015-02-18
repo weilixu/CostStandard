@@ -102,7 +102,6 @@ public class IdfReader {
 	path = filePath;
     }
 
-
     /**
      * read EplusFile and create the database. read the data from idf file and
      * fill the HashMap. This method will switch the flag <dataFilled> to true
@@ -248,26 +247,28 @@ public class IdfReader {
 	// if we cannot find it.
 	return null;
     }
-    
+
     /**
-     * search for same values under same type of objects. It returns a string of grouped value
+     * search for same values under same type of objects. It returns a string of
+     * grouped value
+     * 
      * @param object
      * @param description
      * @return
      */
-    public String[] getListValue(String object, String description){
+    public String[] getListValue(String object, String description) {
 	String[] list;
 	HashMap<String, ArrayList<ValueNode>> temp = eplusMap.get(object);
 	Set<String> elementSet = temp.keySet();
 	list = new String[elementSet.size()];
 	Iterator<String> iterator = elementSet.iterator();
 	int counter = 0;
-	while(iterator.hasNext()){
+	while (iterator.hasNext()) {
 	    String s = iterator.next();
 	    ArrayList<ValueNode> nodeList = eplusMap.get(object).get(s);
-	    for(ValueNode node: nodeList){
-		if(node.getDescription().equals(description)){
-		    list[counter]=node.getAttribute();
+	    for (ValueNode node : nodeList) {
+		if (node.getDescription().equals(description)) {
+		    list[counter] = node.getAttribute();
 		    counter++;
 		    break;
 		}
@@ -275,8 +276,9 @@ public class IdfReader {
 	}
 	return list;
     }
-    
-    protected HashMap<String,HashMap<String, ArrayList<ValueNode>>> getObjectList(String object){
+
+    protected HashMap<String, HashMap<String, ArrayList<ValueNode>>> getObjectList(
+	    String object) {
 	return deepCopyPartialMap(object);
     }
 
@@ -311,10 +313,10 @@ public class IdfReader {
 		}
 	    }
 	}
-	//if found the correct inputs group
+	// if found the correct inputs group
 	if (targetList != null) {
 	    for (ValueNode target : targetList) {
-		//search for the specific value
+		// search for the specific value
 		if (target.getDescription().equals(description)) {
 		    return target.getAttribute();
 		}
@@ -397,20 +399,19 @@ public class IdfReader {
 	    eplusMap.put(objectName, temp);
 	}
     }
-    
-    public String copyExistingEplusObject(String objectName, String elementCount){
-	HashMap<String, ArrayList<ValueNode>> objectMap = eplusMap.get(objectName);
-	Integer size = objectMap.size()+1;
+
+    public String copyExistingEplusObject(String objectName, String elementCount) {
+	HashMap<String, ArrayList<ValueNode>> objectMap = eplusMap
+		.get(objectName);
+	Integer size = objectMap.size() + 1;
 	ArrayList<ValueNode> nodeList = new ArrayList<ValueNode>();
 	ArrayList<ValueNode> temp = eplusMap.get(objectName).get(elementCount);
-	for(ValueNode vn: temp){
+	for (ValueNode vn : temp) {
 	    ValueNode node = vn.clone();
 	    nodeList.add(node);
 	}
-	
-	HashMap<String, ArrayList<ValueNode>> tempMap = new HashMap<String, ArrayList<ValueNode>>();
-	tempMap.put(size.toString(), nodeList);
-	eplusMap.put(objectName, tempMap);
+
+	eplusMap.get(objectName).put(size.toString(), nodeList);
 	return size.toString();
     }
 
@@ -479,29 +480,46 @@ public class IdfReader {
 	    }
 	}
     }
-    
+
+    public void editExistObjectsOnOneElementFromCount(String objectName,
+	    String elementCount, String onKey, String toValue) {
+	// retrieve the elements from the map and convert it to set
+	ArrayList<ValueNode> vnList = eplusMap.get(objectName)
+		.get(elementCount);
+	// go through all the ValueNode, find the key and change the value
+	for (ValueNode vn : vnList) {
+	    if (onKey.equals(vn.getDescription())) {
+		vn.setAttribute(toValue);
+	    }
+	}
+    }
+
     /**
      * create a default mutable tree node for display purpose
+     * 
      * @return
      */
-    public DefaultMutableTreeNode createTree(){
-	DefaultMutableTreeNode energyPlus = new DefaultMutableTreeNode("EnergyPlus");
-	
+    public DefaultMutableTreeNode createTree() {
+	DefaultMutableTreeNode energyPlus = new DefaultMutableTreeNode(
+		"EnergyPlus");
+
 	Set<String> objectName = eplusMap.keySet();
 	Iterator<String> oIterator = objectName.iterator();
-	while(oIterator.hasNext()){
+	while (oIterator.hasNext()) {
 	    String temp = oIterator.next();
-	    //create object level node
+	    // create object level node
 	    DefaultMutableTreeNode objectNode = new DefaultMutableTreeNode(temp);
 	    energyPlus.add(objectNode);
-	    
-	    //getting the next level information
+
+	    // getting the next level information
 	    Set<String> elementCount = eplusMap.get(temp).keySet();
 	    Iterator<String> eIterator = elementCount.iterator();
-	    while(eIterator.hasNext()){
+	    while (eIterator.hasNext()) {
 		String name = eIterator.next();
-		ElementList list = new ElementList(name, eplusMap.get(temp).get(name));
-		DefaultMutableTreeNode elementNode = new DefaultMutableTreeNode(list);
+		ElementList list = new ElementList(name, eplusMap.get(temp)
+			.get(name));
+		DefaultMutableTreeNode elementNode = new DefaultMutableTreeNode(
+			list);
 		objectNode.add(elementNode);
 	    }
 	}
@@ -530,8 +548,7 @@ public class IdfReader {
 	    // do something!
 	}
     }
-    
-    
+
     private HashMap<String, HashMap<String, ArrayList<ValueNode>>> deepCopyMap() {
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> tempMap = new HashMap<String, HashMap<String, ArrayList<ValueNode>>>();
 	Set<String> objectList = eplusMap.keySet();
@@ -556,18 +573,19 @@ public class IdfReader {
 	}
 	return tempMap;
     }
-    
-    private HashMap<String, HashMap<String, ArrayList<ValueNode>>> deepCopyPartialMap(String object){
+
+    private HashMap<String, HashMap<String, ArrayList<ValueNode>>> deepCopyPartialMap(
+	    String object) {
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> tempMap = new HashMap<String, HashMap<String, ArrayList<ValueNode>>>();
 	HashMap<String, ArrayList<ValueNode>> objectMap = new HashMap<String, ArrayList<ValueNode>>();
-	
+
 	Set<String> elementList = eplusMap.get(object).keySet();
 	Iterator<String> elementIterator = elementList.iterator();
-	while(elementIterator.hasNext()){
+	while (elementIterator.hasNext()) {
 	    String element = elementIterator.next();
 	    ArrayList<ValueNode> temp = eplusMap.get(object).get(element);
 	    ArrayList<ValueNode> list = new ArrayList<ValueNode>();
-	    for(ValueNode vn: temp){
+	    for (ValueNode vn : temp) {
 		ValueNode newNode = vn.clone();
 		list.add(newNode);
 	    }
@@ -576,38 +594,38 @@ public class IdfReader {
 	tempMap.put(object, objectMap);
 	return tempMap;
     }
-    
+
     /**
      * This is a wrapper class that wraps the element its correspondent data
+     * 
      * @author Weili
      *
      */
-    public class ElementList{
+    public class ElementList {
 	private String name;
 	private final ArrayList<ValueNode> infoList;
-	
-	public ElementList(String n, ArrayList<ValueNode> il){
+
+	public ElementList(String n, ArrayList<ValueNode> il) {
 	    name = n;
 	    infoList = il;
 	}
-	
-	public ArrayList<ValueNode> getInfo(){
+
+	public ArrayList<ValueNode> getInfo() {
 	    return infoList;
 	}
-	
-	public void addValueNode(ValueNode node){
+
+	public void addValueNode(ValueNode node) {
 	    infoList.add(node);
 	}
-	
-	public String getName(){
+
+	public String getName() {
 	    return name;
 	}
-	
-	public String toString(){
+
+	public String toString() {
 	    return infoList.get(0).getAttribute();
 	}
     }
-
 
     /**
      * IDF Writer class. This class writes the IDF out based on the reader's
@@ -621,12 +639,15 @@ public class IdfReader {
 	private HashMap<String, HashMap<String, ArrayList<ValueNode>>> eplusMap;
 	private String path;
 	private String fileID;
-	
+
 	/**
 	 * 
-	 * @param map datastructure that contains energyplus idf file
-	 * @param p path that the newly generated file can be saved at
-	 * @param ID the identification for the file name
+	 * @param map
+	 *            datastructure that contains energyplus idf file
+	 * @param p
+	 *            path that the newly generated file can be saved at
+	 * @param ID
+	 *            the identification for the file name
 	 */
 	private IdfWriter(
 		HashMap<String, HashMap<String, ArrayList<ValueNode>>> map,
@@ -661,7 +682,7 @@ public class IdfReader {
 			for (int i = 0; i < nodeList.size(); i++) {
 			    ValueNode n = nodeList.get(i);
 			    // end statement needs to be end by ;
-			    if (i==nodeList.size()-1) {
+			    if (i == nodeList.size() - 1) {
 				writer.write(n.getAttribute() + "; \n");
 			    } else {
 				writer.write(n.getAttribute() + ", \n");
@@ -719,15 +740,13 @@ public class IdfReader {
 	private boolean isCriticalLine = false;
 
 	public ValueNode(String att, String des) {
-	    if(des.indexOf("{")>-1){
-		description = des.substring(0,des.indexOf(" {"));
+	    if (des.indexOf("{") > -1) {
+		description = des.substring(0, des.indexOf(" {"));
 		unit = des.substring(des.indexOf("{"));
-	    }else{
+	    } else {
 		description = des;
 	    }
 	    originalAttribute = att;
-	    
-
 
 	    // test whether this line contains parametric value
 	    if (originalAttribute.indexOf("$") > -1) {
@@ -768,9 +787,9 @@ public class IdfReader {
 	public String getDescription() {
 	    return description;
 	}
-	
-	//get the unit of this node
-	public String getUnit(){
+
+	// get the unit of this node
+	public String getUnit() {
 	    return unit;
 	}
 

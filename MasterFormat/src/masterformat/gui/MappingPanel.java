@@ -52,6 +52,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 
     private final JComboBox<String> objectSelectionCombo;
     private final JList<String> itemLists;
+    private final JScrollPane listScrollPane;
     private final DefaultListModel<String> listModel;
 
     // private final String[] costColumnName =
@@ -91,13 +92,14 @@ public class MappingPanel extends JPanel implements CostTableListener {
 
 	EnergyPlusObjectPanel
 		.add(objectSelectionCombo, BorderLayout.PAGE_START);
-	EnergyPlusObjectPanel.add(itemLists, BorderLayout.CENTER);
+	listScrollPane = new JScrollPane(itemLists);
+	EnergyPlusObjectPanel.add(listScrollPane, BorderLayout.CENTER);
 	add(EnergyPlusObjectPanel, BorderLayout.WEST);
 
 	tablePanel = new JPanel(new BorderLayout());
 
 	tableModel = new DefaultTableModel();
-	tableModel.addColumn("Material Name");
+	tableModel.addColumn("Product Name");
 	tableModel.addColumn("Unit");
 	tableModel.addColumn("Material Cost");
 	tableModel.addColumn("Labor Cost");
@@ -192,6 +194,19 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	return tp;
     }
 
+    @Override
+    public void onCostTableUpdated(String[][] data) {
+	if (tableModel.getRowCount() > 0) {
+	    for (int i = tableModel.getRowCount() - 1; i > -1; i--) {
+		tableModel.removeRow(i);
+	    }
+	}
+	for (int j = 0; j < data.length; j++) {
+	    tableModel.addRow(data[j]);
+	}
+	tableModel.fireTableDataChanged();
+    }
+    
     /**
      * Create the GUI and show it. For thread safety, this method should be
      * invoked from the event dispatch thread.
@@ -201,7 +216,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	JFrame frame = new JFrame("MasterFormatTreeDemo");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	File file = new File(
-		"C:\\Users\\Weili\\Desktop\\New folder\\ScaifeHall.idf");
+		"C:\\Users\\Weili\\Desktop\\New folder\\CostTester.idf");
 
 	EnergyPlusModel model = new EnergyPlusModel(file);
 	// Add content to the window.
@@ -220,18 +235,5 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		createAndShowGUI();
 	    }
 	});
-    }
-
-    @Override
-    public void onCostTableUpdated(String[][] data) {
-	if (tableModel.getRowCount() > 0) {
-	    for (int i = tableModel.getRowCount() - 1; i > -1; i--) {
-		tableModel.removeRow(i);
-	    }
-	}
-	for (int j = 0; j < data.length; j++) {
-	    tableModel.addRow(data[j]);
-	}
-	tableModel.fireTableDataChanged();
     }
 }

@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -23,6 +24,11 @@ import eplus.IdfReader.ValueNode;
 public class MaterialAnalyzer {
     private final IdfReader reader;
     private HashMap<String, ArrayList<Material>> constructionMap;
+    private static final Set<String> surfaceTypeList = new HashSet<String>();
+    private static final Set<String> ceilingHeightList = new HashSet<String>();
+    private static String surfaceType=null;
+    private static String floorArea = null;
+    private static String ceilingHeight=null;
 
     private final int stringArraySize = 8;
     private final DecimalFormat df = new DecimalFormat("###.##");
@@ -256,7 +262,7 @@ public class MaterialAnalyzer {
 
     /**
      * find the data from zone and BuildingSurface:Detailed objects. This might
-     * requrie duplicate the constructions since different height of space and
+     * require duplicate the constructions since different height of space and
      * different surfacetype of the construction may yield different base cost
      * Filtering this differences and the method will duplicate the construction
      * and modify the correpondent BuildingSurface:Detail object
@@ -270,14 +276,6 @@ public class MaterialAnalyzer {
 
 	Set<String> surfaceList = surfaceMap.get(surface).keySet();
 	Iterator<String> surfaceIterator = surfaceList.iterator();
-
-	// only extract these three values
-	String floorArea = null; // index 0
-	String ceilingHeight = null; // index 1
-	String surfaceType = null; // index 2
-
-	Integer copiedCounter = 0;// this indicates how many copes require to
-				  // make for this type of construction
 
 	while (surfaceIterator.hasNext()) {
 	    String surfaceCount = surfaceIterator.next();
@@ -307,24 +305,64 @@ public class MaterialAnalyzer {
 		    if (ceilingHeight == null) {
 			ceilingHeight = tempCeilingHeight;
 		    }
-
-		    // if there is anything different
-		    if (!tempSurfaceType.equals(surfaceType)
-			    || !tempCeilingHeight.equals(ceilingHeight)) {
-			// the modification is at idf domain model level, not on
-			// the copied model level
+		    
+		    if(surfaceTypeList.contains(tempSurfaceType)){
+			//condition when there is a copied surface type created
+			//it only requires to change the construction name field in the surface
+			String copiedName = cons+"_"+tempSurfaceType;
+			reader.editExistObjectsOnOneElement(surface,
+				surfaceCount, "Construction Name", copiedName);
+			
+			ArrayList<Material> temp = constructionMap.get(cons);
+			setForAll(temp, tempFloorArea, tempCeilingHeight,
+				tempSurfaceType);
+			
+		    }else if(ceilingHeightList.contains(tempCeilingHeight)){
+			//condition when there is a copied surface type created
+			//it only rquires to change the construction name field in the surface
+			String copiedName = cons+" "+tempCeilingHeight;
+			reader.editExistObjectsOnOneElement(surface,
+				surfaceCount, "Construction Name", copiedName);
+			
+			ArrayList<Material> temp = constructionMap.get(cons);
+			setForAll(temp, tempFloorArea, tempCeilingHeight,
+				tempSurfaceType);
+			
+		    }else if (!tempSurfaceType.equals(surfaceType)){
+			// condition when there is difference between surfacetype and tempsurfacetype
+			//it will create a new copy in the domain model
+			//and then change the construction name field in the surface
+			String tempCount = reader.copyExistingEplusObject(
+				construction, constructionCount);
+			String copiedName = cons+"_"+tempSurfaceType;
+			reader.editExistObjectsOnOneElementFromCount(construction, tempCount, "Name",copiedName);
+			reader.editExistObjectsOnOneElementFromCount(surface,
+				surfaceCount, "Construction Name", copiedName);
+			surfaceTypeList.add(tempSurfaceType);
+			// add this into the construction map
+			ArrayList<Material> temp = cloneExistingMaterialList(constructionMap
+				.get(cons));
+			setForAll(temp, tempFloorArea, tempCeilingHeight,
+				tempSurfaceType);
+			constructionMap.put(copiedName, temp);
+			
+		    }else if(!tempCeilingHeight.equals(ceilingHeight)) {
+			// condition when there is difference between ceiling height and ceiling height
+			// it will create a new copy in the domain model
+			// and then change the construction name field in the surface
 			// copy the existing construction
 			String tempCount = reader.copyExistingEplusObject(
 				construction, constructionCount);
-			String copiedName = cons + copiedCounter.toString();
+			String copiedName = cons + "_"+ceilingHeight;
 			// change the copied construction name
-			reader.editExistObjectsOnOneElement(construction,
+			reader.editExistObjectsOnOneElementFromCount(construction,
 				tempCount, "Name", copiedName);
-			copiedCounter++;
+
 			// change the current surface element's construction
 			// name
-			reader.editExistObjectsOnOneElement(surface,
+			reader.editExistObjectsOnOneElementFromCount(surface,
 				surfaceCount, "Construction Name", copiedName);
+			ceilingHeightList.add(tempCeilingHeight);
 			// add this into the construction map
 			ArrayList<Material> temp = cloneExistingMaterialList(constructionMap
 				.get(cons));
@@ -374,20 +412,23 @@ public class MaterialAnalyzer {
 		}
 	    }
 	}
-	if (data[0] == null) {
+	if (data[0] == "") {
 	    data[0] = "";
 	}
 
-	if (data[1] == null || data[1].equals("autocalculate")) {
+	if (data[1] == "" || data[1].equals("autocalculate")) {
 	    data[1] = "";
-	} else if (volume != null && data[0] != null) {
+	}
+	
+	try{
 	    Double v = Double.parseDouble(volume);
 	    Double f = Double.parseDouble(data[0]);
 	    Double c = v / f;
 	    String ceiling = df.format(c);
-	    data[1] = ceiling;
+	    data[1] = ceiling; 
+	}catch(NumberFormatException e){
+	    //do nothing
 	}
-
 	return data;
     }
 
