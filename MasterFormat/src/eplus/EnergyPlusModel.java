@@ -3,6 +3,7 @@ package eplus;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,13 +27,14 @@ public class EnergyPlusModel {
     private final IdfReader idfDomain;
     private final MasterFormatModel masterformat;
     private MaterialAnalyzer materialModule;
+    private BoilerAnalyzer boilerModule;
 
     // files locations etc.
     private final File eplusFile;
     private final File parentFolder;
 
     // useful data
-    private final String[] domainList = { "None", "Construction" };// comboBox
+    private final String[] domainList = {"Construction","Boiler" };// comboBox
 								   // list.
 								   // Shows the
 								   // category
@@ -66,6 +68,7 @@ public class EnergyPlusModel {
 	    e.printStackTrace();
 	}
 	setUpMaterialAnalyzer();
+	setUpBoilerAnalyzer();
     }
 
     /**
@@ -107,6 +110,10 @@ public class EnergyPlusModel {
     public String[] getConstructionList() {
 	return materialModule.getConstructionList();
     }
+    
+    public String[] getBoilerList(){
+	return boilerModule.getBoilerList();
+    }
 
     /**
      * get the material cost data from the material analyzer
@@ -119,17 +126,27 @@ public class EnergyPlusModel {
     }
 
     /**
-     * This method will be later generalized for all the domains...
+     * For constructions mapping
      * 
      * @param type
      * @param description
      * @param construction
      * @param index
      */
-    public void setMasterFormat(String type, String description, String item,
+    public void setConstructionMasterFormat(String type, String description, String item,
 	    Integer index) {
 	MasterFormat mf = masterformat.getUserInputFromMap(type, description);
 	materialModule.getMaterialList(item).get(index).setMaterial(mf);
+    }
+    
+    /**
+     * For boilers mapping
+     * @param description
+     */
+    public void setBoilerMasterFormat(String description){
+	String type = boilerModule.getBoilerType(description);
+	MasterFormat mf = masterformat.getUserInputFromMap("BOILER", type);
+	boilerModule.setBoilerMasterFormat(description,mf);
     }
 
     /**
@@ -139,19 +156,33 @@ public class EnergyPlusModel {
      * @param index
      * @return
      */
-    public ArrayList<String> getUserInputs(String construction, Integer index) {
+    public ArrayList<String> getConstructionUserInputs(String construction, Integer index) {
 	return materialModule.getMaterialList(construction).get(index)
 		.getUserInputs();
+    }
+    
+    public ArrayList<String> getBoilerUserInputs(String boilerName){
+	return boilerModule.getBoiler(boilerName).getUserInputs();
     }
 
     // temp, only has materials
     /**
-     * This method will later be expand and be generalized
+     * for construction cost vector extraction
      * 
      * @param item
      */
-    public void getCostVector(String item) {
+    public void getConstructionCostVector(String item) {
 	costData = materialModule.getCostListForConstruction(item);
+	updateCostVectorInformation();
+    }
+    
+    /**
+     * for boiler cost vector extraction
+     * 
+     * @param item
+     */
+    public void getBoilerCostVector(String item) {
+	costData = boilerModule.getCostListForBoiler(item);
 	updateCostVectorInformation();
     }
 
@@ -163,11 +194,26 @@ public class EnergyPlusModel {
      * @param construction
      * @param index
      */
-    public void setUserInput(HashMap<String, String> map, String construction,
+    public void setConstructionUserInput(HashMap<String, String> map, String construction,
 	    Integer index) {
 	materialModule.setUserInput(map, construction, index);
-	getCostVector(construction);
+	getConstructionCostVector(construction);
     }
+    
+    /**
+     * set the user inputs to the masterformat item. This method will later be
+     * expanded into all the other domains
+     * 
+     * @param map
+     * @param construction
+     * @param index
+     */
+    public void setBoilerUserInput(HashMap<String, String> map, String boilerName) {
+	boilerModule.setUserInput(map, boilerName);
+	getBoilerCostVector(boilerName);
+    }
+    
+    
     
     /**
      * add the total cost data to EnergyPlus file
@@ -183,6 +229,11 @@ public class EnergyPlusModel {
 	if (category.equalsIgnoreCase("CONSTRUCTION")) {
 	    String[] value = { item.toUpperCase(), "", category, item, "", "",
 		    cost.toString(), "", "", "", "", "", "" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
+	}else if(category.equalsIgnoreCase("BOILER")){
+	    String[] value = { item.toUpperCase(), "", category, item,"", cost.toString(),
+		    "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
 	}
@@ -204,6 +255,11 @@ public class EnergyPlusModel {
 		    cost.toString(), "", "", "", "", "", "" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
+	}else if(category.equalsIgnoreCase("BOILER")){
+	    String[] value = { item.toUpperCase(), "", category, item,"", cost.toString(),
+		    "", "", "", "", "", "", "1" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
 	}
     }
     
@@ -218,6 +274,10 @@ public class EnergyPlusModel {
 
     private void setUpMaterialAnalyzer() {
 	materialModule = new MaterialAnalyzer(idfDomain);
+    }
+    
+    private void setUpBoilerAnalyzer(){
+	boilerModule = new BoilerAnalyzer(idfDomain);
     }
 
     private void updateCostVectorInformation() {

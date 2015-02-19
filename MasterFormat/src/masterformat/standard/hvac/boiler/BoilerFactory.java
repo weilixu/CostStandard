@@ -1,11 +1,11 @@
-package masterformat.standard.concrete;
+package masterformat.standard.hvac.boiler;
 
 import masterformat.api.ComponentFactory;
-import masterformat.standard.hvac.boiler.Boiler;
+import masterformat.standard.concrete.Concrete;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
-public class ConcreteFactory extends ComponentFactory{
+public class BoilerFactory extends ComponentFactory{
 
     @Override
     public Masonry getMasonry(String masonryType) {
@@ -15,12 +15,7 @@ public class ConcreteFactory extends ComponentFactory{
 
     @Override
     public Concrete getConcrete(String concreteType) {
-	
-	if(concreteType.equalsIgnoreCase("CAST IN PLACE WALL")){
-	    return new CastInPlaceWall();
-	}else if(concreteType.equalsIgnoreCase("CAST IN PLACE SLAB ON GRADE")){
-	    return new CastInPlaceSlabOnGrade();
-	}
+	// TODO Auto-generated method stub
 	return null;
     }
 
@@ -32,8 +27,12 @@ public class ConcreteFactory extends ComponentFactory{
     }
 
     @Override
-    public Boiler getBoiler(String hvac) {
-	// TODO Auto-generated method stub
+    public Boiler getBoiler(String boilerType) {
+	if(boilerType.equalsIgnoreCase("BOILER:STEAM")){
+	    return new SteamBoiler();
+	}else if(boilerType.equalsIgnoreCase("BOILER:HOTWATER")){
+	    return new HotWaterBoiler();
+	}
 	return null;
     }
 

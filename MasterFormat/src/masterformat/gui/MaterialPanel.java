@@ -5,17 +5,14 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
@@ -24,14 +21,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import eplus.EnergyPlusModel;
-import masterformat.api.ComponentFactory;
-import masterformat.api.MasterFormat;
-import masterformat.standard.concrete.Concrete;
-import masterformat.standard.concrete.ConcreteFactory;
-import masterformat.standard.masonry.Masonry;
-import masterformat.standard.masonry.MasonryFactory;
-import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
-import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtectionFactory;
 import masterformat.tree.TreeBuilder;
 import masterformat.tree.TreeNode;
 
@@ -100,10 +89,10 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	Object nodeInfo = node.getUserObject();
 	if (node.isLeaf()) {
 	    TreeNode tn = (TreeNode) nodeInfo;
-	    model.setMasterFormat(tn.getType(), tn.getDescription(),
+	    model.setConstructionMasterFormat(tn.getType(), tn.getDescription(),
 		    constructionName, index);
-	    userInputs = model.getUserInputs(constructionName, index);
-	    model.getCostVector(constructionName);
+	    userInputs = model.getConstructionUserInputs(constructionName, index);
+	    model.getConstructionCostVector(constructionName);
 	    disPlayData(userInputs);
 	}
     }
@@ -154,7 +143,7 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 		public void actionPerformed(ActionEvent evt) {
 		    String input = (String)tempCombo.getSelectedItem();
 		    userInputMap.put(option, input);
-		    model.setUserInput(userInputMap, constructionName, index);
+		    model.setConstructionUserInput(userInputMap, constructionName, index);
 		}
 	    });
 	    optionPanel.add(tempCombo);
@@ -177,7 +166,7 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 		public void actionPerformed(ActionEvent e) {
 		    String data = (String)inputField.getText();
 		    userInputMap.put(input, data);  
-		    model.setUserInput(userInputMap, constructionName, index);
+		    model.setConstructionUserInput(userInputMap, constructionName, index);
 		}
 		
 	    });

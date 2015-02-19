@@ -279,6 +279,9 @@ public class IdfReader {
 
     protected HashMap<String, HashMap<String, ArrayList<ValueNode>>> getObjectList(
 	    String object) {
+	if(eplusMap.get(object)==null){
+	    return null;
+	}
 	return deepCopyPartialMap(object);
     }
 

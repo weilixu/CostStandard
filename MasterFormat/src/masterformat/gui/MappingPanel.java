@@ -35,6 +35,8 @@ public class MappingPanel extends JPanel implements CostTableListener {
 
     private final JPanel EnergyPlusObjectPanel;
     private final JPanel itemPanel;
+    private final JPanel constructionPanel;
+    private final JPanel boilerPanel;
     private final JPanel tablePanel;
     private final DefaultTableModel tableModel;
     private final JTable table;
@@ -51,9 +53,12 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private final EnergyPlusModel model;
 
     private final JComboBox<String> objectSelectionCombo;
-    private final JList<String> itemLists;
-    private final JScrollPane listScrollPane;
-    private final DefaultListModel<String> listModel;
+    private JList<String> constructionList;
+    private JScrollPane constructionListScrollPane;
+    private DefaultListModel<String> constructionListModel;
+    private JList<String> boilerList;
+    private JScrollPane boilerListScrollPane;
+    private DefaultListModel<String> boilerListModel;
 
     // private final String[] costColumnName =
     // {"Material Name","Material Cost ($)",
@@ -67,17 +72,24 @@ public class MappingPanel extends JPanel implements CostTableListener {
 
 	setLayout(new BorderLayout());
 
-	itemPanel = new JPanel(new CardLayout());
+	itemPanel = new JPanel(new BorderLayout());
 	itemPanel.setBackground(Color.WHITE);
 	EnergyPlusObjectPanel = new JPanel(new BorderLayout());
 	Border raisedetched = BorderFactory
 		.createEtchedBorder(EtchedBorder.RAISED);
 	EnergyPlusObjectPanel.setBorder(raisedetched);
+	
+	//set-up different category panels
+	constructionPanel = new JPanel(new CardLayout());
+	constructionPanel.setBackground(Color.WHITE);
+	updateConstructions();
+	
+	boilerPanel = new JPanel(new CardLayout());
+	boilerPanel.setBackground(Color.WHITE);
+	updateBoilers();
 
-	listModel = new DefaultListModel<String>();
-	itemLists = new JList<String>(listModel);
-	itemLists.setFont(new Font("Helvetica", Font.BOLD, 20));
-
+	
+	//initialize the selection combo list
 	objectSelectionCombo = new JComboBox<String>(model.getDomainList());
 	objectSelectionCombo.addItemListener(new ItemListener() {
 	    @Override
@@ -85,15 +97,39 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		String category = (String) evt.getItem();
 
 		if (category.equals("Construction")) {
-		    updateConstructions();
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel.getLayout();
+		    EnergyPlusObjectPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+		    
+		    itemPanel.add(constructionPanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(constructionListScrollPane, BorderLayout.CENTER);
+		    
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
+		    
+		}else if(category.equals("Boiler")){
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel.getLayout();
+		    EnergyPlusObjectPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+		    
+		    itemPanel.add(boilerPanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(boilerListScrollPane, BorderLayout.CENTER);
+		    
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
 		}
 	    }
 	});
-
+	
+	itemPanel.add(constructionPanel, BorderLayout.CENTER);
 	EnergyPlusObjectPanel
 		.add(objectSelectionCombo, BorderLayout.PAGE_START);
-	listScrollPane = new JScrollPane(itemLists);
-	EnergyPlusObjectPanel.add(listScrollPane, BorderLayout.CENTER);
+	EnergyPlusObjectPanel.add(constructionListScrollPane, BorderLayout.CENTER);
+	
 	add(EnergyPlusObjectPanel, BorderLayout.WEST);
 
 	tablePanel = new JPanel(new BorderLayout());
@@ -120,9 +156,14 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	totalButton.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		model.addTotalCostToComponentCost(itemLists.getSelectedValue()
-			.toString(), (String) objectSelectionCombo
-			.getSelectedItem());
+		String category = (String) objectSelectionCombo.getSelectedItem();
+		if(category.equals("Construction")){
+			model.addTotalCostToComponentCost(constructionList.getSelectedValue()
+				.toString(), category);  
+		}else if(category.equals("Boiler")){
+		    model.addTotalCostToComponentCost(boilerList.getSelectedValue().toString(), category);
+		}
+
 	    }
 	});
 
@@ -131,9 +172,15 @@ public class MappingPanel extends JPanel implements CostTableListener {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		model.addTotalOPCostToComponentCost(itemLists.getSelectedValue()
-			.toString(),(String) objectSelectionCombo
-			.getSelectedItem());
+		String category = (String) objectSelectionCombo.getSelectedItem();
+		if(category.equals("Construction")){
+			model.addTotalOPCostToComponentCost(constructionList.getSelectedValue()
+				.toString(), category);	    
+		}else if(category.equals("Boiler")){
+			model.addTotalOPCostToComponentCost(boilerList.getSelectedValue()
+				.toString(), category);	
+		}
+
 	    }
 
 	});
@@ -160,28 +207,65 @@ public class MappingPanel extends JPanel implements CostTableListener {
     }
 
     private void updateConstructions() {
+	
+	constructionListModel = new DefaultListModel<String>();
+	constructionList = new JList<String>(constructionListModel);
+	constructionList.setFont(new Font("Helvetica", Font.BOLD, 20));
+	
+	
 	String[] cons = model.getConstructionList();
-	listModel.clear();
-	itemPanel.removeAll();
+	constructionListModel.clear();
 	for (String s : cons) {
 	    JTabbedPane tp = makeTabbedPanel(s);
-	    itemPanel.add(tp, s);
+	    constructionPanel.add(tp, s);
 
-	    listModel.addElement(s);
-	    itemLists.addListSelectionListener(new ListSelectionListener() {
+	    constructionListModel.addElement(s);
+	    constructionList.addListSelectionListener(new ListSelectionListener() {
 		@Override
 		public void valueChanged(ListSelectionEvent evt) {
-		    CardLayout cardLayout = (CardLayout) (itemPanel.getLayout());
-		    String selection = itemLists.getSelectedValue().toString();
+		    CardLayout cardLayout = (CardLayout) (constructionPanel.getLayout());
+		    String selection = constructionList.getSelectedValue().toString();
 		    if (selection.equals(s)) {
-			cardLayout.show(itemPanel, selection);
+			cardLayout.show(constructionPanel, selection);
 		    }
-		    model.getCostVector(selection);
+		    model.getConstructionCostVector(selection);
 		}
 	    });
 	}
-	itemPanel.revalidate();
-	itemPanel.repaint();
+	constructionListScrollPane = new JScrollPane(constructionList);
+    }
+    
+    private void updateBoilers(){
+	boilerListModel = new DefaultListModel<String>();
+	boilerList = new JList<String>(boilerListModel);
+	boilerList.setFont(new Font("Helvetica", Font.BOLD, 20));
+	
+	String[] boilers = model.getBoilerList();
+	boilerListModel.clear();
+	for(String s:boilers){
+	    
+	    model.setBoilerMasterFormat(s);
+	    JPanel boiler = new BoilerPanel(model,s);// need to change this
+	    boilerPanel.add(boiler, s);
+	    
+	    boilerListModel.addElement(s);
+	    boilerList.addListSelectionListener(new ListSelectionListener(){
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    CardLayout cardLayout = (CardLayout)(boilerPanel.getLayout());
+		    String selection = boilerList.getSelectedValue().toString();
+		    if(selection.equals(s)){
+			cardLayout.show(boilerPanel, selection);
+		    }
+		    model.getBoilerCostVector(selection);
+		}
+	    });
+	    
+
+	}
+	
+	boilerListScrollPane = new JScrollPane(boilerList);
     }
 
     private JTabbedPane makeTabbedPanel(String construction) {

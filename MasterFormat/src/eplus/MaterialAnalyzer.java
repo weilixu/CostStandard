@@ -12,7 +12,7 @@ import masterformat.api.MasterFormat;
 import eplus.IdfReader.ValueNode;
 
 /**
- * Currently material Analyzer could extra the following information: Floor
+ * Currently material Analyzer could extract the following information: Floor
  * Area, Height, surfacetype, thickness, conductivity, density, specificheat,
  * resistance Above information will be organized in an String[] data structure
  * in the order of: {floorArea, height, surfaceType, thickness, conductivity,
@@ -49,7 +49,7 @@ public class MaterialAnalyzer {
     protected final int specificHeatIndex = 6;
     protected final int resistanceIndex = 7;
 
-    private static final String[] defaultCostData = { "Unknown", "0", "0", "0",
+    private static final String[] defaultCostData = { "Unknown", "","0", "0", "0",
 	    "0", "0" };
     // the size of cost items (for the table display purpose)
     private final Integer rowElement = 7;
@@ -104,7 +104,7 @@ public class MaterialAnalyzer {
 		Double[] costInfo = m.getCostInformation();
 		// the first element in a vector is the material name
 		costVector[0] = m.getMaterialDescription();
-		costVector[1] = m.getMaterialUnit();
+		costVector[1] = generalUnit;
 		totalMaterial += costInfo[0];
 		totalLabor += costInfo[1];
 		totalEquipment += costInfo[2];

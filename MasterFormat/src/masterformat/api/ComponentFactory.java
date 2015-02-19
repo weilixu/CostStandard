@@ -1,7 +1,7 @@
 package masterformat.api;
 
 import masterformat.standard.concrete.Concrete;
-import masterformat.standard.hvac.hvac;
+import masterformat.standard.hvac.boiler.Boiler;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
@@ -14,5 +14,5 @@ public abstract class ComponentFactory {
     
     public abstract ThermalMoistureProtection getThermalMoistureProtection(String thermalMoistureProtectionType);
     
-    public abstract hvac getHVAC(String hvac);
+    public abstract Boiler getBoiler(String hvac);
 }
