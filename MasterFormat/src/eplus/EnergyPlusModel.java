@@ -232,7 +232,7 @@ public class EnergyPlusModel {
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
 	}else if(category.equalsIgnoreCase("BOILER")){
-	    String[] value = { item.toUpperCase(), "", category, item,"", cost.toString(),
+	    String[] value = { item.toUpperCase(), "", "General", item,"", cost.toString(),
 		    "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);

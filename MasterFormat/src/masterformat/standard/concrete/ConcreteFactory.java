@@ -2,6 +2,7 @@ package masterformat.standard.concrete;
 
 import masterformat.api.ComponentFactory;
 import masterformat.standard.hvac.boiler.Boiler;
+import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
@@ -33,6 +34,12 @@ public class ConcreteFactory extends ComponentFactory{
 
     @Override
     public Boiler getBoiler(String hvac) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public Fan getFan(String fan) {
 	// TODO Auto-generated method stub
 	return null;
     }
