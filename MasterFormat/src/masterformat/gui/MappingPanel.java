@@ -317,7 +317,6 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		    }
 		    model.getFanCostVector(selection);
 		}
-		
 	    });
 	}
 	fanListScrollPane = new JScrollPane(fanList);
