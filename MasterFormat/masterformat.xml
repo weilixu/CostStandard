@@ -25,18 +25,18 @@
 		</thermal_moisture>
 	</material>
 	<fan>
-		<axial tag="233413" description = "Axial HVAC Fans" type = "Axial Fan">
-			<axial_flow tag = "233413" description = "Axial Flow HVAC Fans" type = "Axial Fan"/>
+		<axial tag="233413" description = "Axial HVAC Fans" type = "Fan">
+			<axial_flow tag = "233413" description = "Axial Flow HVAC Fans" type = "Fan"/>
 		</axial>
-		<blower tag="233414" description = "Blower HVAC Fans" type = "Blower Fan">
-			<blower_ceiling tag="233414.102500" description = "Blower type HVAC ceiling fans" type = "Blower Fan"/>
-			<blower_set tag = "233414.102500" description = "Blower type HVAC utility set" type = "Blower Fan"/>
+		<blower tag="233414" description = "Blower HVAC Fans" type = "Fan">
+			<blower_ceiling tag="233414.102500" description = "Blower type HVAC ceiling fans" type = "Fan"/>
+			<blower_set tag = "233414.102500" description = "Blower type HVAC utility set" type = "Fan"/>
 		</blower>
 		<centrifugal tag="233416" description = "Centrifugal HVAC Fans" type="Centrifugal">
-			<centrifugal_booster tag="233416.100200" description = "Centrifugal type HVAC supply or exhaust booster" type = "Centrifugal"/>
-			<centrifugal_set tag = "233416.103500" description = "Centrifugal type HVAC utility set" type = "Centrifugal"/>
-			<centrifugal_roof tag = "233416.107000" description = "Centrifugal type HVAC Roof exhaust" type="Centrifugal"/>
-			<centrifugal_wall tag="233416.108500" description = "Centrifugal type HVAC Wall exhaust" type="Centrifugal"/>
+			<centrifugal_booster tag="233416.100200" description = "Centrifugal type HVAC supply or exhaust booster" type = "Fan"/>
+			<centrifugal_set tag = "233416.103500" description = "Centrifugal type HVAC utility set" type = "Fan"/>
+			<centrifugal_roof tag = "233416.107000" description = "Centrifugal type HVAC Roof exhaust" type="Fan"/>
+			<centrifugal_wall tag="233416.108500" description = "Centrifugal type HVAC Wall exhaust" type="Fan"/>
 		</centrifugal>
 	</fan>
 </masterformat>

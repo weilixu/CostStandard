@@ -36,7 +36,7 @@ public class FanFactory extends ComponentFactory{
 
     @Override
     public Fan getFan(String fan) {
-	if(fan.equalsIgnoreCase("AXIAL FLOW HVAC FAN")){
+	if(fan.equalsIgnoreCase("AXIAL FLOW HVAC FANS")){
 	    return new AxialFlowFan();
 	}else if(fan.equalsIgnoreCase("BLOWER TYPE HVAC CEILING FANS")){
 	    return new BlowerCeilingFan();

@@ -29,7 +29,8 @@ public class MasterFormatModel {
 	}else if(type.equalsIgnoreCase("BOILER")){
 	    factory = new BoilerFactory();
 	    return factory.getBoiler(description);
-	}else if(type.equals("Fan")){
+	}else if(type.equals("FAN")){
+	    System.out.println(description);
 	    factory = new FanFactory();
 	    return factory.getFan(description);
 	}

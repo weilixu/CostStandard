@@ -37,6 +37,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private final JPanel itemPanel;
     private final JPanel constructionPanel;
     private final JPanel boilerPanel;
+    private final JPanel fanPanel;
     private final JPanel tablePanel;
     private final DefaultTableModel tableModel;
     private final JTable table;
@@ -59,6 +60,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private JList<String> boilerList;
     private JScrollPane boilerListScrollPane;
     private DefaultListModel<String> boilerListModel;
+    private JList<String> fanList;
+    private JScrollPane fanListScrollPane;
+    private DefaultListModel<String> fanListModel;
 
     // private final String[] costColumnName =
     // {"Material Name","Material Cost ($)",
@@ -87,6 +91,10 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	boilerPanel = new JPanel(new CardLayout());
 	boilerPanel.setBackground(Color.WHITE);
 	updateBoilers();
+	
+	fanPanel = new JPanel(new CardLayout());
+	fanPanel.setBackground(Color.WHITE);
+	updateFans();
 
 	
 	//initialize the selection combo list
@@ -116,6 +124,18 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		    
 		    itemPanel.add(boilerPanel, BorderLayout.CENTER);
 		    EnergyPlusObjectPanel.add(boilerListScrollPane, BorderLayout.CENTER);
+		    
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
+		}else if(category.equals("Fan")){
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel.getLayout();
+		    EnergyPlusObjectPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+		    
+		    itemPanel.add(fanPanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(fanListScrollPane, BorderLayout.CENTER);
 		    
 		    itemPanel.revalidate();
 		    itemPanel.repaint();
@@ -162,6 +182,8 @@ public class MappingPanel extends JPanel implements CostTableListener {
 				.toString(), category);  
 		}else if(category.equals("Boiler")){
 		    model.addTotalCostToComponentCost(boilerList.getSelectedValue().toString(), category);
+		}else if(category.equals("Fan")){
+		    model.addTotalCostToComponentCost(fanList.getSelectedValue().toString(), category);
 		}
 
 	    }
@@ -178,6 +200,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
 				.toString(), category);	    
 		}else if(category.equals("Boiler")){
 			model.addTotalOPCostToComponentCost(boilerList.getSelectedValue()
+				.toString(), category);	
+		}else if(category.equals("Fan")){
+			model.addTotalOPCostToComponentCost(fanList.getSelectedValue()
 				.toString(), category);	
 		}
 
@@ -266,6 +291,37 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	}
 	
 	boilerListScrollPane = new JScrollPane(boilerList);
+    }
+    
+    private void updateFans(){
+	fanListModel = new DefaultListModel<String>();
+	fanList = new JList<String>(fanListModel);
+	fanList.setFont(new Font("Helvetica", Font.BOLD, 20));
+	
+	String[] fans = model.getFanList();
+	fanListModel.clear();
+	for(String f:fans){
+	    //model.setFanMasterFormat(f);
+	    JPanel fan = new FanPanel(model,f);// need to change this
+	    
+	    fanPanel.add(fan);
+	    fanListModel.addElement(f);
+	    fanList.addListSelectionListener(new ListSelectionListener(){
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    CardLayout cardLayout = (CardLayout)(fanPanel.getLayout());
+		    String selection = fanList.getSelectedValue().toString();
+		    if(selection.equals(f)){
+			cardLayout.show(fanPanel, selection);
+		    }
+		    model.getFanCostVector(selection);
+		}
+		
+	    });
+	}
+	fanListScrollPane = new JScrollPane(fanList);
+
     }
 
     private JTabbedPane makeTabbedPanel(String construction) {

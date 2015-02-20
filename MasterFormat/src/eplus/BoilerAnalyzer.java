@@ -54,7 +54,7 @@ public class BoilerAnalyzer {
 	    String[] costVector = new String[rowElement];
 	    if(boilerObject.getCostInformation()!=null){
 		Double[] costInfo = boilerObject.getCostInformation();
-		//the first element in a evctor is the material name;
+		//the first element in a vector is the boiler name;
 		costVector[0] = boilerObject.getBoilerDescription();
 		costVector[1] = generalUnit;
 
