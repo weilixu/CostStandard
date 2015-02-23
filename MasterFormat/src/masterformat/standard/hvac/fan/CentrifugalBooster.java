@@ -105,7 +105,7 @@ public class CentrifugalBooster extends AbstractFan {
 	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, above 2.40m3/s, 0.51m diameter connection (Predicted)";
 	    costVector = regressionCosts();
 	} else {
-	    costVector = priceData.get(description);
+	    costVector = deepCopyCost(priceData.get(description));
 
 	}
 	selected = false;
@@ -113,6 +113,14 @@ public class CentrifugalBooster extends AbstractFan {
 
     private Double[] regressionCosts() {
 	return regressionModel.predictCostVector(flowRate);
+    }
+    
+    private Double[] deepCopyCost(Double[] costVector){
+	Double[] temp = new Double[costVector.length];
+	for(int i=0; i<costVector.length; i++){
+	    temp[i]= costVector[i];
+	}
+	return temp;
     }
 
 }

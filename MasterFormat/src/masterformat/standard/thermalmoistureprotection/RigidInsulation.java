@@ -142,7 +142,7 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
 		description = "Expanded polystyrene, 76.2 mm, R-Value: 3.37";
 	    }
 	}
-	costVector = priceData.get(description);
+	costVector = deepCopyCost(priceData.get(description));
     }
 
     @Override
@@ -163,7 +163,6 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
     
     @Override
     public void setVariable(String[] surfaceProperties) {
-	System.out.println(Arrays.toString(surfaceProperties));
 	
 	try{
 	    thickness = Double.parseDouble(surfaceProperties[thicknessIndex]);
@@ -183,6 +182,14 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
 	Double[] temp = new Double[data.length];
 	for (int i = 0; i < temp.length; i++) {
 	    temp[i] = data[i] / 0.092903;
+	}
+	return temp;
+    }
+    
+    private Double[] deepCopyCost(Double[] costVector){
+	Double[] temp = new Double[costVector.length];
+	for(int i=0; i<costVector.length; i++){
+	    temp[i]= costVector[i];
 	}
 	return temp;
     }

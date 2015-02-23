@@ -87,10 +87,18 @@ public class AxialFlowFan extends AbstractFan {
 	    description = "Air conditioning and process air handling, Vaneaxial, low pressure, above 3.8 m3/s, above 1491 Watts";
 	    costVector = regressionModel.predictCostVector(flowRate);
 	}else{
-	    costVector = priceData.get(description);
+	    costVector = deepCopyCost(priceData.get(description));
 	}
 	
 	selected = false;
+    }
+    
+    private Double[] deepCopyCost(Double[] costVector){
+	Double[] temp = new Double[costVector.length];
+	for(int i=0; i<costVector.length; i++){
+	    temp[i]= costVector[i];
+	}
+	return temp;
     }
 
 //    private Double[] regressionCosts() {

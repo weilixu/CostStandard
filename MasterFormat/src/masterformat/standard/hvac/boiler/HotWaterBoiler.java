@@ -176,7 +176,15 @@ public class HotWaterBoiler extends AbstractBoiler{
 		description = "Oil-Fired Fired Boilers, Standard controls, flame retention burner, packaged, Cast iron with insulated flush jacket, 2043 kW";
 	    }
 	}
-	costVector = priceData.get(description);
+	costVector = deepCopyCost(priceData.get(description));
+    }
+    
+    private Double[] deepCopyCost(Double[] costVector){
+	Double[] temp = new Double[costVector.length];
+	for(int i=0; i<costVector.length; i++){
+	    temp[i]= costVector[i];
+	}
+	return temp;
     }
 
 }

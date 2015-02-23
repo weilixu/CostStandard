@@ -140,7 +140,6 @@ public class EnergyPlusModel {
      */
     public void setConstructionMasterFormat(String type, String description,
 	    String item, Integer index) {
-	System.out.println(type+" "+description);
 	MasterFormat mf = masterformat.getUserInputFromMap(type, description);
 	materialModule.getMaterialList(item).get(index).setMaterial(mf);
     }

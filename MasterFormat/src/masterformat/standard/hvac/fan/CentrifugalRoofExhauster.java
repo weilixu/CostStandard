@@ -1,6 +1,7 @@
 package masterformat.standard.hvac.fan;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -46,17 +47,17 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 		flowRate = Double.parseDouble(userInputsMap.get(temp));
 	    } else if (temp.equals("Drive")) {
 		drives = userInputsMap.get(temp);
-	    } else if (temp.equals("SpeedWind")) {
+	    } else if (temp.equals("For 2 speed winding")) {
 		String speed = userInputsMap.get(temp);
 		if (speed.equals("true")) {
 		    speedWind = true;
 		}
-	    } else if (temp.equals("Explosion")) {
+	    } else if (temp.equals("For explosionproof motor")) {
 		String explode = userInputsMap.get(temp);
 		if (explode.equals("true")) {
 		    explosion = true;
 		}
-	    } else if (temp.equals("TopDist")) {
+	    } else if (temp.equals("For belt driven, top discharge")) {
 		String top = userInputsMap.get(temp);
 		if (top.equals("true")) {
 		    topdischarge = true;
@@ -197,7 +198,7 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 	}
 
 	if (selected == false) {
-	    if (drives.equals("Direct Drive")) {
+	    if (drives.equals("Direct drive")) {
 		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, above 0.97m3/s above 0.010sqm damper";
 		costVector = regressionDDModel.predictCostVector(flowRate);
 	    } else {
@@ -205,20 +206,23 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 		costVector = regressionVBModel.predictCostVector(flowRate);
 	    }
 	} else {
-	    costVector = priceData.get(description);
+	    costVector = deepCopyCost(priceData.get(description));
 	}
 	selected = false;
 
 	if (speedWind) {
 	    multiplyMaterial(speedWindPercent);
+	    speedWind = false;
 	}
 
 	if (explosion) {
 	    addAdditions(explosionproofAddition);
+	    explosion = false;
 	}
 
 	if (topdischarge) {
 	    multiplyMaterial(topdischargePercent);
+	    topdischarge = false;
 	}
 
     }
@@ -242,6 +246,14 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 	costVector[totalOPIndex] = costVector[totalOPIndex]
 		+ costVector[materialIndex];
 
+    }
+    
+    private Double[] deepCopyCost(Double[] costVector){
+	Double[] temp = new Double[costVector.length];
+	for(int i=0; i<costVector.length; i++){
+	    temp[i]= costVector[i];
+	}
+	return temp;
     }
 
 }

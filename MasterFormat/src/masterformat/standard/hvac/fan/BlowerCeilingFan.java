@@ -132,7 +132,7 @@ public class BlowerCeilingFan extends AbstractFan {
 	    description = "Ceiling fan, right angle, extra quiet, 25 pa,above 1.40 m3/s (Predicted)";
 	    costVector = regressionCosts();
 	} else {
-	    costVector = priceData.get(description);
+	    costVector = deepCopyCost(priceData.get(description));
 	}
 
 	selected = false;
@@ -171,5 +171,13 @@ public class BlowerCeilingFan extends AbstractFan {
 	costVector[totalOPIndex] = costVector[totalOPIndex]
 		+ costVector[materialIndex];
 
+    }
+    
+    private Double[] deepCopyCost(Double[] costVector){
+	Double[] temp = new Double[costVector.length];
+	for(int i=0; i<costVector.length; i++){
+	    temp[i]= costVector[i];
+	}
+	return temp;
     }
 }

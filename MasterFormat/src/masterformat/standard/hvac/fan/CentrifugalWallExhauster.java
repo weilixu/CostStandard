@@ -117,12 +117,20 @@ public class CentrifugalWallExhauster extends AbstractFan {
 	    description = "Wall exhauster, centrifugal, auto damper, 31Pa, V-belt drive 3 phase, above 1.76m3/s, above 373Watts";
 	    costVector = regressionCosts();
 	} else {
-	    costVector = priceData.get(description);
+	    costVector = deepCopyCost(priceData.get(description));
 	}
 	selected = false;
     }
 
     private Double[] regressionCosts() {
 	return regressionModel.predictCostVector(flowRate);
+    }
+    
+    private Double[] deepCopyCost(Double[] costVector){
+	Double[] temp = new Double[costVector.length];
+	for(int i=0; i<costVector.length; i++){
+	    temp[i]= costVector[i];
+	}
+	return temp;
     }
 }

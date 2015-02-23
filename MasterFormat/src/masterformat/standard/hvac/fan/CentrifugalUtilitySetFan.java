@@ -204,9 +204,17 @@ public class CentrifugalUtilitySetFan extends AbstractFan {
 		costVector = regressionVBModel.predictCostVector(flowRate);
 	    }
 	} else {
-	    costVector = priceData.get(description);
+	    costVector = deepCopyCost(priceData.get(description));
 	}
 	selected = false;
+    }
+    
+    private Double[] deepCopyCost(Double[] costVector){
+	Double[] temp = new Double[costVector.length];
+	for(int i=0; i<costVector.length; i++){
+	    temp[i]= costVector[i];
+	}
+	return temp;
     }
 
 }

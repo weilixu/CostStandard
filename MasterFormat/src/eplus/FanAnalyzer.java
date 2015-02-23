@@ -288,7 +288,6 @@ public class FanAnalyzer {
 	    try {
 		fan.selectCostVector();
 	    } catch (NullPointerException e) {
-		System.out.println("Get into here??");
 		return null;
 	    }
 
