@@ -7,10 +7,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 import eplus.IdfReader.ValueNode;
+import eplus.htmlparser.EnergyPlusHTMLParser;
 import masterformat.api.MasterFormat;
 
 public class FanAnalyzer {
     private final IdfReader reader;
+    private final EnergyPlusHTMLParser parser;
     private HashMap<String, Fan> fanMap;
 
     private final int stringArraySize = 4;
@@ -34,14 +36,16 @@ public class FanAnalyzer {
     // the size of cost items (for the table display purpose)
     private final Integer rowElement = 7;
 
-    public FanAnalyzer(IdfReader reader) {
+    public FanAnalyzer(IdfReader reader, EnergyPlusHTMLParser p) {
 	this.reader = reader;
+	parser = p;
+	
 	fanMap = new HashMap<String, Fan>();
 	processFanRawDatafromFans();
     }
     
     protected String[][] getCostListForFan(String fan){
-	Fan f = fanMap.get(fan);
+	Fan f = fanMap.get(fan);	
 	String[][] costList = new String[1][rowElement];
 	
 	String generalUnit = f.getFanUnit();
@@ -127,7 +131,11 @@ public class FanAnalyzer {
 	    
 	    for(ValueNode vn: tempNodeList){
 		if(vn.getDescription().equals("Maximum Flow Rate")){
-		    f.setFlowRate(vn.getAttribute());
+		    String rate = vn.getAttribute();
+		    if(rate.equals("autosize")){
+			rate = parser.getFanSummary(name)[3];
+		    }
+		    f.setFlowRate(rate);
 		}
 	    }
 	    fanMap.put(name, f);
@@ -145,7 +153,11 @@ public class FanAnalyzer {
 	    
 	    for(ValueNode vn: tempNodeList){
 		if(vn.getDescription().equals("Maximum Flow Rate")){
-		    f.setFlowRate(vn.getAttribute());
+		    String rate = vn.getAttribute();
+		    if(rate.equals("autosize")){
+			rate = parser.getFanSummary(name)[3];
+		    }
+		    f.setFlowRate(rate);
 		}
 	    }
 	    fanMap.put(name, f);
@@ -164,7 +176,11 @@ public class FanAnalyzer {
 	    
 	    for(ValueNode vn: tempNodeList){
 		if(vn.getDescription().equals("Maximum Flow Rate")){
-		    f.setFlowRate(vn.getAttribute());
+		    String rate = vn.getAttribute();
+		    if(rate.equals("autosize")){
+			rate = parser.getFanSummary(name)[3];
+		    }
+		    f.setFlowRate(rate);
 		}
 	    }
 	    fanMap.put(name, f);
@@ -182,7 +198,11 @@ public class FanAnalyzer {
 	    
 	    for(ValueNode vn: tempNodeList){
 		if(vn.getDescription().equals("Maximum Flow Rate")){
-		    f.setFlowRate(vn.getAttribute());
+		    String rate = vn.getAttribute();
+		    if(rate.equalsIgnoreCase("autosize")){
+			rate = parser.getFanSummary(name)[3];
+		    }
+		    f.setFlowRate(rate);
 		}
 	    }
 	    fanMap.put(name, f);

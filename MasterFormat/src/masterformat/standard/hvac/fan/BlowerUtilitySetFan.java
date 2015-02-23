@@ -38,8 +38,6 @@ public class BlowerUtilitySetFan extends AbstractFan {
 
     private CostMultiRegressionModel regressionDDModel;
     private CostMultiRegressionModel regressionVBModel;
-    private final Double[] flowRateDDVector = { 0.07, 0.23, 0.92, 1.14, 1.57 };
-    private final Double[] flowRateVBVector = { 0.38, 0.61, 0.94, 1.37 };
 
     public BlowerUtilitySetFan() {
 	unit = "$/Ea";
@@ -75,6 +73,9 @@ public class BlowerUtilitySetFan extends AbstractFan {
 
 	regressionDDModel = new CostMultiRegressionModel();
 	regressionVBModel = new CostMultiRegressionModel();
+
+	Double[] flowRateDDVector = { 0.07, 0.23, 0.92, 1.14, 1.57 };
+	Double[] flowRateVBVector = { 0.38, 0.61, 0.94, 1.37 };
 	Double[][] costsMatrix = { { 870.0, 160.0, 0.0, 1030.0, 1200.0 },
 		{ 1100.0, 177.0, 0.0, 1277.0, 1475.0 },
 		{ 1275.0, 213.0, 0.0, 1488.0, 1725.0 },
@@ -96,30 +97,34 @@ public class BlowerUtilitySetFan extends AbstractFan {
 	typesOne.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.94 m3/s, 746 watts");
 	typesOne.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 1.37 m3/s, 560 watts");
 
+	int ddCounter=0;
+	int vbCounter=0;
 	for (int i = 0; i < typesOne.size(); i++) {
 	    priceData.put(typesOne.get(i), costsMatrix[i]);
 	    if (typesOne.get(i).contains("Direct drive")) {
-		regressionDDModel.addMaterialCost(flowRateDDVector[i],
+		regressionDDModel.addMaterialCost(flowRateDDVector[ddCounter],
 			costsMatrix[i][materialIndex]);
-		regressionDDModel.addLaborCost(flowRateDDVector[i],
+		regressionDDModel.addLaborCost(flowRateDDVector[ddCounter],
 			costsMatrix[i][laborIndex]);
-		regressionDDModel.addEquipmentCost(flowRateDDVector[i],
+		regressionDDModel.addEquipmentCost(flowRateDDVector[ddCounter],
 			costsMatrix[i][equipIndex]);
-		regressionDDModel.addTotalCost(flowRateDDVector[i],
+		regressionDDModel.addTotalCost(flowRateDDVector[ddCounter],
 			costsMatrix[i][totalIndex]);
-		regressionDDModel.addTotalOPCost(flowRateDDVector[i],
+		regressionDDModel.addTotalOPCost(flowRateDDVector[ddCounter],
 			costsMatrix[i][totalOPIndex]);
+		ddCounter++;
 	    } else {
-		regressionVBModel.addMaterialCost(flowRateVBVector[i],
+		regressionVBModel.addMaterialCost(flowRateVBVector[vbCounter],
 			costsMatrix[i][materialIndex]);
-		regressionVBModel.addLaborCost(flowRateVBVector[i],
+		regressionVBModel.addLaborCost(flowRateVBVector[vbCounter],
 			costsMatrix[i][laborIndex]);
-		regressionVBModel.addEquipmentCost(flowRateVBVector[i],
+		regressionVBModel.addEquipmentCost(flowRateVBVector[vbCounter],
 			costsMatrix[i][equipIndex]);
-		regressionVBModel.addTotalCost(flowRateVBVector[i],
+		regressionVBModel.addTotalCost(flowRateVBVector[vbCounter],
 			costsMatrix[i][totalIndex]);
-		regressionVBModel.addTotalOPCost(flowRateVBVector[i],
+		regressionVBModel.addTotalOPCost(flowRateVBVector[vbCounter],
 			costsMatrix[i][totalOPIndex]);
+		vbCounter++;
 	    }
 	}
 

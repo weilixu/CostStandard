@@ -16,9 +16,6 @@ public class CentrifugalWallExhauster extends AbstractFan {
 
     private CostMultiRegressionModel regressionModel;
 
-    private final Double[] flowRateVector = { 0.29, 0.38, 0.39, 0.62, 1.32,
-	    1.76 };
-
     public CentrifugalWallExhauster() {
 	unit = "$/Ea";
 	hierarchy = "230000 HVAC:233400 HVAC Fans:233416 Centrifugal HVAC Fans:233416.108500 Wall exhausters";
@@ -51,7 +48,7 @@ public class CentrifugalWallExhauster extends AbstractFan {
     @Override
     protected void initializeData() {
 	regressionModel = new CostMultiRegressionModel();
-
+	Double[] flowRateVector = { 0.29, 0.38, 0.39, 0.62, 1.32, 1.76 };
 	Double[][] costsMatrix = { { 425.0, 73.0, 0.0, 498.0, 575.0 },
 		{ 880.0, 79.0, 0.0, 959.0, 1075.0 },
 		{ 1075.0, 85.5, 0.0, 1160.50, 1300.0 },

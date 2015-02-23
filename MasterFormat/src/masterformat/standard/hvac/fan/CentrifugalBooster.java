@@ -9,8 +9,6 @@ import masterformat.standard.model.CostMultiRegressionModel;
 
 public class CentrifugalBooster extends AbstractFan {
     private CostMultiRegressionModel regressionModel;
-    private final Double[] flowRateVector = { 0.24, 0.65, 0.72, 1.21, 1.64,
-	    2.40 };
 
     private Double flowRate;
 
@@ -45,6 +43,7 @@ public class CentrifugalBooster extends AbstractFan {
     protected void initializeData() {
 	regressionModel = new CostMultiRegressionModel();
 
+	Double[] flowRateVector = { 0.24, 0.65, 0.72, 1.21, 1.64, 2.40 };
 	Double[][] costsMatrix = { { 1300.0, 340.0, 0.0, 1640.0, 1950.0 },
 		{ 1375.0, 510.0, 0.0, 1885.0, 2300.0 },
 		{ 1500.0, 510.0, 0.0, 2010.0, 2425.0 },

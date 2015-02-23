@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import eplus.MaterialAnalyzer.Material;
+import eplus.htmlparser.EnergyPlusHTMLParser;
 import masterformat.api.MasterFormat;
 import masterformat.listener.CostTableListener;
 import masterformat.standard.model.MasterFormatModel;
@@ -24,6 +25,7 @@ public class EnergyPlusModel {
 
     // models
     private final IdfReader idfDomain;
+    private EnergyPlusHTMLParser htmlParser;
     private final MasterFormatModel masterformat;
     private MaterialAnalyzer materialModule;
     private BoilerAnalyzer boilerModule;
@@ -35,14 +37,7 @@ public class EnergyPlusModel {
 
     // useful data
     private final String[] domainList = { "Construction", "Boiler","Fan" };// comboBox
-								     // list.
-								     // Shows
-								     // the
-								     // category
-								     // from
-								     // EnergyPlus
-								     // economic
-								     // model
+
     private String[][] costData;
     private final String componentCostDescription = "Name:Type:Line Item Type:Item Name:Object End-Use Key:Cost per Each:Cost per Area:"
 	    + "Cost per Unit of Output Capacity:Cost per Unit of Output Capacity per COP:Cost per Volume:Cost per Volume Rate:Cost per Energy per Temperature Difference"
@@ -69,6 +64,7 @@ public class EnergyPlusModel {
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
+	processHTML();
 	setUpMaterialAnalyzer();
 	setUpBoilerAnalyzer();
 	setUpFanAnalyzer();
@@ -319,6 +315,17 @@ public class EnergyPlusModel {
 		generatedCounter.toString());
 	generatedCounter++;
     }
+    
+    private void processHTML(){
+	File[] fList = parentFolder.listFiles();
+	for(File file:fList){
+	    if(file.isFile()){
+		if(file.getName().endsWith(".html")){
+		    htmlParser = new EnergyPlusHTMLParser(file);
+		}
+	    }
+	}
+    }
 
     private void setUpMaterialAnalyzer() {
 	materialModule = new MaterialAnalyzer(idfDomain);
@@ -329,7 +336,7 @@ public class EnergyPlusModel {
     }
 
     private void setUpFanAnalyzer() {
-	fanModule = new FanAnalyzer(idfDomain);
+	fanModule = new FanAnalyzer(idfDomain,htmlParser);
     }
 
     private void updateCostVectorInformation() {

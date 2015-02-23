@@ -20,9 +20,6 @@ public class BlowerCeilingFan extends AbstractFan {
     private final Double[] wallcap = { 300.0, 28.0, 0.0, 328.0, 375.0 };
     private final Double straightfan = 1.1;
 
-    private final Double[] flowRateVector = { 0.05, 0.10, 0.18, 0.42, 0.78,
-	    1.40 };
-
     public BlowerCeilingFan() {
 	unit = "$/Ea";
 	hierarchy = "230000 HVAC:233400 HVAC Fans:233414 Blower HVAC Fans:233414.102500 Ceiling Fan";
@@ -67,6 +64,8 @@ public class BlowerCeilingFan extends AbstractFan {
     @Override
     protected void initializeData() {
 	regressionModel = new CostMultiRegressionModel();
+
+	Double[] flowRateVector = { 0.05, 0.10, 0.18, 0.42, 0.78, 1.40 };
 
 	Double[][] costsMatrix = { { 300.0, 51.0, 0.0, 351.0, 410.0 },
 		{ 355.0, 54.0, 0.0, 409.0, 470.0 },
