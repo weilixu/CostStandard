@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.standard.model.CostMultiRegressionModel;
+
 /**
  * Utility ventilating set. This type of fans are self-contained units
  * consisting of a complete fan, motor and drive package. The arrangements offer
@@ -26,28 +28,34 @@ import java.util.Set;
  * @author Weili
  *
  */
-public class BlowerUtilitySetFan extends AbstractFan{
+public class BlowerUtilitySetFan extends AbstractFan {
 
     /**
      * have options V-belt drive or Direct drive
      */
     private String drives;
     private Double flowRate;
-    
-    public BlowerUtilitySetFan(){
+
+    private CostMultiRegressionModel regressionDDModel;
+    private CostMultiRegressionModel regressionVBModel;
+    private final Double[] flowRateDDVector = { 0.07, 0.23, 0.92, 1.14, 1.57 };
+    private final Double[] flowRateVBVector = { 0.38, 0.61, 0.94, 1.37 };
+
+    public BlowerUtilitySetFan() {
 	unit = "$/Ea";
 	hierarchy = "230000 HVAC:233400 HVAC Fans:233414 Blower HVAC Fans:233414.107500 Utility Set";
+	selected = false;
     }
 
     @Override
     public void setUserInputs(HashMap<String, String> userInputsMap) {
 	Set<String> inputs = userInputsMap.keySet();
 	Iterator<String> iterator = inputs.iterator();
-	while(iterator.hasNext()){
+	while (iterator.hasNext()) {
 	    String temp = iterator.next();
-	    if(temp.equals("Flow Rate")){
+	    if (temp.equals("Flow Rate")) {
 		flowRate = Double.parseDouble(userInputsMap.get(temp));
-	    }else if(temp.equals("Drive")){
+	    } else if (temp.equals("Drive")) {
 		drives = userInputsMap.get(temp);
 	    }
 	}
@@ -59,22 +67,24 @@ public class BlowerUtilitySetFan extends AbstractFan{
 	    flowRate = Double.parseDouble(surfaceProperties[flowRateIndex]);
 	} catch (NumberFormatException e) {
 	    userInputs.add("INPUT:Flow Rate:m3/s");
-	}	
+	}
     }
 
     @Override
     protected void initializeData() {
-	Double[][] costsMatrix = {{870.0,160.0,0.0,1030.0,1200.0},
-		{1100.0,177.0,0.0,1277.0,1475.0},
-		{1275.0,213.0,0.0,1488.0,1725.0},
-		{2375.0,233.0,0.0,2608.0,2950.0},
-		{2625.0,340.0,0.0,2965.0,3425.0},
-		{980.0,171.0,0.0,1151.0,1325.0},
-		{1025.0,205.0,0.0,1230.0,1425.0},
-		{1225.0,223.0,0.0,1448.0,1700.0},
-		{1650.0,244.0,0.0,1894.0,2175.0}
-	};
-	
+
+	regressionDDModel = new CostMultiRegressionModel();
+	regressionVBModel = new CostMultiRegressionModel();
+	Double[][] costsMatrix = { { 870.0, 160.0, 0.0, 1030.0, 1200.0 },
+		{ 1100.0, 177.0, 0.0, 1277.0, 1475.0 },
+		{ 1275.0, 213.0, 0.0, 1488.0, 1725.0 },
+		{ 2375.0, 233.0, 0.0, 2608.0, 2950.0 },
+		{ 2625.0, 340.0, 0.0, 2965.0, 3425.0 },
+		{ 980.0, 171.0, 0.0, 1151.0, 1325.0 },
+		{ 1025.0, 205.0, 0.0, 1230.0, 1425.0 },
+		{ 1225.0, 223.0, 0.0, 1448.0, 1700.0 },
+		{ 1650.0, 244.0, 0.0, 1894.0, 2175.0 } };
+
 	ArrayList<String> typesOne = new ArrayList<String>();
 	typesOne.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.07 m3/s, 93 watts");
 	typesOne.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.23 m3/s, 124 watts");
@@ -86,39 +96,91 @@ public class BlowerUtilitySetFan extends AbstractFan{
 	typesOne.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.94 m3/s, 746 watts");
 	typesOne.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 1.37 m3/s, 560 watts");
 
-	for(int i=0; i<typesOne.size(); i++){
+	for (int i = 0; i < typesOne.size(); i++) {
 	    priceData.put(typesOne.get(i), costsMatrix[i]);
+	    if (typesOne.get(i).contains("Direct drive")) {
+		regressionDDModel.addMaterialCost(flowRateDDVector[i],
+			costsMatrix[i][materialIndex]);
+		regressionDDModel.addLaborCost(flowRateDDVector[i],
+			costsMatrix[i][laborIndex]);
+		regressionDDModel.addEquipmentCost(flowRateDDVector[i],
+			costsMatrix[i][equipIndex]);
+		regressionDDModel.addTotalCost(flowRateDDVector[i],
+			costsMatrix[i][totalIndex]);
+		regressionDDModel.addTotalOPCost(flowRateDDVector[i],
+			costsMatrix[i][totalOPIndex]);
+	    } else {
+		regressionVBModel.addMaterialCost(flowRateVBVector[i],
+			costsMatrix[i][materialIndex]);
+		regressionVBModel.addLaborCost(flowRateVBVector[i],
+			costsMatrix[i][laborIndex]);
+		regressionVBModel.addEquipmentCost(flowRateVBVector[i],
+			costsMatrix[i][equipIndex]);
+		regressionVBModel.addTotalCost(flowRateVBVector[i],
+			costsMatrix[i][totalIndex]);
+		regressionVBModel.addTotalOPCost(flowRateVBVector[i],
+			costsMatrix[i][totalOPIndex]);
+	    }
 	}
-	
+
 	userInputs.add("OPTION:Drive:Direct Drive");
 	userInputs.add("OPTION:Drive:V-belt drive, drive cover, 3 phases");
     }
-    
+
     @Override
     public void selectCostVector() {
-	if(drives.equals("Direct Drive")){
-	    if(flowRate<=0.07){
+	if (drives.equals("Direct Drive")) {
+	    if (flowRate <= 0.07) {
 		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.07 m3/s, 93 watts";
-	    }else if(flowRate>0.07 && flowRate<=0.23){
+		selected = true;
+	    } else if (flowRate > 0.07 && flowRate <= 0.23) {
 		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.23 m3/s, 124 watts";
-	    }else if(flowRate>0.23 && flowRate<=0.92){
+		selected = true;
+
+	    } else if (flowRate > 0.23 && flowRate <= 0.92) {
 		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.92 m3/s, 373 watts";
-	    }else if(flowRate>0.92 && flowRate<=1.14){
+		selected = true;
+
+	    } else if (flowRate > 0.92 && flowRate <= 1.14) {
 		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, 1.14 m3/s, 560 watts";
-	    }else if(flowRate>1.14){
+		selected = true;
+
+	    } else if (flowRate > 1.14 && flowRate <= 1.57) {
 		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, 1.57 m3/s, 1120 watts";
+		selected = true;
+
 	    }
-	}else if(drives.equals("V-belt drive, drive cover, 3 phases")){
-	    if(flowRate<=0.38){
+	} else if (drives.equals("V-belt drive, drive cover, 3 phases")) {
+	    if (flowRate <= 0.38) {
 		description = "Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.38 m3/s, 186 watts";
-	    }else if(flowRate>0.38 && flowRate<=0.61){
+		selected = true;
+
+	    } else if (flowRate > 0.38 && flowRate <= 0.61) {
 		description = "Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.61 m3/s, 248 watts";
-	    }else if(flowRate>0.61 && flowRate<=0.94){
+		selected = true;
+
+	    } else if (flowRate > 0.61 && flowRate <= 0.94) {
 		description = "Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.94 m3/s, 746 watts";
-	    }else if(flowRate>0.94){
+		selected = true;
+
+	    } else if (flowRate > 0.94 && flowRate <= 1.37) {
 		description = "Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 1.37 m3/s, 560 watts";
+		selected = true;
+
 	    }
 	}
-	costVector = priceData.get(description);
+
+	if (selected == false) {
+	    if (drives.equals("Direct Drive")) {
+		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, above 1.57 m3/s, above 1120 watts (Predicted)";
+		costVector = regressionDDModel.predictCostVector(flowRate);
+	    } else {
+		description = "Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases above 1.37 m3/s, above 560 watts (Predicted)";
+		costVector = regressionVBModel.predictCostVector(flowRate);
+	    }
+	} else {
+	    costVector = priceData.get(description);
+	}
+	selected = false;
     }
 }

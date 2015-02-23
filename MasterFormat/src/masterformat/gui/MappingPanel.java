@@ -320,7 +320,6 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	    });
 	}
 	fanListScrollPane = new JScrollPane(fanList);
-
     }
 
     private JTabbedPane makeTabbedPanel(String construction) {

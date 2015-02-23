@@ -26,6 +26,7 @@ public abstract class AbstractFan implements Fan{
     //recorde the inputs that required outside of mapping process
     protected ArrayList<String> userInputs;
     protected String description;
+    protected boolean selected;
     
     public AbstractFan(){
 	userInputs = new ArrayList<String>();

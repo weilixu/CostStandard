@@ -47,13 +47,12 @@ public class FanAnalyzer {
 	String generalUnit = f.getFanUnit();
 	
 	String[] costVector = new String[rowElement];
-	if(f.getCostInformation()!=null){
-	    Double[] costInfo = f.getCostInformation();
+	Double[] costInfo = f.getCostInformation();
+	if(costInfo!=null){
 	    //the first element in a vector is the fan name;
 	    
 	    costVector[0] = f.getFanDescription();
 	    costVector[1] = generalUnit;
-	    
 	    for(int j=0; j<costInfo.length; j++){
 		costVector[j+2] = df.format(costInfo[j]);
 	    }
@@ -269,6 +268,7 @@ public class FanAnalyzer {
 	    try {
 		fan.selectCostVector();
 	    } catch (NullPointerException e) {
+		System.out.println("Get into here??");
 		return null;
 	    }
 

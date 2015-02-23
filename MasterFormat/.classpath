@@ -16,5 +16,6 @@
 			<attribute name="javadoc_location" value="jar:file:/C:/Users/Weili/weilixu/CostStandard/MasterFormat/lib/jsoup-1.8.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/ifc4javatoolbox_2.0.1_20130524.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

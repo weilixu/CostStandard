@@ -5,40 +5,46 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.standard.model.CostMultiRegressionModel;
 
 public class BlowerCeilingFan extends AbstractFan {
+
+    private CostMultiRegressionModel regressionModel;
 
     private Double flowRate;
     private boolean speedControl;
     private String mountMethod;
-    
-    private final Double[] speedControlAddition = {164.0,27.50,0.0,191.50,222.0};
-    private final Double[] wallcap = {300.0,28.0,0.0,328.0,375.0};
+
+    private final Double[] speedControlAddition = { 164.0, 27.50, 0.0, 191.50,
+	    222.0 };
+    private final Double[] wallcap = { 300.0, 28.0, 0.0, 328.0, 375.0 };
     private final Double straightfan = 1.1;
-    
-    
+
+    private final Double[] flowRateVector = { 0.05, 0.10, 0.18, 0.42, 0.78,
+	    1.40 };
+
     public BlowerCeilingFan() {
 	unit = "$/Ea";
 	hierarchy = "230000 HVAC:233400 HVAC Fans:233414 Blower HVAC Fans:233414.102500 Ceiling Fan";
-	
+	selected = false;
     }
 
     @Override
     public void setUserInputs(HashMap<String, String> userInputsMap) {
 	Set<String> inputs = userInputsMap.keySet();
 	Iterator<String> iterator = inputs.iterator();
-	while(iterator.hasNext()){
+	while (iterator.hasNext()) {
 	    String temp = iterator.next();
-	    if(temp.equals("SpeedControl")){
+	    if (temp.equals("SpeedControl")) {
 		String control = userInputsMap.get(temp);
-		if(control.equals("true")){
+		if (control.equals("true")) {
 		    speedControl = true;
-		}else{
+		} else {
 		    speedControl = false;
 		}
-	    }else if(temp.equals("Mount")){
+	    } else if (temp.equals("Mount")) {
 		mountMethod = userInputsMap.get(temp);
-	    }else if(temp.equals("Flow Rate")){
+	    } else if (temp.equals("Flow Rate")) {
 		flowRate = Double.parseDouble(userInputsMap.get(temp));
 	    }
 	}
@@ -60,12 +66,14 @@ public class BlowerCeilingFan extends AbstractFan {
 
     @Override
     protected void initializeData() {
-	Double[][] costsMatrix = { {300.0,51.0,0.0,351.0,410.0},
-		{355.0,54.0,0.0,409.0,470.0},
-		{450.0,57.0,0.0,507.0,580.0},
-		{890.0,64.0,0.0,954.0,1075.0},
-		{1225.0,79.0,0.0,1304.0,1475.0},
-		{1650.0,93.0,0.0,1743.0,1950.0}};
+	regressionModel = new CostMultiRegressionModel();
+
+	Double[][] costsMatrix = { { 300.0, 51.0, 0.0, 351.0, 410.0 },
+		{ 355.0, 54.0, 0.0, 409.0, 470.0 },
+		{ 450.0, 57.0, 0.0, 507.0, 580.0 },
+		{ 890.0, 64.0, 0.0, 954.0, 1075.0 },
+		{ 1225.0, 79.0, 0.0, 1304.0, 1475.0 },
+		{ 1650.0, 93.0, 0.0, 1743.0, 1950.0 } };
 	ArrayList<String> typesOne = new ArrayList<String>();
 	typesOne.add("Ceiling fan, right angle, extra quiet, 25 pa,0.05 m3/s");
 	typesOne.add("Ceiling fan, right angle, extra quiet, 25 pa,0.10 m3/s");
@@ -74,58 +82,95 @@ public class BlowerCeilingFan extends AbstractFan {
 	typesOne.add("Ceiling fan, right angle, extra quiet, 25 pa,0.78 m3/s");
 	typesOne.add("Ceiling fan, right angle, extra quiet, 25 pa,1.40 m3/s");
 
-	for(int i=0; i<typesOne.size(); i++){
+	for (int i = 0; i < typesOne.size(); i++) {
 	    priceData.put(typesOne.get(i), costsMatrix[i]);
+
+	    regressionModel.addMaterialCost(flowRateVector[i],
+		    costsMatrix[i][materialIndex]);
+	    regressionModel.addLaborCost(flowRateVector[i],
+		    costsMatrix[i][laborIndex]);
+	    regressionModel.addEquipmentCost(flowRateVector[i],
+		    costsMatrix[i][equipIndex]);
+	    regressionModel.addTotalCost(flowRateVector[i],
+		    costsMatrix[i][totalIndex]);
+	    regressionModel.addTotalOPCost(flowRateVector[i],
+		    costsMatrix[i][totalOPIndex]);
 	}
-	
+
 	userInputs.add("OPTION:Mount:None");
 	userInputs.add("OPTION:Mount:For wall or roof cap");
 	userInputs.add("OPTION:Mount:For straight thru fan");
 	userInputs.add("BOOL:SpeedControl:Speed Control Switch");
     }
-    
+
     @Override
     public void selectCostVector() {
-	if(flowRate<=0.05){
+	if (flowRate <= 0.05) {
 	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.05 m3/s";
-	}else if(flowRate>0.05 && flowRate<=0.10){
+	    selected = true;
+	} else if (flowRate > 0.05 && flowRate <= 0.10) {
 	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.10 m3/s";
-	}else if(flowRate>0.10 && flowRate<=0.18){
+	    selected = true;
+	} else if (flowRate > 0.10 && flowRate <= 0.18) {
 	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.18 m3/s";
-	}else if(flowRate>0.18 && flowRate<=0.42){
-	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.42 m3/s";
-	}else if(flowRate>0.42 && flowRate<=0.78){
-	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.78 m3/s";
-	}else if(flowRate>0.78){
-	    description = "Ceiling fan, right angle, extra quiet, 25 pa,1.40 m3/s";
-	}
-	costVector = priceData.get(description);
+	    selected = true;
 
-	if(speedControl){
+	} else if (flowRate > 0.18 && flowRate <= 0.42) {
+	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.42 m3/s";
+	    selected = true;
+
+	} else if (flowRate > 0.42 && flowRate <= 0.78) {
+	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.78 m3/s";
+	    selected = true;
+
+	} else if (flowRate > 0.78 && flowRate <= 1.4) {
+	    description = "Ceiling fan, right angle, extra quiet, 25 pa,1.40 m3/s";
+	    selected = true;
+
+	}
+
+	if (selected == false) {
+	    description = "Ceiling fan, right angle, extra quiet, 25 pa,above 1.40 m3/s (Predicted)";
+	    costVector = regressionCosts();
+	} else {
+	    costVector = priceData.get(description);
+	}
+
+	selected = false;
+
+	if (speedControl) {
 	    addAdditions(speedControlAddition);
 	}
-	
-	if(mountMethod.equals("For wall or roof cap")){
+
+	if (mountMethod.equals("For wall or roof cap")) {
 	    addAdditions(wallcap);
-	}else if(mountMethod.equals("For straight thru fan")){
+	} else if (mountMethod.equals("For straight thru fan")) {
 	    multiplyMaterial(straightfan);
 	}
     }
-    
-    private void addAdditions(Double[] additions){
-	for(int i=0; i<costVector.length; i++){
-	    costVector[i] = costVector[i]+additions[i];
+
+    private Double[] regressionCosts() {
+	return regressionModel.predictCostVector(flowRate);
+    }
+
+    private void addAdditions(Double[] additions) {
+	for (int i = 0; i < costVector.length; i++) {
+	    costVector[i] = costVector[i] + additions[i];
 	}
     }
-    
-    private void multiplyMaterial(Double percent){
-	costVector[totalIndex] = costVector[totalIndex] - costVector[materialIndex];
-	costVector[totalOPIndex] = costVector[totalOPIndex] - costVector[materialIndex];
 
-	costVector[materialIndex] = costVector[materialIndex]*percent;
-	
-	costVector[totalIndex] = costVector[totalIndex] + costVector[materialIndex];
-	costVector[totalOPIndex] = costVector[totalOPIndex] + costVector[materialIndex];
-	
+    private void multiplyMaterial(Double percent) {
+	costVector[totalIndex] = costVector[totalIndex]
+		- costVector[materialIndex];
+	costVector[totalOPIndex] = costVector[totalOPIndex]
+		- costVector[materialIndex];
+
+	costVector[materialIndex] = costVector[materialIndex] * percent;
+
+	costVector[totalIndex] = costVector[totalIndex]
+		+ costVector[materialIndex];
+	costVector[totalOPIndex] = costVector[totalOPIndex]
+		+ costVector[materialIndex];
+
     }
 }
