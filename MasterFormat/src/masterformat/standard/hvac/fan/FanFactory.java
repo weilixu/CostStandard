@@ -3,6 +3,7 @@ package masterformat.standard.hvac.fan;
 import masterformat.api.ComponentFactory;
 import masterformat.standard.concrete.Concrete;
 import masterformat.standard.hvac.boiler.Boiler;
+import masterformat.standard.hvac.condenserunits.CondenserUnits;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
@@ -51,6 +52,12 @@ public class FanFactory extends ComponentFactory{
 	}else if(fan.equalsIgnoreCase("CENTRIFUGAL TYPE HVAC WALL EXHAUST")){
 	    return new CentrifugalWallExhauster();
 	}
+	return null;
+    }
+
+    @Override
+    public CondenserUnits getCondenserUnit(String condenserunit) {
+	// TODO Auto-generated method stub
 	return null;
     }
 }

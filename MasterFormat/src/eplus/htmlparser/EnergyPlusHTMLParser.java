@@ -14,6 +14,7 @@ public class EnergyPlusHTMLParser {
     private Document doc;
 
     private FanSizingSummary fanSummary;
+    private PumpSizingSummary pumpSummary;
 
     public EnergyPlusHTMLParser(File f) {
 	htmlFile = f;
@@ -22,6 +23,7 @@ public class EnergyPlusHTMLParser {
 	    doc = Jsoup.parse(htmlFile, "UTF-8");
 	    preprocessTable();
 	    fanSummary = new FanSizingSummary(doc);
+	    pumpSummary = new PumpSizingSummary(doc);
 	} catch (IOException e) {
 	    // do nothing
 	}
@@ -55,8 +57,6 @@ public class EnergyPlusHTMLParser {
 	fanProperties[1] = fanSummary.getFanPressure(fanName);
 	fanProperties[2] = fanSummary.getFanFlowRate(fanName);
 	fanProperties[3] = fanSummary.getFanPower(fanName);
-	System.out.println(Arrays.toString(fanProperties));
 	return fanProperties;
     }
-
 }

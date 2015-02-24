@@ -3,6 +3,7 @@ package masterformat.standard.thermalmoistureprotection;
 import masterformat.api.ComponentFactory;
 import masterformat.standard.concrete.Concrete;
 import masterformat.standard.hvac.boiler.Boiler;
+import masterformat.standard.hvac.condenserunits.CondenserUnits;
 import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.masonry.Masonry;
 
@@ -37,6 +38,12 @@ public class ThermalMoistureProtectionFactory extends ComponentFactory{
 
     @Override
     public Fan getFan(String fan) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public CondenserUnits getCondenserUnit(String condenserunit) {
 	// TODO Auto-generated method stub
 	return null;
     }

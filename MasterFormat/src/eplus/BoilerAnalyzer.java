@@ -52,8 +52,8 @@ public class BoilerAnalyzer {
 	
 
 	    String[] costVector = new String[rowElement];
-	    if(boilerObject.getCostInformation()!=null){
-		Double[] costInfo = boilerObject.getCostInformation();
+	    Double[] costInfo = boilerObject.getCostInformation();
+	    if(costInfo!=null){
 		//the first element in a vector is the boiler name;
 		costVector[0] = boilerObject.getBoilerDescription();
 		costVector[1] = generalUnit;
@@ -183,7 +183,6 @@ public class BoilerAnalyzer {
 	}
 	
 	public void setSourceType(String st){
-	    System.out.println(st);
 	    properties[sourceTypeIndex] = st;
 	}
 	

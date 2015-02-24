@@ -279,7 +279,7 @@ public class IdfReader {
 
     protected HashMap<String, HashMap<String, ArrayList<ValueNode>>> getObjectList(
 	    String object) {
-	if(eplusMap.get(object)==null){
+	if (eplusMap.get(object) == null) {
 	    return null;
 	}
 	return deepCopyPartialMap(object);
@@ -383,24 +383,22 @@ public class IdfReader {
      */
     public void addNewEnergyPlusObject(String objectName,
 	    String[] objectValues, String[] objectDes) {
+	System.out.println("This is the map size: "
+		+ eplusMap.get(objectName).size());
 	// create value node array
 	ArrayList<ValueNode> newObject = new ArrayList<ValueNode>();
 	for (int i = 0; i < objectValues.length; i++) {
 	    newObject.add(new ValueNode(objectValues[i], objectDes[i]));
 	}
 	// create a new map
-	HashMap<String, ArrayList<ValueNode>> temp = new HashMap<String, ArrayList<ValueNode>>();
 	String elementCount = null;
 	if (eplusMap.containsKey(objectName)) {
 	    Integer count = eplusMap.get(objectName).size();
 	    elementCount = count.toString();
-	    temp.put(elementCount, newObject);
-	    eplusMap.put(objectName, temp);
 	} else {
 	    elementCount = "0";
-	    temp.put(elementCount, newObject);
-	    eplusMap.put(objectName, temp);
 	}
+	eplusMap.get(objectName).put(elementCount, newObject);
     }
 
     public String copyExistingEplusObject(String objectName, String elementCount) {

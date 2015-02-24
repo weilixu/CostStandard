@@ -4,6 +4,7 @@ import masterformat.api.ComponentFactory;
 import masterformat.api.MasterFormat;
 import masterformat.standard.concrete.ConcreteFactory;
 import masterformat.standard.hvac.boiler.BoilerFactory;
+import masterformat.standard.hvac.condenserunits.CondenserUnitsFactory;
 import masterformat.standard.hvac.fan.FanFactory;
 import masterformat.standard.masonry.MasonryFactory;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtectionFactory;
@@ -30,9 +31,11 @@ public class MasterFormatModel {
 	    factory = new BoilerFactory();
 	    return factory.getBoiler(description);
 	}else if(type.equals("FAN")){
-	    System.out.println(description);
 	    factory = new FanFactory();
 	    return factory.getFan(description);
+	}else if(type.equalsIgnoreCase("CONDENSERUNIT")){
+	    factory = new CondenserUnitsFactory();
+	    return factory.getCondenserUnit(description);
 	}
 	return null;
     }

@@ -1,46 +1,35 @@
-package masterformat.standard.masonry;
+package masterformat.standard.hvac.condenserunits;
 
 import masterformat.api.ComponentFactory;
 import masterformat.standard.concrete.Concrete;
 import masterformat.standard.hvac.boiler.Boiler;
-import masterformat.standard.hvac.condenserunits.CondenserUnits;
 import masterformat.standard.hvac.fan.Fan;
+import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
-public class MasonryFactory extends ComponentFactory{
+public class CondenserUnitsFactory extends ComponentFactory{
 
     @Override
     public Masonry getMasonry(String masonryType) {
-	if(masonryType==null){
-	    return null;
-	}
-	
-	if(masonryType.equalsIgnoreCase("BRICK VENEER MASONRY")){
-		return new BrickVennerMasonry();
-	}
-	
-	if(masonryType.equalsIgnoreCase("THIN BRICK VENEER")){
-	    return new ThinBrickVeneer();
-	}
-	
+	// TODO Auto-generated method stub
 	return null;
     }
 
     @Override
     public Concrete getConcrete(String concreteType) {
-	//this factory would not produce concrete
+	// TODO Auto-generated method stub
 	return null;
     }
 
     @Override
     public ThermalMoistureProtection getThermalMoistureProtection(
 	    String thermalMoistureProtectionType) {
-	//this factory would not produce thermal and moisture protection
+	// TODO Auto-generated method stub
 	return null;
     }
 
     @Override
-    public Boiler getBoiler(String hvac) {
+    public Boiler getBoiler(String boiler) {
 	// TODO Auto-generated method stub
 	return null;
     }
@@ -53,7 +42,11 @@ public class MasonryFactory extends ComponentFactory{
 
     @Override
     public CondenserUnits getCondenserUnit(String condenserunit) {
-	// TODO Auto-generated method stub
+	System.out.println(condenserunit);
+	if(condenserunit.equalsIgnoreCase("Packaged Air-Cooled Refrigerant Condensing Units")){
+	    return new PackagedCU();
+	}
 	return null;
     }
+
 }

@@ -3,6 +3,7 @@ package eplus;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,13 +31,14 @@ public class EnergyPlusModel {
     private MaterialAnalyzer materialModule;
     private BoilerAnalyzer boilerModule;
     private FanAnalyzer fanModule;
+    private CondenserUnitAnalyzer condenserUnitModule;
 
     // files locations etc.
     private final File eplusFile;
     private final File parentFolder;
 
     // useful data
-    private final String[] domainList = { "Construction", "Boiler","Fan" };// comboBox
+    private final String[] domainList = { "Construction", "Boiler","Fan","DX Coils" };// comboBox
 
     private String[][] costData;
     private final String componentCostDescription = "Name:Type:Line Item Type:Item Name:Object End-Use Key:Cost per Each:Cost per Area:"
@@ -68,6 +70,7 @@ public class EnergyPlusModel {
 	setUpMaterialAnalyzer();
 	setUpBoilerAnalyzer();
 	setUpFanAnalyzer();
+	setUpCondenserUnitAnalyzer();
     }
 
     /**
@@ -117,6 +120,10 @@ public class EnergyPlusModel {
     public String[] getFanList() {
 	return fanModule.getFanList();
     }
+    
+    public String[] getCondenserUnitList(){
+	return condenserUnitModule.getCondenserList();
+    }
 
     /**
      * get the material cost data from the material analyzer
@@ -158,12 +165,16 @@ public class EnergyPlusModel {
     /**
      * For fans mapping
      * 
-     * @param description
+     * @param description: type of the object in energyplus
      */
     public void setFanMasterFormat(String fanName,String description) {
-	System.out.println(fanName+" "+description);
 	MasterFormat mf = masterformat.getUserInputFromMap("FAN", description);
 	fanModule.setFanMasterFormat(fanName, mf);
+    }
+    
+    public void setCondenserMasterFormat(String condenserName, String description){
+	MasterFormat mf = masterformat.getUserInputFromMap("CONDENSERUNIT", description);
+	condenserUnitModule.setCondenserUnitMasterFormat(condenserName, mf);
     }
 
     // All the methods to retrieve user inputs from the mapping results
@@ -186,6 +197,10 @@ public class EnergyPlusModel {
 
     public ArrayList<String> getFanUserInputs(String fanName) {
 	return fanModule.getFan(fanName).getUserInputs();
+    }
+    
+    public ArrayList<String> getCondenserUnitInputs(String condenserName){
+	return condenserUnitModule.getCondenser(condenserName).getUserInputs();
     }
 
     // All the methods to extract the cost vector from the masterformat
@@ -216,6 +231,11 @@ public class EnergyPlusModel {
      */
     public void getFanCostVector(String item) {
 	costData = fanModule.getCostListForFan(item);
+	updateCostVectorInformation();
+    }
+    
+    public void getCondenserUnitCostVector(String item){
+	costData = condenserUnitModule.getCostListForCondenserUnit(item);
 	updateCostVectorInformation();
     }
 
@@ -253,6 +273,11 @@ public class EnergyPlusModel {
 	fanModule.setUserInput(map, fanName);
 	getFanCostVector(fanName);
     }
+    
+    public void setCondenserUnitUserInput(HashMap<String, String> map, String condenserName){
+	condenserUnitModule.setUserInput(map, condenserName);
+	getCondenserUnitCostVector(condenserName);
+    }
 
     // All the method that retrieve the cost information and put it down to
     // EnergyPlus Component line object
@@ -263,10 +288,11 @@ public class EnergyPlusModel {
      * @param category
      */
     public void addTotalCostToComponentCost(String item, String category) {
-	Integer totalCostIndex = 4;
+	Integer totalCostIndex = 5;
 	Double cost = Double
 		.parseDouble(costData[costData.length - 1][totalCostIndex]);
-
+	System.out.println(Arrays.toString(costData[costData.length-1]));
+	
 	String[] description = componentCostDescription.split(":");
 	if (category.equalsIgnoreCase("CONSTRUCTION")) {
 	    String[] value = { item.toUpperCase(), "", category, item, "", "",
@@ -274,6 +300,16 @@ public class EnergyPlusModel {
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
 	} else if (category.equalsIgnoreCase("BOILER")) {
+	    String[] value = { item.toUpperCase(), "", "General", item, "",
+		    cost.toString(), "", "", "", "", "", "", "1" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
+	} else if(category.equalsIgnoreCase("FAN")){
+	    String[] value = { item.toUpperCase(), "", "General", item, "",
+		    cost.toString(), "", "", "", "", "", "", "1" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
+	} else if(category.equalsIgnoreCase("DX Coils")){
 	    String[] value = { item.toUpperCase(), "", "General", item, "",
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
@@ -288,7 +324,7 @@ public class EnergyPlusModel {
      * @param category
      */
     public void addTotalOPCostToComponentCost(String item, String category) {
-	Integer totalCostIndex = 5;
+	Integer totalCostIndex = 6;
 	Double cost = Double
 		.parseDouble(costData[costData.length - 1][totalCostIndex]);
 
@@ -300,6 +336,16 @@ public class EnergyPlusModel {
 		    description);
 	} else if (category.equalsIgnoreCase("BOILER")) {
 	    String[] value = { item.toUpperCase(), "", category, item, "",
+		    cost.toString(), "", "", "", "", "", "", "1" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
+	} else if(category.equalsIgnoreCase("FAN")){
+	    String[] value = { item.toUpperCase(), "", "General", item, "",
+		    cost.toString(), "", "", "", "", "", "", "1" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
+	} else if(category.equalsIgnoreCase("CONDENSERUNIT")){
+	    String[] value = { item.toUpperCase(), "", "General", item, "",
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
@@ -336,6 +382,10 @@ public class EnergyPlusModel {
 
     private void setUpFanAnalyzer() {
 	fanModule = new FanAnalyzer(idfDomain,htmlParser);
+    }
+    
+    private void setUpCondenserUnitAnalyzer(){
+	condenserUnitModule = new CondenserUnitAnalyzer(idfDomain);
     }
 
     private void updateCostVectorInformation() {

@@ -39,6 +39,11 @@
 			<centrifugal_wall tag="233416.108500" description = "Centrifugal type HVAC Wall exhaust" type="Fan"/>
 		</centrifugal>
 	</fan>
+	<condenserunit>
+		<package tag="236213" description = "Packaged Air-Cooled Refrigerant Compressor and Condenser Units" type="CondenserUnit">
+			<package_air tag="236213.10" description = "Packaged Air-Cooled Refrigerant Condensing Units" type = "CondenserUnit"/>
+		</package>
+	</condenserunit>
 </masterformat>
 
 
