@@ -383,8 +383,6 @@ public class IdfReader {
      */
     public void addNewEnergyPlusObject(String objectName,
 	    String[] objectValues, String[] objectDes) {
-	System.out.println("This is the map size: "
-		+ eplusMap.get(objectName).size());
 	// create value node array
 	ArrayList<ValueNode> newObject = new ArrayList<ValueNode>();
 	for (int i = 0; i < objectValues.length; i++) {

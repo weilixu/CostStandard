@@ -1,6 +1,9 @@
 package masterformat.gui;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,8 +14,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -38,7 +43,10 @@ public class FanPanel extends JPanel implements TreeSelectionListener {
 
     private final JPanel editorPanel;
     private final JScrollPane editorView;
+    private final JPanel statuPanel;
+    private final JScrollPane statuView;
 
+    private final JSplitPane statusPane;
     private final JSplitPane splitPane;
 
     private final EnergyPlusModel model;
@@ -72,11 +80,21 @@ public class FanPanel extends JPanel implements TreeSelectionListener {
 	editorView = new JScrollPane(editorPanel);
 	editorView.getViewport().setBackground(Color.WHITE);
 
-	splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-	splitPane.setTopComponent(treeView);
-	splitPane.setBottomComponent(editorView);
+	splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+	splitPane.setLeftComponent(treeView);
+	splitPane.setRightComponent(editorView);
 
-	add(splitPane);
+	statusPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+	statusPane.setTopComponent(splitPane);
+	statuPanel = new JPanel();
+	statuPanel.setBackground(Color.WHITE);
+	statuPanel.setLayout(new BoxLayout(statuPanel, BoxLayout.PAGE_AXIS));
+	statuView = new JScrollPane(statuPanel);
+	statuView.getViewport().setBackground(Color.WHITE);
+
+	statusPane.setTopComponent(splitPane);
+	statusPane.setBottomComponent(statuView);
+	add(statusPane);
     }
 
     @Override
@@ -94,12 +112,40 @@ public class FanPanel extends JPanel implements TreeSelectionListener {
 	    model.setFanMasterFormat(fanName, tn.getDescription());
 	    userInputs = model.getFanUserInputs(fanName);
 	    model.getFanCostVector(fanName);
+	    disPlayOptions();
 	    disPlayData(userInputs);
 	}
     }
 
     public String getFanName() {
 	return fanName;
+    }
+
+    private void disPlayOptions() {
+	statuPanel.removeAll();
+	model.getFanOptionList(fanName);
+	model.getFanOptionQuantities(fanName);
+	String[] optionList = model.getOptionList();
+	Integer[] optionQuantities = model.getQuantityList();
+
+	for (int i = 0; i < optionList.length; i++) {
+	    JPanel tempPanel = new JPanel();
+	    JLabel text = new JLabel(optionList[i]);
+	    text.setFont(new Font("Helvetica", Font.BOLD, 12));
+	    // text.setEnabled();
+	    JTextField q = new JTextField(optionQuantities[i].toString());
+	    q.setFont(new Font("Helvetica", Font.BOLD, 10));
+	    q.setPreferredSize(new Dimension(100, 15));
+	    q.setEditable(false);
+	    tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.PAGE_AXIS));
+	    tempPanel.add(text);
+	    tempPanel.add(q);
+	    tempPanel.setBackground(Color.WHITE);
+	    tempPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+	    statuPanel.add(tempPanel);
+	}
+	statuPanel.revalidate();
+	statuPanel.repaint();
     }
 
     private void disPlayData(ArrayList<String> inputs) {
@@ -153,10 +199,16 @@ public class FanPanel extends JPanel implements TreeSelectionListener {
 		    Object source = e.getItemSelectable();
 		    if (source == tempCheckedBox) {
 			userInputMap.put(description, "true");
+			model.setFanUserInput(userInputMap, fanName);
+			disPlayOptions();
+
 		    }
-		    
-		    if(e.getStateChange()==ItemEvent.DESELECTED){
+
+		    if (e.getStateChange() == ItemEvent.DESELECTED) {
 			userInputMap.remove(description);
+			model.setFanUserInput(userInputMap, fanName);
+			disPlayOptions();
+
 		    }
 		}
 	    });
@@ -184,6 +236,8 @@ public class FanPanel extends JPanel implements TreeSelectionListener {
 		    String input = (String) tempCombo.getSelectedItem();
 		    userInputMap.put(option, input);
 		    model.setFanUserInput(userInputMap, fanName);
+		    disPlayOptions();
+
 		}
 	    });
 	    optionPanel.add(tempCombo);
@@ -208,6 +262,8 @@ public class FanPanel extends JPanel implements TreeSelectionListener {
 		    String data = (String) inputField.getText();
 		    userInputMap.put(input, data);
 		    model.setFanUserInput(userInputMap, fanName);
+		    disPlayOptions();
+
 		}
 
 	    });

@@ -31,6 +31,9 @@ abstract class AbstractConcrete implements Concrete{
     protected ArrayList<String> userInputs;
     protected String description;
     
+    protected ArrayList<String> optionLists;
+    protected ArrayList<Integer> optionQuantities;
+    
     
     public AbstractConcrete(){
 	userInputs = new ArrayList<String>();
@@ -104,5 +107,16 @@ abstract class AbstractConcrete implements Concrete{
      * This method is used to initialize the product's cost data
      */
     abstract protected void initializeData();
+    
+    @Override
+    public ArrayList<String> getOptionListFromObjects(){
+	return optionLists;
+    }
+    
+    @Override
+    public ArrayList<Integer> getQuantitiesFromObjects(){
+	return optionQuantities;
+    }
+    
 
 }

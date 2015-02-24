@@ -31,6 +31,9 @@ abstract class AbstractMasonry implements Masonry{
     protected ArrayList<String> userInputs;
     protected String description;
     
+    protected ArrayList<String> optionLists;
+    protected ArrayList<Integer> optionQuantities;
+    
     public AbstractMasonry(){
 	userInputs = new ArrayList<String>();
 	initializeData();
@@ -89,6 +92,16 @@ abstract class AbstractMasonry implements Masonry{
     @Override
     public ArrayList<String> getUserInputs(){
 	return userInputs;
+    }
+    
+    @Override
+    public ArrayList<String> getOptionListFromObjects(){
+	return optionLists;
+    }
+    
+    @Override
+    public ArrayList<Integer> getQuantitiesFromObjects(){
+	return optionQuantities;
     }
     
     @Override

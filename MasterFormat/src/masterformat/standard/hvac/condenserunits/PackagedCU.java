@@ -12,7 +12,6 @@ public class PackagedCU extends AbstractCondenserUnits {
     private final Double[] capacityList = { 5275.3, 17584.3, 35168.5, 70337.1 };
     private static final Double[] Default_Cost_Vector = {0.0,0.0,0.0,0.0,0.0};
     
-    private ArrayList<String> typesOne;
 
     public PackagedCU() {
 	unit = "$/Ea";
@@ -48,14 +47,19 @@ public class PackagedCU extends AbstractCondenserUnits {
 		{ 5000.0, 1725.0, 0.0, 6725.0, 8100.0 },
 		{ 11600.0, 3350.0, 0.0, 14950.0, 17800.0 } };
 
-	typesOne = new ArrayList<String>();
-	typesOne.add("Condensing unit, Air cooled, compressor, standard controls, 5200 watts");
-	typesOne.add("Condensing unit, Air cooled, compressor, standard controls, 17500 watts");
-	typesOne.add("Condensing unit, Air cooled, compressor, standard controls, 35100 watts");
-	typesOne.add("Condensing unit, Air cooled, compressor, standard controls, 70300 watts");
+	optionLists = new ArrayList<String>();
+	optionQuantities = new ArrayList<Integer>();
+	optionLists.add("Condensing unit, Air cooled, compressor, standard controls, 5200 watts");
+	optionQuantities.add(0);
+	optionLists.add("Condensing unit, Air cooled, compressor, standard controls, 17500 watts");
+	optionQuantities.add(0);
+	optionLists.add("Condensing unit, Air cooled, compressor, standard controls, 35100 watts");
+	optionQuantities.add(0);
+	optionLists.add("Condensing unit, Air cooled, compressor, standard controls, 70300 watts");
+	optionQuantities.add(0);
 
-	for (int i = 0; i < typesOne.size(); i++) {
-	    priceData.put(typesOne.get(i), costsMatrix[i]);
+	for (int i = 0; i < optionLists.size(); i++) {
+	    priceData.put(optionLists.get(i), costsMatrix[i]);
 	}
     }
 
@@ -74,12 +78,13 @@ public class PackagedCU extends AbstractCondenserUnits {
 	    description = "Condensing unit, Air cooled, compressor, standard controls, 70300 watts";
 	    costVector = deepCopyCost(priceData.get(description));
 	} else {
-	    description = "Condensing unit, Air cooled, compressor, standard controls, ";
+	    description = "Condensing unit, Air cooled, compressor, standard controls, Groups ";
 	    fittingCapacity();
 	}
     }
     
     private void fittingCapacity(){
+	setToZero();
 	//shows the best fit capacity
 	Double fittedCapacity=0.0;
 	//shows the total capacity added
@@ -105,14 +110,22 @@ public class PackagedCU extends AbstractCondenserUnits {
 	    }
 	}
 	//add to the cost vector
-	Double[] itemCost = priceData.get(typesOne.get(criticalIndex));
+	Double[] itemCost = priceData.get(optionLists.get(criticalIndex));
 	for(int j=0; j<costVector.length; j++){
 	    costVector[j]+=itemCost[j];
 	}
-	//modify the description
-	description=description+capacityList[criticalIndex]+"watts, ";
+	Integer q = optionQuantities.get(criticalIndex)+1;
+	optionQuantities.set(criticalIndex, q);
+	
 	return capacityList[criticalIndex];
     }
+    
+    private void setToZero(){
+	for(int i=0; i<optionQuantities.size(); i++){
+	    optionQuantities.set(i, 0);
+	}
+    }
+
     
     private Double[] deepCopyCost(Double[] costVector){
 	Double[] temp = new Double[costVector.length];

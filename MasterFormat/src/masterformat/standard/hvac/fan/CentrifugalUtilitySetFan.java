@@ -37,13 +37,18 @@ public class CentrifugalUtilitySetFan extends AbstractFan {
     private String drives;
     private Double flowRate;
 
-    private CostMultiRegressionModel regressionDDModel;
-    private CostMultiRegressionModel regressionVBModel;
+    private Double[] flowRateDDVector = { 0.47, 0.94, 1.89, 3.78, 5.66 };
+    private Double[] flowRateVBVector = { 0.57, 0.72, 0.87, 1.03, 1.70, 2.00,
+	    2.30 };
+
+    private final int VBIndex = 5;
+
+    private static final Double[] Default_Cost_Vector = { 0.0, 0.0, 0.0, 0.0,
+	    0.0 };
 
     public CentrifugalUtilitySetFan() {
 	unit = "$/Ea";
 	hierarchy = "230000 HVAC:233400 HVAC Fans:233416 Centrifugal HVAC Fans:233416.103500 Centrifugal, airfoil, motor and drive, complete";
-	selected = false;
     }
 
     @Override
@@ -71,11 +76,6 @@ public class CentrifugalUtilitySetFan extends AbstractFan {
 
     @Override
     protected void initializeData() {
-	regressionDDModel = new CostMultiRegressionModel();
-	regressionVBModel = new CostMultiRegressionModel();
-
-	Double[] flowRateDDVector = { 0.47, 0.94, 1.89, 3.78, 5.66 };
-	Double[] flowRateVBVector = { 0.57, 0.72, 0.87, 1.03, 1.70, 2.00, 2.30 };
 
 	Double[][] costsMatrix = { { 1900.0, 410.0, 0.0, 2310.0, 2700.0 },
 		{ 2150.0, 510.0, 0.0, 2660.0, 3125.0 },
@@ -90,52 +90,48 @@ public class CentrifugalUtilitySetFan extends AbstractFan {
 		{ 3300.0, 640.0, 0.0, 3940.0, 4600.0 },
 		{ 4000.0, 730.0, 0.0, 4730.0, 5500.0 } };
 
-	ArrayList<String> typesOne = new ArrayList<String>();
-	typesOne.add("Centrifugal, airfoil, motor and drive, complete 0.47m3/s 373Watt");
-	typesOne.add("Centrifugal, airfoil, motor and drive, complete 0.94m3/s 746Watt");
-	typesOne.add("Centrifugal, airfoil, motor and drive, complete 1.89m3/s 2237Watt");
-	typesOne.add("Centrifugal, airfoil, motor and drive, complete 3.78m3/s 5593Watt");
-	typesOne.add("Centrifugal, airfoil, motor and drive, complete 5.66m3/s 7457Watt");
-	typesOne.add("Centrifugal, Utility set, V belt drive, motor 63Pa, 0.57m3/s 186Watt");
-	typesOne.add("Centrifugal, Utility set, V belt drive, motor 63Pa, 0.72m3/s 249Watt");
-	typesOne.add("Centrifugal, Utility set, V belt drive, motor 63Pa, 0.87m3/s 373Watt");
-	typesOne.add("Centrifugal, Utility set, V belt drive, motor 63Pa, 1.03m3/s 560Watt");
-	typesOne.add("Centrifugal, Utility set, V belt drive, motor 125Pa, 1.70m3/s 746Watt");
-	typesOne.add("Centrifugal, Utility set, V belt drive, motor 125Pa, 2.00m3/s 1118Watt");
-	typesOne.add("Centrifugal, Utility set, V belt drive, motor 125Pa, 2.30m3/s 1491Watt");
-	
-	int ddCounter=0;
-	int vbCounter=0;
-	for (int i = 0; i < typesOne.size(); i++) {
-	    priceData.put(typesOne.get(i), costsMatrix[i]);
+	optionLists = new ArrayList<String>();
+	optionQuantities = new ArrayList<Integer>();
+	optionLists
+		.add("Centrifugal, airfoil, motor and drive, complete 0.47m3/s 373Watt");
+	optionQuantities.add(0);
+	optionLists
+		.add("Centrifugal, airfoil, motor and drive, complete 0.94m3/s 746Watt");
+	optionQuantities.add(0);
+	optionLists
+		.add("Centrifugal, airfoil, motor and drive, complete 1.89m3/s 2237Watt");
+	optionQuantities.add(0);
+	optionLists
+		.add("Centrifugal, airfoil, motor and drive, complete 3.78m3/s 5593Watt");
+	optionQuantities.add(0);
+	optionLists
+		.add("Centrifugal, airfoil, motor and drive, complete 5.66m3/s 7457Watt");
+	optionQuantities.add(0);
+	optionLists
+		.add("Centrifugal, Utility set, V belt drive, motor 63Pa, 0.57m3/s 186Watt");
+	optionQuantities.add(0);
+	optionLists
+		.add("Centrifugal, Utility set, V belt drive, motor 63Pa, 0.72m3/s 249Watt");
+	optionQuantities.add(0);
+	optionLists
+		.add("Centrifugal, Utility set, V belt drive, motor 63Pa, 0.87m3/s 373Watt");
+	optionQuantities.add(0);
+	optionLists
+		.add("Centrifugal, Utility set, V belt drive, motor 63Pa, 1.03m3/s 560Watt");
+	optionQuantities.add(0);
+	optionLists
+		.add("Centrifugal, Utility set, V belt drive, motor 125Pa, 1.70m3/s 746Watt");
+	optionQuantities.add(0);
+	optionLists
+		.add("Centrifugal, Utility set, V belt drive, motor 125Pa, 2.00m3/s 1118Watt");
+	optionQuantities.add(0);
+	optionLists
+		.add("Centrifugal, Utility set, V belt drive, motor 125Pa, 2.30m3/s 1491Watt");
+	optionQuantities.add(0);
 
-	    if (typesOne.get(i).contains("motor and drive")) {
-		regressionDDModel.addMaterialCost(flowRateDDVector[ddCounter],
-			costsMatrix[i][materialIndex]);
-		regressionDDModel.addLaborCost(flowRateDDVector[ddCounter],
-			costsMatrix[i][laborIndex]);
-		regressionDDModel.addEquipmentCost(flowRateDDVector[ddCounter],
-			costsMatrix[i][equipIndex]);
-		regressionDDModel.addTotalCost(flowRateDDVector[ddCounter],
-			costsMatrix[i][totalIndex]);
-		regressionDDModel.addTotalOPCost(flowRateDDVector[ddCounter],
-			costsMatrix[i][totalOPIndex]);
-		ddCounter++;
-	    } else {
-		regressionVBModel.addMaterialCost(flowRateVBVector[vbCounter],
-			costsMatrix[i][materialIndex]);
-		regressionVBModel.addLaborCost(flowRateVBVector[vbCounter],
-			costsMatrix[i][laborIndex]);
-		regressionVBModel.addEquipmentCost(flowRateVBVector[vbCounter],
-			costsMatrix[i][equipIndex]);
-		regressionVBModel.addTotalCost(flowRateVBVector[vbCounter],
-			costsMatrix[i][totalIndex]);
-		regressionVBModel.addTotalOPCost(flowRateVBVector[vbCounter],
-			costsMatrix[i][totalOPIndex]);
-		vbCounter++;
-	    }
+	for (int i = 0; i < optionLists.size(); i++) {
+	    priceData.put(optionLists.get(i), costsMatrix[i]);
 	}
-
 	userInputs.add("OPTION:Drive:Direct drive");
 	userInputs.add("OPTION:Drive:V-belt drive");
     }
@@ -145,74 +141,115 @@ public class CentrifugalUtilitySetFan extends AbstractFan {
 	if (drives.equals("Direct dirve")) {
 	    if (flowRate <= 0.47) {
 		description = "Centrifugal, airfoil, motor and drive, complete 0.47m3/s 373Watt";
-		selected = true;
+		costVector = deepCopyCost(priceData.get(description));
 	    } else if (flowRate > 0.47 && flowRate <= 0.94) {
 		description = "Centrifugal, airfoil, motor and drive, complete 0.94m3/s 746Watt";
-		selected = true;
+		costVector = deepCopyCost(priceData.get(description));
 
 	    } else if (flowRate > 0.94 && flowRate <= 1.89) {
 		description = "Centrifugal, airfoil, motor and drive, complete 1.89m3/s 2237Watt";
-		selected = true;
+		costVector = deepCopyCost(priceData.get(description));
 
 	    } else if (flowRate > 1.89 && flowRate <= 3.78) {
 		description = "Centrifugal, airfoil, motor and drive, complete 3.78m3/s 5593Watt";
-		selected = true;
+		costVector = deepCopyCost(priceData.get(description));
 
 	    } else if (flowRate > 3.78 && flowRate <= 5.66) {
 		description = "Centrifugal, airfoil, motor and drive, complete 5.66m3/s 7457Watt";
-		selected = true;
-
+		costVector = deepCopyCost(priceData.get(description));
+	    } else {
+		description = "Centrifugal, airfoil, motor and drive, complete grouped";
+		fittingFlowRate(flowRateDDVector, true);
 	    }
 	} else if (drives.equals("V-belt drive")) {
 	    if (flowRate <= 0.57) {
 		description = "Centrifugal, Utility set, V belt drive, motor 63Pa, 0.57m3/s 186Watt";
-		selected = true;
+		costVector = deepCopyCost(priceData.get(description));
 
 	    } else if (flowRate > 0.57 && flowRate <= 0.72) {
 		description = "Centrifugal, Utility set, V belt drive, motor 63Pa, 0.72m3/s 249Watt";
-		selected = true;
+		costVector = deepCopyCost(priceData.get(description));
 
 	    } else if (flowRate > 0.72 && flowRate <= 0.87) {
 		description = "Centrifugal, Utility set, V belt drive, motor 63Pa, 0.87m3/s 373Watt";
-		selected = true;
+		costVector = deepCopyCost(priceData.get(description));
 
 	    } else if (flowRate > 0.87 && flowRate <= 1.03) {
 		description = "Centrifugal, Utility set, V belt drive, motor 63Pa, 1.03m3/s 560Watt";
-		selected = true;
+		costVector = deepCopyCost(priceData.get(description));
 
 	    } else if (flowRate > 1.03 && flowRate <= 1.70) {
 		description = "Centrifugal, Utility set, V belt drive, motor 125Pa, 1.70m3/s 746Watt";
-		selected = true;
+		costVector = deepCopyCost(priceData.get(description));
 
 	    } else if (flowRate > 1.70 && flowRate <= 2.00) {
 		description = "Centrifugal, Utility set, V belt drive, motor 125Pa, 2.00m3/s 1118Watt";
-		selected = true;
+		costVector = deepCopyCost(priceData.get(description));
 
 	    } else if (flowRate > 2.00 && flowRate <= 2.30) {
 		description = "Centrifugal, Utility set, V belt drive, motor 125Pa, 2.30m3/s 1491Watt";
-		selected = true;
-
-	    }
-	}
-
-	if (selected == false) {
-	    if (drives.equals("motor and drive")) {
-		description = "Centrifugal, airfoil, motor and drive, complete above 5.66m3/s above 7457Watt (Predicted)";
-		costVector = regressionDDModel.predictCostVector(flowRate);
+		costVector = deepCopyCost(priceData.get(description));
 	    } else {
-		description = "Centrifugal, Utility set, V belt drive, motor 125Pa, above 2.30m3/s above 1491Watt (Predicted)";
-		costVector = regressionVBModel.predictCostVector(flowRate);
+		description = "Centrifugal, Utility set, V belt drive, motor 125Pa, grouped";
+		fittingFlowRate(flowRateVBVector, false);
 	    }
-	} else {
-	    costVector = deepCopyCost(priceData.get(description));
 	}
-	selected = false;
+    }
+
+    private void fittingFlowRate(Double[] flowList, boolean DD) {
+	setToZero();
+	// shows the best fit capacity
+	Double fittedFlowRate = 0.0;
+	// shows the total capacity added
+	Double totalFlowRate = 0.0;
+	costVector = deepCopyCost(Default_Cost_Vector);
+
+	while (totalFlowRate < flowRate) {
+	    fittedFlowRate = findFittedFlowRate(totalFlowRate, flowList, DD);
+	    totalFlowRate += fittedFlowRate;
+	}
+    }
+
+    private Double findFittedFlowRate(Double total, Double[] flowRateList, boolean DD) {
+	// the difference between capacity and total capacity
+	Double temp = flowRate;
+	Double fittedFlow = 0.0;
+	// index shows the current best fit capacity
+	int criticalIndex = 0;
+
+	for (int i = 0; i < flowRateList.length; i++) {
+	    Double residual = Math.abs(flowRate - total - flowRateList[i]);
+	    if (residual < temp) {
+		temp = residual;
+		criticalIndex = i;
+		fittedFlow = flowRateList[i];
+	    }
+	}
+	// add to the cost vector
+	if(!DD){
+	    criticalIndex = criticalIndex+VBIndex;
+	}
+	Double[] itemCost = priceData.get(optionLists.get(criticalIndex));
+	for (int j = 0; j < costVector.length; j++) {
+	    costVector[j] += itemCost[j];
+	}
+	Integer q = optionQuantities.get(criticalIndex) + 1;
+	optionQuantities.set(criticalIndex, q);
+
+	return fittedFlow;
     }
     
-    private Double[] deepCopyCost(Double[] costVector){
+    private void setToZero(){
+	for(int i=0; i<optionQuantities.size(); i++){
+	    optionQuantities.set(i, 0);
+	}
+    }
+
+
+    private Double[] deepCopyCost(Double[] costVector) {
 	Double[] temp = new Double[costVector.length];
-	for(int i=0; i<costVector.length; i++){
-	    temp[i]= costVector[i];
+	for (int i = 0; i < costVector.length; i++) {
+	    temp[i] = costVector[i];
 	}
 	return temp;
     }

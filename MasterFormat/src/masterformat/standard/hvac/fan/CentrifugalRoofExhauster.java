@@ -25,8 +25,14 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 	    660.0 };
     private final Double topdischargePercent = 1.15;
 
-    private CostMultiRegressionModel regressionDDModel;
-    private CostMultiRegressionModel regressionVBModel;
+    private Double[] flowRateDDVector = { 0.15, 0.28, 0.38, 0.68, 0.97 };
+    private Double[] flowRateVBVector = { 0.78, 1.30, 1.65, 2.32, 4.02, 6.50,
+	    9.70 };
+    
+    private final int VBIndex = 5;
+    
+    private static final Double[] Default_Cost_Vector = { 0.0, 0.0, 0.0, 0.0,0.0};
+
 
     public CentrifugalRoofExhauster() {
 	unit = "$/Ea";
@@ -34,7 +40,6 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 	speedWind = false;
 	explosion = false;
 	topdischarge = false;
-	selected = false;
     }
 
     @Override
@@ -77,11 +82,7 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 
     @Override
     protected void initializeData() {
-	regressionDDModel = new CostMultiRegressionModel();
-	regressionVBModel = new CostMultiRegressionModel();
 
-	Double[] flowRateDDVector = { 0.15, 0.28, 0.38, 0.68, 0.97 };
-	Double[] flowRateVBVector = { 0.78, 1.30, 1.65, 2.32, 4.02, 6.50, 9.70 };
 	Double[][] costsMatrix = { { 705.0, 146.0, 0.0, 851.0, 1000.0 },
 		{ 900.0, 171.0, 0.0, 1071.0, 1250.0 },
 		{ 900.0, 205.0, 0.0, 1105.0, 1300.0 },
@@ -95,50 +96,47 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 		{ 3925.0, 510.0, 0.0, 4435.0, 5100.0 },
 		{ 7875.0, 1025.0, 0.0, 8900.0, 10200.0 } };
 
-	ArrayList<String> typesOne = new ArrayList<String>();
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.15m3/s 0.007sqm damper");
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.28m3/s 0.007sqm damper");
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.38m3/s 0.008sqm damper");
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.68m3/s 0.008sqm damper");
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.97m3/s 0.010sqm damper");
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 0.78m3/s 0.008sqm damper");
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 1.30m3/s 0.014sqm damper");
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 1.65m3/s 0.014sqm damper");
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 2.32m3/s 0.015sqm damper");
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 4.02m3/s 0.018sqm damper");
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 6.50m3/s 0.023sqm damper");
-	typesOne.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 9.70m3/s 0.028sqm damper");
+	optionLists = new ArrayList<String>();
+	optionQuantities = new ArrayList<Integer>();
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.15m3/s 0.007sqm damper");
+	optionQuantities.add(0);
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.28m3/s 0.007sqm damper");
+	optionQuantities.add(0);
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.38m3/s 0.008sqm damper");
+	optionQuantities.add(0);
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.68m3/s 0.008sqm damper");
+	optionQuantities.add(0);
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.97m3/s 0.010sqm damper");
+	optionQuantities.add(0);
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 0.78m3/s 0.008sqm damper");
+	optionQuantities.add(0);
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 1.30m3/s 0.014sqm damper");
+	optionQuantities.add(0);
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 1.65m3/s 0.014sqm damper");
+	optionQuantities.add(0);
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 2.32m3/s 0.015sqm damper");
+	optionQuantities.add(0);
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 4.02m3/s 0.018sqm damper");
+	optionQuantities.add(0);
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 6.50m3/s 0.023sqm damper");
+	optionQuantities.add(0);
+	optionLists
+		.add("Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 9.70m3/s 0.028sqm damper");
+	optionQuantities.add(0);
 
-	int ddCounter=0;
-	int vbCounter=0;
-	for (int i = 0; i < typesOne.size(); i++) {
-	    priceData.put(typesOne.get(i), costsMatrix[i]);
-	    if (typesOne.get(i).contains("Direct drive")) {
-		regressionDDModel.addMaterialCost(flowRateDDVector[ddCounter],
-			costsMatrix[i][materialIndex]);
-		regressionDDModel.addLaborCost(flowRateDDVector[ddCounter],
-			costsMatrix[i][laborIndex]);
-		regressionDDModel.addEquipmentCost(flowRateDDVector[ddCounter],
-			costsMatrix[i][equipIndex]);
-		regressionDDModel.addTotalCost(flowRateDDVector[ddCounter],
-			costsMatrix[i][totalIndex]);
-		regressionDDModel.addTotalOPCost(flowRateDDVector[ddCounter],
-			costsMatrix[i][totalOPIndex]);
-		ddCounter++;
-	    } else {
-		regressionVBModel.addMaterialCost(flowRateVBVector[vbCounter],
-			costsMatrix[i][materialIndex]);
-		regressionVBModel.addLaborCost(flowRateVBVector[vbCounter],
-			costsMatrix[i][laborIndex]);
-		regressionVBModel.addEquipmentCost(flowRateVBVector[vbCounter],
-			costsMatrix[i][equipIndex]);
-		regressionVBModel.addTotalCost(flowRateVBVector[vbCounter],
-			costsMatrix[i][totalIndex]);
-		regressionVBModel.addTotalOPCost(flowRateVBVector[vbCounter],
-			costsMatrix[i][totalOPIndex]);
-		vbCounter++;
-	    }
-
+	for (int i = 0; i < optionLists.size(); i++) {
+	    priceData.put(optionLists.get(i), costsMatrix[i]);
 	}
 
 	userInputs.add("OPTION:Drive:Direct drive");
@@ -150,65 +148,52 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 
     @Override
     public void selectCostVector() {
-	if (flowRate <= 0.15) {
-	    description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.15m3/s 0.007sqm damper";
-	    selected = true;
-	} else if (flowRate > 0.15 && flowRate <= 0.28) {
-	    description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.28m3/s 0.007sqm damper";
-	    selected = true;
-	} else if (flowRate > 0.28 && flowRate <= 0.38) {
-	    description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.38m3/s 0.008sqm damper";
-	    selected = true;
-	} else if (flowRate > 0.38 && flowRate <= 0.68) {
-	    description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.68m3/s 0.008sqm damper";
-	    selected = true;
-	} else if (flowRate > 0.68 && flowRate <= 0.97) {
-	    if (drives.equals("Direct drive")) {
+	if (drives.equals("Direct drive")) {
+	    if (flowRate <= 0.15) {
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.15m3/s 0.007sqm damper";
+		costVector = deepCopyCost(priceData.get(description));
+	    } else if (flowRate > 0.15 && flowRate <= 0.28) {
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.28m3/s 0.007sqm damper";
+		costVector = deepCopyCost(priceData.get(description));
+	    } else if (flowRate > 0.28 && flowRate <= 0.38) {
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.38m3/s 0.008sqm damper";
+		costVector = deepCopyCost(priceData.get(description));
+	    } else if (flowRate > 0.38 && flowRate <= 0.68) {
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.68m3/s 0.008sqm damper";
+		costVector = deepCopyCost(priceData.get(description));
+	    } else if (flowRate > 0.68 && flowRate <= 0.97) {
 		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, 0.97m3/s 0.010sqm damper";
-		selected = true;
-	    } else if (drives.equals("V-belt drive")) {
-		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 0.78m3/s 0.008sqm damper";
-		selected = true;
-
-	    }
-	} else if (flowRate > 0.97 && flowRate <= 1.30) {
-	    description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 1.30m3/s 0.014sqm damper";
-	    selected = true;
-
-	} else if (flowRate > 1.30 && flowRate <= 1.65) {
-	    description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 1.65m3/s 0.014sqm damper";
-	    selected = true;
-
-	} else if (flowRate > 1.65 && flowRate <= 2.32) {
-	    description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 2.32m3/s 0.015sqm damper";
-	    selected = true;
-
-	} else if (flowRate > 2.32 && flowRate <= 4.02) {
-	    description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 4.02m3/s 0.018sqm damper";
-	    selected = true;
-
-	} else if (flowRate > 4.02 && flowRate <= 6.50) {
-	    description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 6.50m3/s 0.023sqm damper";
-	    selected = true;
-
-	} else if (flowRate > 6.50) {
-	    description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 9.70m3/s 0.028sqm damper";
-	    selected = true;
-
-	}
-
-	if (selected == false) {
-	    if (drives.equals("Direct drive")) {
-		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, above 0.97m3/s above 0.010sqm damper";
-		costVector = regressionDDModel.predictCostVector(flowRate);
 	    } else {
-		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, above 9.70m3/s above 0.028sqm damper";
-		costVector = regressionVBModel.predictCostVector(flowRate);
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, Direct drive, grouped";
+		fittingFlowRate(flowRateDDVector,true);
 	    }
-	} else {
-	    costVector = deepCopyCost(priceData.get(description));
+	} else if (drives.equals("V-belt drive")) {
+	    if (flowRate <= 0.78) {
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 0.78m3/s 0.008sqm damper";
+		costVector = deepCopyCost(priceData.get(description));
+	    } else if (flowRate > 0.78 && flowRate < 1.30) {
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 1.30m3/s 0.014sqm damper";
+		costVector = deepCopyCost(priceData.get(description));
+	    } else if (flowRate > 1.30 && flowRate <= 1.65) {
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 1.65m3/s 0.014sqm damper";
+		costVector = deepCopyCost(priceData.get(description));
+	    } else if (flowRate > 1.65 && flowRate <= 2.32) {
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 2.32m3/s 0.015sqm damper";
+		costVector = deepCopyCost(priceData.get(description));
+	    } else if (flowRate > 2.32 && flowRate <= 4.02) {
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 4.02m3/s 0.018sqm damper";
+		costVector = deepCopyCost(priceData.get(description));
+	    } else if (flowRate > 4.02 && flowRate <= 6.50) {
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 6.50m3/s 0.023sqm damper";
+		costVector = deepCopyCost(priceData.get(description));
+	    } else if (flowRate > 6.50 && flowRate <= 9.70) {
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive, 9.70m3/s 0.028sqm damper";
+		costVector = deepCopyCost(priceData.get(description));
+	    }else{
+		description = "Roof exhauster, centrifugal, aluminum housin, 0.3m galvanized curb, bird screen, back draft damper, 63Pa, V-belt drive,grouped";
+		fittingFlowRate(flowRateVBVector,false);
+	    }
 	}
-	selected = false;
 
 	if (speedWind) {
 	    multiplyMaterial(speedWindPercent);
@@ -226,6 +211,56 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 	}
 
     }
+    
+    private void fittingFlowRate(Double[] flowList, boolean DD) {
+	setToZero();
+ 	// shows the best fit capacity
+ 	Double fittedFlowRate = 0.0;
+ 	// shows the total capacity added
+ 	Double totalFlowRate = 0.0;
+ 	costVector = deepCopyCost(Default_Cost_Vector);
+
+ 	while (totalFlowRate < flowRate) {
+ 	    fittedFlowRate = findFittedFlowRate(totalFlowRate, flowList, DD);
+ 	    totalFlowRate += fittedFlowRate;
+ 	}
+     }
+
+    private Double findFittedFlowRate(Double total, Double[] flowRateList, boolean DD) {
+	// the difference between capacity and total capacity
+	Double temp = flowRate;
+	Double fittedFlow = 0.0;
+	// index shows the current best fit capacity
+	int criticalIndex = 0;
+
+	for (int i = 0; i < flowRateList.length; i++) {
+	    Double residual = Math.abs(flowRate - total - flowRateList[i]);
+	    if (residual < temp) {
+		temp = residual;
+		criticalIndex = i;
+		fittedFlow = flowRateList[i];
+	    }
+	}
+	// add to the cost vector
+	if(!DD){
+	    criticalIndex = criticalIndex+VBIndex;
+	}
+	Double[] itemCost = priceData.get(optionLists.get(criticalIndex));
+	for (int j = 0; j < costVector.length; j++) {
+	    costVector[j] += itemCost[j];
+	}
+	Integer q = optionQuantities.get(criticalIndex) + 1;
+	optionQuantities.set(criticalIndex, q);
+
+	return fittedFlow;
+    }
+    
+    private void setToZero(){
+	for(int i=0; i<optionQuantities.size(); i++){
+	    optionQuantities.set(i, 0);
+	}
+    }
+
 
     private void addAdditions(Double[] additions) {
 	for (int i = 0; i < costVector.length; i++) {
@@ -247,11 +282,11 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 		+ costVector[materialIndex];
 
     }
-    
-    private Double[] deepCopyCost(Double[] costVector){
+
+    private Double[] deepCopyCost(Double[] costVector) {
 	Double[] temp = new Double[costVector.length];
-	for(int i=0; i<costVector.length; i++){
-	    temp[i]= costVector[i];
+	for (int i = 0; i < costVector.length; i++) {
+	    temp[i] = costVector[i];
 	}
 	return temp;
     }

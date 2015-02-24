@@ -45,6 +45,10 @@ abstract class AbstractThermalMoistureProtection implements ThermalMoistureProte
     protected String description;
     
     
+    protected ArrayList<String> optionLists;
+    protected ArrayList<Integer> optionQuantities;
+    
+    
     public AbstractThermalMoistureProtection(){
 	userInputs = new ArrayList<String>();
 	initializeData();
@@ -104,6 +108,16 @@ abstract class AbstractThermalMoistureProtection implements ThermalMoistureProte
     @Override
     public ArrayList<String> getUserInputs(){
 	return userInputs;
+    }
+    
+    @Override
+    public ArrayList<String> getOptionListFromObjects(){
+	return optionLists;
+    }
+    
+    @Override
+    public ArrayList<Integer> getQuantitiesFromObjects(){
+	return optionQuantities;
     }
     
     @Override

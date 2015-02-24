@@ -8,14 +8,16 @@ import java.util.Set;
 import masterformat.standard.model.CostMultiRegressionModel;
 
 public class CentrifugalBooster extends AbstractFan {
-    private CostMultiRegressionModel regressionModel;
 
     private Double flowRate;
+    
+    private Double[] flowRateList = { 0.24, 0.65, 0.72, 1.21, 1.64, 2.40 };
+    private static final Double[] Default_Cost_Vector = {0.0,0.0,0.0,0.0,0.0};
+
 
     public CentrifugalBooster() {
 	unit = "$/Ea";
 	hierarchy = "230000 HVAC:233400 HVAC Fans:233414 Blower HVAC Fans:233416.100200 In-Line centrifugal, supply or exhaust booster";
-	selected = false;
     }
 
     @Override
@@ -41,36 +43,30 @@ public class CentrifugalBooster extends AbstractFan {
 
     @Override
     protected void initializeData() {
-	regressionModel = new CostMultiRegressionModel();
 
-	Double[] flowRateVector = { 0.24, 0.65, 0.72, 1.21, 1.64, 2.40 };
 	Double[][] costsMatrix = { { 1300.0, 340.0, 0.0, 1640.0, 1950.0 },
 		{ 1375.0, 510.0, 0.0, 1885.0, 2300.0 },
 		{ 1500.0, 510.0, 0.0, 2010.0, 2425.0 },
 		{ 1625.0, 1025.0, 0.0, 2650.0, 3350.0 },
 		{ 1925.0, 1275.0, 0.0, 3200.0, 4075.0 },
 		{ 2100.0, 1375.0, 0.0, 3475.0, 4400.0 } };
-	ArrayList<String> typesOne = new ArrayList<String>();
-	typesOne.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.24m3/s, 0.25m diameter connection");
-	typesOne.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.65m3/s, 0.30m diameter connection");
-	typesOne.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.72m3/s, 0.41m diameter connection");
-	typesOne.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 1.21m3/s, 0.46m diameter connection");
-	typesOne.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 1.64m3/s, 0.51m diameter connection");
-	typesOne.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 2.40m3/s, 0.51m diameter connection");
+	optionLists = new ArrayList<String>();
+	optionQuantities = new ArrayList<Integer>();
+	optionLists.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.24m3/s, 0.25m diameter connection");
+	optionQuantities.add(0);
+	optionLists.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.65m3/s, 0.30m diameter connection");
+	optionQuantities.add(0);
+	optionLists.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.72m3/s, 0.41m diameter connection");
+	optionQuantities.add(0);
+	optionLists.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 1.21m3/s, 0.46m diameter connection");
+	optionQuantities.add(0);
+	optionLists.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 1.64m3/s, 0.51m diameter connection");
+	optionQuantities.add(0);
+	optionLists.add("In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 2.40m3/s, 0.51m diameter connection");
+	optionQuantities.add(0);
 
-	for (int i = 0; i < typesOne.size(); i++) {
-	    priceData.put(typesOne.get(i), costsMatrix[i]);
-
-	    regressionModel.addMaterialCost(flowRateVector[i],
-		    costsMatrix[i][materialIndex]);
-	    regressionModel.addLaborCost(flowRateVector[i],
-		    costsMatrix[i][laborIndex]);
-	    regressionModel.addEquipmentCost(flowRateVector[i],
-		    costsMatrix[i][equipIndex]);
-	    regressionModel.addTotalCost(flowRateVector[i],
-		    costsMatrix[i][totalIndex]);
-	    regressionModel.addTotalOPCost(flowRateVector[i],
-		    costsMatrix[i][totalOPIndex]);
+	for (int i = 0; i < optionLists.size(); i++) {
+	    priceData.put(optionLists.get(i), costsMatrix[i]);
 	}
     }
 
@@ -78,49 +74,85 @@ public class CentrifugalBooster extends AbstractFan {
     public void selectCostVector() {
 	if (flowRate <= 0.24) {
 	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.24m3/s, 0.25m diameter connection";
-	    selected = true;
+	    costVector = deepCopyCost(priceData.get(description));
 	} else if (flowRate > 0.24 && flowRate <= 0.65) {
 	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.65m3/s, 0.30m diameter connection";
-	    selected = true;
+	    costVector = deepCopyCost(priceData.get(description));
 
 	} else if (flowRate > 0.65 && flowRate <= 0.72) {
 	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.72m3/s, 0.41m diameter connection";
-	    selected = true;
+	    costVector = deepCopyCost(priceData.get(description));
 
 	} else if (flowRate > 0.72 && flowRate <= 1.21) {
 	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 1.21m3/s, 0.46m diameter connection";
-	    selected = true;
+	    costVector = deepCopyCost(priceData.get(description));
 
 	} else if (flowRate > 1.21 && flowRate <= 1.64) {
 	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 1.64m3/s, 0.51m diameter connection";
-	    selected = true;
-
-	} else if (flowRate > 1.64) {
-	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 2.40m3/s, 0.51m diameter connection";
-	    selected = true;
-
-	}
-
-	if (selected == false) {
-	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, above 2.40m3/s, 0.51m diameter connection (Predicted)";
-	    costVector = regressionCosts();
-	} else {
 	    costVector = deepCopyCost(priceData.get(description));
 
+	} else if (flowRate > 1.64 && flowRate<=2.40) {
+	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 2.40m3/s, 0.51m diameter connection";
+	    costVector = deepCopyCost(priceData.get(description));
+	} else {
+	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, grouped";
+	    fittingFlowRate();
 	}
-	selected = false;
-    }
-
-    private Double[] regressionCosts() {
-	return regressionModel.predictCostVector(flowRate);
     }
     
-    private Double[] deepCopyCost(Double[] costVector){
+    private void fittingFlowRate(){
+	setToZero();
+	//shows the best fit capacity
+	Double fittedFlowRate=0.0;
+	//shows the total capacity added
+	Double totalFlowRate=0.0;
+	costVector=deepCopyCost(Default_Cost_Vector);
+	
+	while(totalFlowRate<flowRate){
+	    fittedFlowRate = findFittedFlowRate(totalFlowRate);
+	    totalFlowRate+=fittedFlowRate;
+	}
+    }
+    
+    private Double findFittedFlowRate(Double total){
+  	//the difference between capacity and total capacity
+  	Double temp = flowRate;
+  	//index shows the current best fit capacity
+  	int criticalIndex = 0;
+  	
+  	for(int i=0; i<flowRateList.length; i++){
+  	    Double residual = Math.abs(flowRate-total-flowRateList[i]);
+  	    if(residual<temp){
+  		temp = residual;
+  		criticalIndex = i;
+  	    }
+  	}
+  	//add to the cost vector
+  	Double[] itemCost = priceData.get(optionLists.get(criticalIndex));
+  	for(int j=0; j<costVector.length; j++){
+  	    costVector[j]+=itemCost[j];
+  	}
+  	Integer q = optionQuantities.get(criticalIndex)+1;
+  	optionQuantities.set(criticalIndex, q);
+  	
+  	return flowRateList[criticalIndex];
+      }
+    
+    private void setToZero(){
+	for(int i=0; i<optionQuantities.size(); i++){
+	    optionQuantities.set(i, 0);
+	}
+    }
+
+
+    private Double[] deepCopyCost(Double[] costVector) {
 	Double[] temp = new Double[costVector.length];
-	for(int i=0; i<costVector.length; i++){
-	    temp[i]= costVector[i];
+	for (int i = 0; i < costVector.length; i++) {
+	    temp[i] = costVector[i];
 	}
 	return temp;
     }
+    
+    
 
 }

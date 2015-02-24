@@ -281,6 +281,14 @@ public class FanAnalyzer {
 	    fan.setUserInputs(map);
 	}
 	
+	public ArrayList<String> getOptionList(){
+	    return fan.getOptionListFromObjects();
+	}
+	
+	public ArrayList<Integer> getOptionQuantities(){
+	    return fan.getQuantitiesFromObjects();
+	}
+	
 	public Double[] getCostInformation(){
 	    if(fan == null){
 		return null;

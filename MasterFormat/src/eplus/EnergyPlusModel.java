@@ -48,6 +48,9 @@ public class EnergyPlusModel {
     private final String componentCostObject = "ComponentCost:LineItem";
     // count the generated idf file
     private Integer generatedCounter = 0;
+    
+    private String[] selectionOptions;
+    private Integer[] selectionOptionQuantities;
 
     // listeners
     private List<CostTableListener> tableListeners;
@@ -91,7 +94,15 @@ public class EnergyPlusModel {
     public String[] getDomainList() {
 	return domainList;
     }
-
+    
+    public String[] getOptionList(){
+	return selectionOptions;
+    }
+    
+    public Integer[] getQuantityList(){
+	return selectionOptionQuantities;
+    }
+	    
     // Below are all the methods to retrieve the object list from Energyplus
     /**
      * retrieve the material list from a specific construction This is used for
@@ -237,6 +248,47 @@ public class EnergyPlusModel {
     public void getCondenserUnitCostVector(String item){
 	costData = condenserUnitModule.getCostListForCondenserUnit(item);
 	updateCostVectorInformation();
+    }
+    
+    //All the methods to get the options under one category and quantities
+    public void getFanOptionList(String fanName){
+	ArrayList<String> list = fanModule.getFan(fanName).getOptionList();
+	String[] temp = new String[list.size()];
+	for(int i=0; i<list.size(); i++){
+	    temp[i] = list.get(i);
+	}
+	selectionOptions = temp;
+    }
+    
+    //All the methods to get the options quantities under one category
+    public void getFanOptionQuantities(String fanName){
+	ArrayList<Integer> list = fanModule.getFan(fanName).getOptionQuantities();
+	Integer[] temp = new Integer[list.size()];
+	for(int i=0; i<list.size(); i++){
+	    temp[i] = list.get(i);
+	}
+	selectionOptionQuantities = temp;
+	
+    }
+    
+    public void getCondenserUnitOptionList(String condenserName){
+	ArrayList<String> list = condenserUnitModule.getCondenser(condenserName).getOptionList();
+	String[] temp = new String[list.size()];
+	for(int i=0; i<list.size(); i++){
+	    temp[i] = list.get(i);
+	}
+	selectionOptions = temp;
+    }
+    
+    //All the methods to get the options quantities under one category
+    public void getCondenserUnitOptionQuantities(String condenserName){
+	ArrayList<Integer> list = condenserUnitModule.getCondenser(condenserName).getOptionQuantities();
+	Integer[] temp = new Integer[list.size()];
+	for(int i=0; i<list.size(); i++){
+	    temp[i] = list.get(i);
+	}
+	selectionOptionQuantities = temp;
+	
     }
 
     // All the methods that feed back user inputs to the masterformat for the

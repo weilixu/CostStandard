@@ -26,6 +26,9 @@ public abstract class AbstractBoiler implements Boiler{
     protected ArrayList<String> userInputs;
     protected String description;
     
+    protected ArrayList<String> optionLists;
+    protected ArrayList<Integer> optionQuantities;
+    
     public AbstractBoiler(){
 	userInputs = new ArrayList<String>();
 	initializeData();
@@ -84,6 +87,16 @@ public abstract class AbstractBoiler implements Boiler{
     @Override
     public ArrayList<String> getUserInputs(){
 	return userInputs;
+    }
+    
+    @Override
+    public ArrayList<String> getOptionListFromObjects(){
+	return optionLists;
+    }
+    
+    @Override
+    public ArrayList<Integer> getQuantitiesFromObjects(){
+	return optionQuantities;
     }
     
     @Override

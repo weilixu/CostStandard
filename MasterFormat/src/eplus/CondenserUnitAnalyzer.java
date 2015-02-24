@@ -273,6 +273,14 @@ public class CondenserUnitAnalyzer {
 	    condenserUnit.setUserInputs(map);
 	}
 	
+	public ArrayList<String> getOptionList(){
+	    return condenserUnit.getOptionListFromObjects();
+	}
+	
+	public ArrayList<Integer> getOptionQuantities(){
+	    return condenserUnit.getQuantitiesFromObjects();
+	}
+	
 	public Double[] getCostInformation(){
 	    if(condenserUnit == null){
 		return null;

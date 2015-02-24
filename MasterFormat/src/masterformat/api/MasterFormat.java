@@ -63,4 +63,16 @@ public interface MasterFormat {
      */
     public void setUserInputs(HashMap<String, String> userInputsMap);
     
+    /**
+     * get the option list from the database
+     * @return
+     */
+    public ArrayList<String> getOptionListFromObjects();
+    
+    /**
+     * get the quantity count from the object
+     * @return
+     */
+    public ArrayList<Integer> getQuantitiesFromObjects();
+    
 }

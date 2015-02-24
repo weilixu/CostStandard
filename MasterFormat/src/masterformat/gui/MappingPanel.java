@@ -205,10 +205,6 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		}else if(category.equals("Fan")){
 		    model.addTotalCostToComponentCost(fanList.getSelectedValue().toString(), category);
 		}else if(category.equals("DX Coils")){
-		    System.out.println(condenserUnitList==null);
-		    System.out.println(condenserUnitList.getSelectedValue()==null);
-		    System.out.println(condenserUnitList.getSelectedValue().toString()==null);
-		    System.out.println(category==null);
 		    model.addTotalCostToComponentCost(condenserUnitList.getSelectedValue().toString(), category);
 		}
 	    }
@@ -244,7 +240,6 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	    public void actionPerformed(ActionEvent arg0) {
 		model.writeIdf();
 	    }
-	    
 	});
 	
 	buttonPanel = new JPanel();

@@ -26,7 +26,9 @@ public abstract class AbstractFan implements Fan{
     //recorde the inputs that required outside of mapping process
     protected ArrayList<String> userInputs;
     protected String description;
-    protected boolean selected;
+    
+    protected ArrayList<String> optionLists;
+    protected ArrayList<Integer> optionQuantities;
     
     public AbstractFan(){
 	userInputs = new ArrayList<String>();
@@ -87,6 +89,17 @@ public abstract class AbstractFan implements Fan{
     public ArrayList<String> getUserInputs(){
 	return userInputs;
     }
+    
+    @Override
+    public ArrayList<String> getOptionListFromObjects(){
+	return optionLists;
+    }
+    
+    @Override
+    public ArrayList<Integer> getQuantitiesFromObjects(){
+	return optionQuantities;
+    }
+    
     
     @Override
     abstract public void selectCostVector();
