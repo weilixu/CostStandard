@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -21,11 +22,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
-import masterformat.listener.BoilerListener;
+import masterformat.listener.FurnaceListener;
 import eplus.EnergyPlusModel;
 
-public class BoilerPanel extends JPanel implements BoilerListener{
-    private final static String TAG = "Boiler";
+public class FurnacePanel extends JPanel implements FurnaceListener{
+    private final static String TAG = "Furnace";
     
     private final JPanel editorPanel;
     private final JScrollPane editorView;
@@ -37,16 +38,16 @@ public class BoilerPanel extends JPanel implements BoilerListener{
     private final EnergyPlusModel model;
     
     //data
-    private final String boiler;
+    private final String furnace;
     private ArrayList<String> userInputs;
     private HashMap<String, String> userInputMap;
     
-    public BoilerPanel(EnergyPlusModel m, String boilerName){
+    public FurnacePanel(EnergyPlusModel m, String furnaceName){
 	super(new BorderLayout());
 	
 	model = m;
-	model.addBoilerListener(this);
-	boiler = boilerName;
+	model.addFurnaceListener(this);
+	furnace = furnaceName;
 	userInputs = new ArrayList<String>();
 	userInputMap = new HashMap<String, String>();
 	
@@ -72,10 +73,44 @@ public class BoilerPanel extends JPanel implements BoilerListener{
 	statusPane.setBottomComponent(statuView);
 	
 	add(statusPane, BorderLayout.CENTER);
+	//processStatuView();
+    }
+    
+    public String getName(){
+	return furnace;
+    }
+    
+    private void processStatuView(){
+	statuPanel.removeAll();
+	model.getFurnaceOptionList(furnace);
+	model.getFurnaceOptionQuantities(furnace);
+	
+	String[] optionList = model.getOptionList();
+	Integer[] optionQuantities = model.getQuantityList();
+
+	for (int i = 0; i < optionList.length; i++) {
+	    JPanel tempPanel = new JPanel();
+	    JLabel text = new JLabel(optionList[i]);
+	    text.setFont(new Font("Helvetica", Font.BOLD, 24));
+	    // text.setEnabled();
+	    JLabel q = new JLabel(optionQuantities[i].toString());
+	    q.setFont(new Font("Helvetica", Font.BOLD, 20));
+	    q.setPreferredSize(new Dimension(100, 15));
+	    q.setBackground(Color.WHITE);
+	    //q.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+	    tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.PAGE_AXIS));
+	    tempPanel.add(text);
+	    tempPanel.add(q);
+	    tempPanel.setBackground(Color.WHITE);
+	    tempPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+	    statuPanel.add(tempPanel);
+	}
+	statuPanel.revalidate();
+	statuPanel.repaint();
     }
     
     private void processEditorPanel(){
-	userInputs = model.getBoilerUserInputs(boiler);
+	userInputs = model.getFurnaceInputs(furnace);
 	
 	HashMap<String, HashMap<String, ArrayList<String>>> mapData = stringToMap();
 	
@@ -102,35 +137,6 @@ public class BoilerPanel extends JPanel implements BoilerListener{
     
     }
     
-    private void processStatuView(){
-	statuPanel.removeAll();
-	model.getBoilerOptionList(boiler);
-	model.getBoilerOptionQuantities(boiler);
-	
-	String[] optionList = model.getOptionList();
-	Integer[] optionQuantities = model.getQuantityList();
-
-	for (int i = 0; i < optionList.length; i++) {
-	    JPanel tempPanel = new JPanel();
-	    JLabel text = new JLabel(optionList[i]);
-	    text.setFont(new Font("Helvetica", Font.BOLD, 24));
-	    // text.setEnabled();
-	    JLabel q = new JLabel(optionQuantities[i].toString());
-	    q.setFont(new Font("Helvetica", Font.BOLD, 20));
-	    q.setPreferredSize(new Dimension(100, 15));
-	    q.setBackground(Color.WHITE);
-	    //q.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-	    tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.PAGE_AXIS));
-	    tempPanel.add(text);
-	    tempPanel.add(q);
-	    tempPanel.setBackground(Color.WHITE);
-	    tempPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-	    statuPanel.add(tempPanel);
-	}
-	statuPanel.revalidate();
-	statuPanel.repaint();
-    }
-    
     private JPanel createOptions(HashMap<String, ArrayList<String>> optionMap) {
  	JPanel optionPanel = new JPanel(new GridLayout(3, 0));
  	optionPanel.setBackground(Color.WHITE);
@@ -149,7 +155,7 @@ public class BoilerPanel extends JPanel implements BoilerListener{
  		public void actionPerformed(ActionEvent evt) {
  		    String input = (String)tempCombo.getSelectedItem();
  		    userInputMap.put(option, input);
- 		    model.setBoilerUserInput(userInputMap,boiler);
+ 		    model.setFurnaceUserInput(userInputMap,furnace);
  		    processStatuView();
  		}
  	    });
@@ -173,9 +179,8 @@ public class BoilerPanel extends JPanel implements BoilerListener{
  		public void actionPerformed(ActionEvent e) {
  		    String data = (String)inputField.getText();
  		    userInputMap.put(input, data);  
- 		    model.setBoilerUserInput(userInputMap,boiler);
+ 		    model.setFurnaceUserInput(userInputMap,furnace);
  		    processStatuView();
-
  		}
  		
  	    });
@@ -211,12 +216,5 @@ public class BoilerPanel extends JPanel implements BoilerListener{
     public void onQuanatitiesUpdates() {
 	processStatuView();
     }
-    
-    @Override
-    public String getName(){
-	return boiler;
-    }
+
 }
-    
-
-

@@ -1,14 +1,14 @@
-package masterformat.standard.concrete;
+package masterformat.standard.hvac.furnaces;
 
 import masterformat.api.ComponentFactory;
+import masterformat.standard.concrete.Concrete;
 import masterformat.standard.hvac.boiler.Boiler;
 import masterformat.standard.hvac.condenserunits.CondenserUnits;
 import masterformat.standard.hvac.fan.Fan;
-import masterformat.standard.hvac.furnaces.Furnace;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
-public class ConcreteFactory extends ComponentFactory{
+public class FurnaceFactory extends ComponentFactory{
 
     @Override
     public Masonry getMasonry(String masonryType) {
@@ -18,12 +18,7 @@ public class ConcreteFactory extends ComponentFactory{
 
     @Override
     public Concrete getConcrete(String concreteType) {
-	
-	if(concreteType.equalsIgnoreCase("CAST IN PLACE WALL")){
-	    return new CastInPlaceWall();
-	}else if(concreteType.equalsIgnoreCase("CAST IN PLACE SLAB ON GRADE")){
-	    return new CastInPlaceSlabOnGrade();
-	}
+	// TODO Auto-generated method stub
 	return null;
     }
 
@@ -35,7 +30,7 @@ public class ConcreteFactory extends ComponentFactory{
     }
 
     @Override
-    public Boiler getBoiler(String hvac) {
+    public Boiler getBoiler(String boiler) {
 	// TODO Auto-generated method stub
 	return null;
     }
@@ -54,7 +49,11 @@ public class ConcreteFactory extends ComponentFactory{
 
     @Override
     public Furnace getFurnace(String furnace) {
-	// TODO Auto-generated method stub
+	if(furnace.equalsIgnoreCase("Coil:Heating:Electric")){
+	    return new ElectricFurnaces();
+	}else if(furnace.equalsIgnoreCase("Coil:Heating:Gas")){
+	    return new FuelFiredFurnaces();
+	}
 	return null;
     }
 

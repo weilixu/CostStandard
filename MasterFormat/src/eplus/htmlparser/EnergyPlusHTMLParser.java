@@ -15,6 +15,7 @@ public class EnergyPlusHTMLParser {
 
     private FanSizingSummary fanSummary;
     private PumpSizingSummary pumpSummary;
+    private HeatingCoilSummary heatCoilSummary;
 
     public EnergyPlusHTMLParser(File f) {
 	htmlFile = f;
@@ -24,6 +25,7 @@ public class EnergyPlusHTMLParser {
 	    preprocessTable();
 	    fanSummary = new FanSizingSummary(doc);
 	    pumpSummary = new PumpSizingSummary(doc);
+	    heatCoilSummary = new HeatingCoilSummary(doc);
 	} catch (IOException e) {
 	    // do nothing
 	}
@@ -58,5 +60,19 @@ public class EnergyPlusHTMLParser {
 	fanProperties[2] = fanSummary.getFanFlowRate(fanName);
 	fanProperties[3] = fanSummary.getFanPower(fanName);
 	return fanProperties;
+    }
+    
+    /**
+     * So far the method extracts {heatingCoilCapacity, heatingCoilEfficiency}
+     * future element can be added to this list.
+     * 
+     * @param heatCoilName
+     * @return
+     */
+    public String[] getHeatCoilSummary(String heatCoilName){
+	String[] heatCoilProperties = new String[2];
+	heatCoilProperties[0] = heatCoilSummary.getHeatingCoilCapacity(heatCoilName);
+	heatCoilProperties[1] = heatCoilSummary.getHeatingCoilEfficiency(heatCoilName);
+	return heatCoilProperties;
     }
 }

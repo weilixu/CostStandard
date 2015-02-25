@@ -1,24 +1,23 @@
-package masterformat.standard.hvac.boiler;
+package masterformat.standard.hvac.furnaces;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class AbstractBoiler implements Boiler{
-    
+public abstract class AbstractFurnace implements Furnace{
     private final int materialIndex = 0;
     private final int laborIndex = 1;
     private final int equipIndex = 2;
     private final int totalIndex = 3;
     private final int totalOPIndex = 4;
     
-    protected final int sourceTypeIndex = 0;
-    protected final int capacityIndex = 1;
-    protected final int efficiencyIndex=2;
+    protected final int powerIndex = 0;
+    protected final int efficiencyIndex=1;
+    
     protected static final Double[] Default_Cost_Vector = {0.0,0.0,0.0,0.0,0.0};
-
+    
     
     protected String unit = "Ea.";
-    protected String hierarchy = "235200 Heating Boiler";
+    protected String hierarchy = "235400 Furnaces";
     //price data structure to save the data
     protected HashMap<String, Double[]> priceData = new HashMap<String, Double[]>();
     //cost data after selected
@@ -30,7 +29,7 @@ public abstract class AbstractBoiler implements Boiler{
     protected ArrayList<String> optionLists;
     protected ArrayList<Integer> optionQuantities;
     
-    public AbstractBoiler(){
+    public AbstractFurnace(){
 	userInputs = new ArrayList<String>();
 	initializeData();
     }

@@ -85,7 +85,7 @@ public class FanPanel extends JPanel implements TreeSelectionListener {
 	splitPane.setRightComponent(editorView);
 
 	statusPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-	statusPane.setTopComponent(splitPane);
+	//statusPane.setTopComponent(splitPane);
 	statuPanel = new JPanel();
 	statuPanel.setBackground(Color.WHITE);
 	statuPanel.setLayout(new BoxLayout(statuPanel, BoxLayout.PAGE_AXIS));

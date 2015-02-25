@@ -99,29 +99,43 @@ public class BlowerCeilingFan extends AbstractFan {
 
     @Override
     public void selectCostVector() {
+	setToZero();
+	Integer index = 0;
 	if (flowRate <= 0.05) {
-	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.05 m3/s";
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 0.05 && flowRate <= 0.10) {
-	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.10 m3/s";
+	    index = 1;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
-
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 0.10 && flowRate <= 0.18) {
-	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.18 m3/s";
+	    index = 2;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
-
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 0.18 && flowRate <= 0.42) {
-	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.42 m3/s";
+	    index = 3;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
-
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 0.42 && flowRate <= 0.78) {
-	    description = "Ceiling fan, right angle, extra quiet, 25 pa,0.78 m3/s";
+	    index = 4;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
-
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 0.78 && flowRate <= 1.4) {
-	    description = "Ceiling fan, right angle, extra quiet, 25 pa,1.40 m3/s";
+	    index = 5;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
-
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	}else{
 	    description = "Ceiling fan, right angle, extra quiet, 25 pa, grouped";
 	    fittingFlowRate();

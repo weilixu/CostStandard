@@ -195,8 +195,6 @@ public class BoilerAnalyzer {
 	}
 	
 	public void setEfficiency(String e){
-	    System.out.println(e);
-
 	    properties[efficiencyIndex] = e;
 	}
 	
@@ -230,6 +228,14 @@ public class BoilerAnalyzer {
 	
 	public ArrayList<String> getUserInputs(){
 	    return boiler.getUserInputs();
+	}
+	
+	public ArrayList<String> getOptionList(){
+	    return boiler.getOptionListFromObjects();
+	}
+	
+	public ArrayList<Integer> getOptionQuantities(){
+	    return boiler.getQuantitiesFromObjects();
 	}
 	
 	public void setUserInputs(HashMap<String, String> map){

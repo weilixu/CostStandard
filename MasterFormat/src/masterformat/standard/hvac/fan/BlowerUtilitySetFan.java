@@ -36,9 +36,8 @@ public class BlowerUtilitySetFan extends AbstractFan {
     private String drives;
     private Double flowRate;
 
-    private Double[] flowRateDDVector = { 0.07, 0.23, 0.92, 1.14, 1.57 };
-    private Double[] flowRateVBVector = { 0.38, 0.61, 0.94, 1.37 };
-    private final int VBIndex = 5;
+    private Double[] flowRateVector = { 0.07, 0.23, 0.92, 1.14, 1.57, 0.38,
+	    0.61, 0.94, 1.37 };
 
     private static final Double[] Default_Cost_Vector = { 0.0, 0.0, 0.0, 0.0,
 	    0.0 };
@@ -86,23 +85,32 @@ public class BlowerUtilitySetFan extends AbstractFan {
 
 	optionLists = new ArrayList<String>();
 	optionQuantities = new ArrayList<Integer>();
-	optionLists.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.07 m3/s, 93 watts");
+	optionLists
+		.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.07 m3/s, 93 watts");
 	optionQuantities.add(0);
-	optionLists.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.23 m3/s, 124 watts");
+	optionLists
+		.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.23 m3/s, 124 watts");
 	optionQuantities.add(0);
-	optionLists.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.92 m3/s, 373 watts");
+	optionLists
+		.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.92 m3/s, 373 watts");
 	optionQuantities.add(0);
-	optionLists.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 1.14 m3/s, 560 watts");
+	optionLists
+		.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 1.14 m3/s, 560 watts");
 	optionQuantities.add(0);
-	optionLists.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 1.57 m3/s, 1120 watts");
+	optionLists
+		.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 1.57 m3/s, 1120 watts");
 	optionQuantities.add(0);
-	optionLists.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.38 m3/s, 186 watts");
+	optionLists
+		.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.38 m3/s, 186 watts");
 	optionQuantities.add(0);
-	optionLists.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.61 m3/s, 248 watts");
+	optionLists
+		.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.61 m3/s, 248 watts");
 	optionQuantities.add(0);
-	optionLists.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.94 m3/s, 746 watts");
+	optionLists
+		.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.94 m3/s, 746 watts");
 	optionQuantities.add(0);
-	optionLists.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 1.37 m3/s, 560 watts");
+	optionLists
+		.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 1.37 m3/s, 560 watts");
 	optionQuantities.add(0);
 
 	for (int i = 0; i < optionLists.size(); i++) {
@@ -115,57 +123,79 @@ public class BlowerUtilitySetFan extends AbstractFan {
 
     @Override
     public void selectCostVector() {
+	setToZero();
+	Integer upperIndex = 0;
+	Integer lowerIndex = 0;
 	if (drives.equals("Direct Drive")) {
 	    if (flowRate <= 0.07) {
-		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.07 m3/s, 93 watts";
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
-
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else if (flowRate > 0.07 && flowRate <= 0.23) {
-		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.23 m3/s, 124 watts";
+		upperIndex = 1;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
-
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else if (flowRate > 0.23 && flowRate <= 0.92) {
-		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.92 m3/s, 373 watts";
+		upperIndex = 2;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
-
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else if (flowRate > 0.92 && flowRate <= 1.14) {
-		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, 1.14 m3/s, 560 watts";
+		upperIndex = 3;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
-
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else if (flowRate > 1.14 && flowRate <= 1.57) {
-		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, 1.57 m3/s, 1120 watts";
+		upperIndex = 4;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
-
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else {
+		upperIndex = 4;
 		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, grouped";
-		fittingFlowRate(flowRateDDVector, true);
+		fittingFlowRate(upperIndex, lowerIndex);
 	    }
 	} else if (drives.equals("V-belt drive, drive cover, 3 phases")) {
+	    lowerIndex = 5;
 	    if (flowRate <= 0.38) {
-		description = "Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.38 m3/s, 186 watts";
+		upperIndex = 5;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
-
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else if (flowRate > 0.38 && flowRate <= 0.61) {
-		description = "Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.61 m3/s, 248 watts";
+		upperIndex = 6;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
-
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else if (flowRate > 0.61 && flowRate <= 0.94) {
-		description = "Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.94 m3/s, 746 watts";
+		upperIndex = 7;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
-
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else if (flowRate > 0.94 && flowRate <= 1.37) {
-		description = "Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 1.37 m3/s, 560 watts";
+		upperIndex = 8;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
-
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else {
+		upperIndex = 8;
 		description = "Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases, grouped";
-		fittingFlowRate(flowRateVBVector, false);
+		fittingFlowRate(upperIndex, lowerIndex);
 	    }
 	}
     }
 
-    private void fittingFlowRate(Double[] flowList, boolean DD) {
-	setToZero();
+    private void fittingFlowRate(Integer upper, Integer lower) {
 	// shows the best fit capacity
 	Double fittedFlowRate = 0.0;
 	// shows the total capacity added
@@ -173,43 +203,36 @@ public class BlowerUtilitySetFan extends AbstractFan {
 	costVector = deepCopyCost(Default_Cost_Vector);
 
 	while (totalFlowRate < flowRate) {
-	    fittedFlowRate = findFittedFlowRate(totalFlowRate, flowList, DD);
+	    fittedFlowRate = findFittedPower(totalFlowRate, upper, lower);
 	    totalFlowRate += fittedFlowRate;
 	}
     }
 
-    private Double findFittedFlowRate(Double total, Double[] flowRateList, boolean DD) {
+    private Double findFittedPower(Double total, Integer upper, Integer lower) {
 	// the difference between capacity and total capacity
 	Double temp = flowRate;
-	Double fittedFlow = 0.0;
 	// index shows the current best fit capacity
 	int criticalIndex = 0;
 
-	for (int i = 0; i < flowRateList.length; i++) {
-	    Double residual = Math.abs(flowRate - total - flowRateList[i]);
+	for (int i = lower; i <= upper; i++) {
+	    Double residual = Math.abs(flowRate - total - flowRateVector[i]);
 	    if (residual < temp) {
 		temp = residual;
 		criticalIndex = i;
-		fittedFlow = flowRateList[i];
 	    }
 	}
 	// add to the cost vector
-	if(!DD){
-	    criticalIndex = criticalIndex+VBIndex;
-	}
-	
 	Double[] itemCost = priceData.get(optionLists.get(criticalIndex));
 	for (int j = 0; j < costVector.length; j++) {
 	    costVector[j] += itemCost[j];
 	}
 	Integer q = optionQuantities.get(criticalIndex) + 1;
 	optionQuantities.set(criticalIndex, q);
-	System.out.println(criticalIndex + " " +optionQuantities.get(criticalIndex));
-	return fittedFlow;
+	return flowRateVector[criticalIndex];
     }
-    
-    private void setToZero(){
-	for(int i=0; i<optionQuantities.size(); i++){
+
+    private void setToZero() {
+	for (int i = 0; i < optionQuantities.size(); i++) {
 	    optionQuantities.set(i, 0);
 	}
     }

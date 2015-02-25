@@ -14,10 +14,7 @@ public class CentrifugalWallExhauster extends AbstractFan {
     private String drives;
     private Double flowRate;
 
-    private Double[] flowRateDDVector = { 0.29, 0.38, 0.39, 0.62 };
-    private Double[] flowRateVBVector = { 1.32, 1.76 };
-
-    private final int VBIndex = 4;
+    private Double[] flowRateVector = { 0.29, 0.38, 0.39, 0.62,1.32, 1.76 };
 
     private static final Double[] Default_Cost_Vector = { 0.0, 0.0, 0.0, 0.0,
 	    0.0 };
@@ -90,39 +87,60 @@ public class CentrifugalWallExhauster extends AbstractFan {
 
     @Override
     public void selectCostVector() {
+	setToZero();
+	Integer upperIndex = 0;
+	Integer lowerIndex = 0;
 	if (drives.equals("Direct drive")) {
 	    if (flowRate <= 0.29) {
-		description = "Wall exhauster, centrifugal, auto damper, 31Pa, Direct drive, 0.29m3/s, 37Watts";
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
+		Integer i = optionQuantities.get(upperIndex);
 	    } else if (flowRate > 0.29 && flowRate <= 0.38) {
-		description = "Wall exhauster, centrifugal, auto damper, 31Pa, Direct drive, 0.38m3/s, 62Watts";
+		upperIndex = 1;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else if (flowRate > 0.38 && flowRate <= 0.39) {
-		description = "Wall exhauster, centrifugal, auto damper, 31Pa, Direct drive, 0.39m3/s, 124Watts";
+		upperIndex = 2;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else if (flowRate > 0.39) {
-		description = "Wall exhauster, centrifugal, auto damper, 31Pa, Direct drive, 0.62m3/s, 186Watts";
+		upperIndex = 3;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else {
+		upperIndex = 3;
 		description = "Wall exhauster, centrifugal, auto damper, 31Pa, Direct drive, grouped";
-		fittingFlowRate(flowRateDDVector, true);
+		fittingFlowRate(upperIndex, lowerIndex);
 	    }
 	} else if (drives.equals("V-belt drive")) {
+	    lowerIndex = 4;
 	    if (flowRate <= 1.32) {
-		description = "Wall exhauster, centrifugal, auto damper, 31Pa, V-belt drive 3 phase, 1.32m3/s, 186Watts";
+		upperIndex = 4;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else if (flowRate > 1.32) {
-		description = "Wall exhauster, centrifugal, auto damper, 31Pa, V-belt drive 3 phase, 1.76m3/s, 373Watts";
+		upperIndex = 5;
+		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
+		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else {
+		upperIndex = 5;
 		description = "Wall exhauster, centrifugal, auto damper, 31Pa, V-belt drive 3 phase, grouped";
-		fittingFlowRate(flowRateVBVector, false);
+		fittingFlowRate(upperIndex, lowerIndex);
 	    }
 	}
     }
 
-    private void fittingFlowRate(Double[] flowList, boolean DD) {
-	setToZero();
+    private void fittingFlowRate(Integer upper, Integer lower) {
 	// shows the best fit capacity
 	Double fittedFlowRate = 0.0;
 	// shows the total capacity added
@@ -130,39 +148,32 @@ public class CentrifugalWallExhauster extends AbstractFan {
 	costVector = deepCopyCost(Default_Cost_Vector);
 
 	while (totalFlowRate < flowRate) {
-	    fittedFlowRate = findFittedFlowRate(totalFlowRate, flowList, DD);
+	    fittedFlowRate = findFittedPower(totalFlowRate, upper, lower);
 	    totalFlowRate += fittedFlowRate;
 	}
     }
 
-    private Double findFittedFlowRate(Double total, Double[] flowRateList,
-	    boolean DD) {
+    private Double findFittedPower(Double total, Integer upper, Integer lower) {
 	// the difference between capacity and total capacity
 	Double temp = flowRate;
-	Double fittedFlow = 0.0;
 	// index shows the current best fit capacity
 	int criticalIndex = 0;
 
-	for (int i = 0; i < flowRateList.length; i++) {
-	    Double residual = Math.abs(flowRate - total - flowRateList[i]);
+	for (int i = lower; i <= upper; i++) {
+	    Double residual = Math.abs(flowRate - total - flowRateVector[i]);
 	    if (residual < temp) {
 		temp = residual;
 		criticalIndex = i;
-		fittedFlow = flowRateList[i];
 	    }
 	}
 	// add to the cost vector
-	if (!DD) {
-	    criticalIndex = criticalIndex + VBIndex;
-	}
 	Double[] itemCost = priceData.get(optionLists.get(criticalIndex));
 	for (int j = 0; j < costVector.length; j++) {
 	    costVector[j] += itemCost[j];
 	}
 	Integer q = optionQuantities.get(criticalIndex) + 1;
 	optionQuantities.set(criticalIndex, q);
-
-	return fittedFlow;
+	return flowRateVector[criticalIndex];
     }
     
     private void setToZero(){

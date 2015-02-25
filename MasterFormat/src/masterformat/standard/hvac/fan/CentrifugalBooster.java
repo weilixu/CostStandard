@@ -72,28 +72,43 @@ public class CentrifugalBooster extends AbstractFan {
 
     @Override
     public void selectCostVector() {
+	setToZero();
+	Integer index = 0;
 	if (flowRate <= 0.24) {
-	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.24m3/s, 0.25m diameter connection";
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 0.24 && flowRate <= 0.65) {
-	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.65m3/s, 0.30m diameter connection";
+	    index = 1;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
-
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 0.65 && flowRate <= 0.72) {
-	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 0.72m3/s, 0.41m diameter connection";
+	    index = 2;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
-
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 0.72 && flowRate <= 1.21) {
-	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 1.21m3/s, 0.46m diameter connection";
+	    index = 3;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
-
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 1.21 && flowRate <= 1.64) {
-	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 1.64m3/s, 0.51m diameter connection";
+	    index = 4;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
-
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 1.64 && flowRate<=2.40) {
-	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, 2.40m3/s, 0.51m diameter connection";
+	    index = 5;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else {
 	    description = "In-line centrifugal, supply or exhaust booster, aluminum wheel or hub, disconnect switch, 62Pa, grouped";
 	    fittingFlowRate();

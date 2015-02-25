@@ -39,16 +39,17 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private final JPanel boilerPanel;
     private final JPanel fanPanel;
     private final JPanel condenserUnitPanel;
+    private final JPanel furnacePanel;
     private final JPanel tablePanel;
     private final DefaultTableModel tableModel;
     private final JTable table;
-    
+
     private final JPanel buttonPanel;
     private final JButton totalButton;
     private final String TOTAL_BUTTON = "Add total Cost to EnergyPlus";
     private final JButton totalOPButton;
     private final String TOTAL_OP_BUTTON = "Add total Incl O&P Cost to EnergyPlus";
-    //temp there
+    // temp there
     private final JButton writeButton;
     private final String WRITE = "Export to EnergyPlus";
 
@@ -67,6 +68,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private JList<String> condenserUnitList;
     private JScrollPane condenserUnitListScrollPane;
     private DefaultListModel<String> condenserUnitListModel;
+    private DefaultListModel<String> furnaceModel;
+    private JList<String> furnaceList;
+    private JScrollPane furnaceScrollPane;
 
     // private final String[] costColumnName =
     // {"Material Name","Material Cost ($)",
@@ -86,26 +90,29 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	Border raisedetched = BorderFactory
 		.createEtchedBorder(EtchedBorder.RAISED);
 	EnergyPlusObjectPanel.setBorder(raisedetched);
-	
-	//set-up different category panels
+
+	// set-up different category panels
 	constructionPanel = new JPanel(new CardLayout());
 	constructionPanel.setBackground(Color.WHITE);
 	updateConstructions();
-	
+
 	boilerPanel = new JPanel(new CardLayout());
 	boilerPanel.setBackground(Color.WHITE);
 	updateBoilers();
-	
+
 	fanPanel = new JPanel(new CardLayout());
 	fanPanel.setBackground(Color.WHITE);
 	updateFans();
-	
+
 	condenserUnitPanel = new JPanel(new CardLayout());
 	condenserUnitPanel.setBackground(Color.WHITE);
 	updateCondenserUnit();
 
-	
-	//initialize the selection combo list
+	furnacePanel = new JPanel(new CardLayout());
+	furnacePanel.setBackground(Color.WHITE);
+	updateFurnace();
+
+	// initialize the selection combo list
 	objectSelectionCombo = new JComboBox<String>(model.getDomainList());
 	objectSelectionCombo.addItemListener(new ItemListener() {
 	    @Override
@@ -113,63 +120,91 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		String category = (String) evt.getItem();
 
 		if (category.equals("Construction")) {
-		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel.getLayout();
-		    EnergyPlusObjectPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
 		    itemPanel.removeAll();
-		    
+
 		    itemPanel.add(constructionPanel, BorderLayout.CENTER);
-		    EnergyPlusObjectPanel.add(constructionListScrollPane, BorderLayout.CENTER);
-		    
+		    EnergyPlusObjectPanel.add(constructionListScrollPane,
+			    BorderLayout.CENTER);
+
 		    itemPanel.revalidate();
 		    itemPanel.repaint();
 		    EnergyPlusObjectPanel.revalidate();
 		    EnergyPlusObjectPanel.repaint();
-		    
-		}else if(category.equals("Boiler")){
-		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel.getLayout();
-		    EnergyPlusObjectPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+
+		} else if (category.equals("Boiler")) {
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
 		    itemPanel.removeAll();
-		    
+
 		    itemPanel.add(boilerPanel, BorderLayout.CENTER);
-		    EnergyPlusObjectPanel.add(boilerListScrollPane, BorderLayout.CENTER);
-		    
+		    EnergyPlusObjectPanel.add(boilerListScrollPane,
+			    BorderLayout.CENTER);
+
 		    itemPanel.revalidate();
 		    itemPanel.repaint();
 		    EnergyPlusObjectPanel.revalidate();
 		    EnergyPlusObjectPanel.repaint();
-		}else if(category.equals("Fan")){
-		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel.getLayout();
-		    EnergyPlusObjectPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+		} else if (category.equals("Fan")) {
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
 		    itemPanel.removeAll();
-		    
+
 		    itemPanel.add(fanPanel, BorderLayout.CENTER);
-		    EnergyPlusObjectPanel.add(fanListScrollPane, BorderLayout.CENTER);
-		    
+		    EnergyPlusObjectPanel.add(fanListScrollPane,
+			    BorderLayout.CENTER);
+
 		    itemPanel.revalidate();
 		    itemPanel.repaint();
 		    EnergyPlusObjectPanel.revalidate();
 		    EnergyPlusObjectPanel.repaint();
-		}else if(category.equalsIgnoreCase("DX Coils")){
-		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel.getLayout();
-		    EnergyPlusObjectPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+		} else if (category.equalsIgnoreCase("DX Coils")) {
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
 		    itemPanel.removeAll();
-		    
+
 		    itemPanel.add(condenserUnitPanel, BorderLayout.CENTER);
-		    EnergyPlusObjectPanel.add(condenserUnitListScrollPane, BorderLayout.CENTER);
-		    
+		    EnergyPlusObjectPanel.add(condenserUnitListScrollPane,
+			    BorderLayout.CENTER);
+
 		    itemPanel.revalidate();
 		    itemPanel.repaint();
 		    EnergyPlusObjectPanel.revalidate();
-		    EnergyPlusObjectPanel.repaint(); 
+		    EnergyPlusObjectPanel.repaint();
+		} else if (category.equalsIgnoreCase("Furnace")) {
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+
+		    itemPanel.add(furnacePanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(furnaceScrollPane,
+			    BorderLayout.CENTER);
+
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
 		}
 	    }
 	});
-	
+
 	itemPanel.add(constructionPanel, BorderLayout.CENTER);
 	EnergyPlusObjectPanel
 		.add(objectSelectionCombo, BorderLayout.PAGE_START);
-	EnergyPlusObjectPanel.add(constructionListScrollPane, BorderLayout.CENTER);
-	
+	EnergyPlusObjectPanel.add(constructionListScrollPane,
+		BorderLayout.CENTER);
+
 	add(EnergyPlusObjectPanel, BorderLayout.WEST);
 
 	tablePanel = new JPanel(new BorderLayout());
@@ -196,16 +231,20 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	totalButton.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		String category = (String) objectSelectionCombo.getSelectedItem();
-		if(category.equals("Construction")){
-			model.addTotalCostToComponentCost(constructionList.getSelectedValue()
-				.toString(), category);  
-		}else if(category.equals("Boiler")){
-		    model.addTotalCostToComponentCost(boilerList.getSelectedValue().toString(), category);
-		}else if(category.equals("Fan")){
-		    model.addTotalCostToComponentCost(fanList.getSelectedValue().toString(), category);
-		}else if(category.equals("DX Coils")){
-		    model.addTotalCostToComponentCost(condenserUnitList.getSelectedValue().toString(), category);
+		String category = (String) objectSelectionCombo
+			.getSelectedItem();
+		if (category.equals("Construction")) {
+		    model.addTotalCostToComponentCost(constructionList
+			    .getSelectedValue().toString(), category);
+		} else if (category.equals("Boiler")) {
+		    model.addTotalCostToComponentCost(boilerList
+			    .getSelectedValue().toString(), category);
+		} else if (category.equals("Fan")) {
+		    model.addTotalCostToComponentCost(fanList
+			    .getSelectedValue().toString(), category);
+		} else if (category.equals("DX Coils")) {
+		    model.addTotalCostToComponentCost(condenserUnitList
+			    .getSelectedValue().toString(), category);
 		}
 	    }
 	});
@@ -215,38 +254,40 @@ public class MappingPanel extends JPanel implements CostTableListener {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		String category = (String) objectSelectionCombo.getSelectedItem();
-		if(category.equals("Construction")){
-			model.addTotalOPCostToComponentCost(constructionList.getSelectedValue()
-				.toString(), category);	    
-		}else if(category.equals("Boiler")){
-			model.addTotalOPCostToComponentCost(boilerList.getSelectedValue()
-				.toString(), category);	
-		}else if(category.equals("Fan")){
-			model.addTotalOPCostToComponentCost(fanList.getSelectedValue()
-				.toString(), category);	
-		}else if(category.equals("DX Coils")){
-		    model.addTotalOPCostToComponentCost(condenserUnitList.getSelectedValue().toString(), category);
+		String category = (String) objectSelectionCombo
+			.getSelectedItem();
+		if (category.equals("Construction")) {
+		    model.addTotalOPCostToComponentCost(constructionList
+			    .getSelectedValue().toString(), category);
+		} else if (category.equals("Boiler")) {
+		    model.addTotalOPCostToComponentCost(boilerList
+			    .getSelectedValue().toString(), category);
+		} else if (category.equals("Fan")) {
+		    model.addTotalOPCostToComponentCost(fanList
+			    .getSelectedValue().toString(), category);
+		} else if (category.equals("DX Coils")) {
+		    model.addTotalOPCostToComponentCost(condenserUnitList
+			    .getSelectedValue().toString(), category);
 		}
 
 	    }
 
 	});
-	
+
 	writeButton = new JButton(WRITE);
-	writeButton.addActionListener(new ActionListener(){
+	writeButton.addActionListener(new ActionListener() {
 
 	    @Override
 	    public void actionPerformed(ActionEvent arg0) {
 		model.writeIdf();
 	    }
 	});
-	
+
 	buttonPanel = new JPanel();
 	buttonPanel.add(totalButton);
 	buttonPanel.add(totalOPButton);
 	buttonPanel.add(writeButton);
-	
+
 	tablePanel.add(buttonPanel, BorderLayout.PAGE_END);
 
 	add(tablePanel, BorderLayout.PAGE_END);
@@ -254,12 +295,11 @@ public class MappingPanel extends JPanel implements CostTableListener {
     }
 
     private void updateConstructions() {
-	
+
 	constructionListModel = new DefaultListModel<String>();
 	constructionList = new JList<String>(constructionListModel);
 	constructionList.setFont(new Font("Helvetica", Font.BOLD, 20));
-	
-	
+
 	String[] cons = model.getConstructionList();
 	constructionListModel.clear();
 	for (String s : cons) {
@@ -267,74 +307,77 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	    constructionPanel.add(tp, s);
 
 	    constructionListModel.addElement(s);
-	    constructionList.addListSelectionListener(new ListSelectionListener() {
-		@Override
-		public void valueChanged(ListSelectionEvent evt) {
-		    CardLayout cardLayout = (CardLayout) (constructionPanel.getLayout());
-		    String selection = constructionList.getSelectedValue().toString();
-		    if (selection.equals(s)) {
-			cardLayout.show(constructionPanel, selection);
-		    }
-		    model.getConstructionCostVector(selection);
-		}
-	    });
+	    constructionList
+		    .addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent evt) {
+			    CardLayout cardLayout = (CardLayout) (constructionPanel
+				    .getLayout());
+			    String selection = constructionList
+				    .getSelectedValue().toString();
+			    if (selection.equals(s)) {
+				cardLayout.show(constructionPanel, selection);
+			    }
+			    model.getConstructionCostVector(selection);
+			}
+		    });
 	}
 	constructionListScrollPane = new JScrollPane(constructionList);
     }
-    
-    private void updateBoilers(){
+
+    private void updateBoilers() {
 	boilerListModel = new DefaultListModel<String>();
 	boilerList = new JList<String>(boilerListModel);
 	boilerList.setFont(new Font("Helvetica", Font.BOLD, 20));
-	
+
 	String[] boilers = model.getBoilerList();
 	boilerListModel.clear();
-	for(String s:boilers){
-	    
+	for (String s : boilers) {
+
 	    model.setBoilerMasterFormat(s);
-	    JPanel boiler = new BoilerPanel(model,s);// need to change this
+	    JPanel boiler = new BoilerPanel(model, s);// need to change this
 	    boilerPanel.add(boiler, s);
-	    
+
 	    boilerListModel.addElement(s);
-	    boilerList.addListSelectionListener(new ListSelectionListener(){
+	    boilerList.addListSelectionListener(new ListSelectionListener() {
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
-		    CardLayout cardLayout = (CardLayout)(boilerPanel.getLayout());
+		    CardLayout cardLayout = (CardLayout) (boilerPanel
+			    .getLayout());
 		    String selection = boilerList.getSelectedValue().toString();
-		    if(selection.equals(s)){
+		    if (selection.equals(s)) {
 			cardLayout.show(boilerPanel, selection);
+			model.getBoilerCostVector(selection);
 		    }
-		    model.getBoilerCostVector(selection);
 		}
 	    });
-	    
 
 	}
-	
+
 	boilerListScrollPane = new JScrollPane(boilerList);
     }
-    
-    private void updateFans(){
+
+    private void updateFans() {
 	fanListModel = new DefaultListModel<String>();
 	fanList = new JList<String>(fanListModel);
 	fanList.setFont(new Font("Helvetica", Font.BOLD, 20));
-	
+
 	String[] fans = model.getFanList();
 	fanListModel.clear();
-	for(String f:fans){
-	    //model.setFanMasterFormat(f);
-	    JPanel fan = new FanPanel(model,f);// need to change this
-	    
+	for (String f : fans) {
+	    // model.setFanMasterFormat(f);
+	    JPanel fan = new FanPanel(model, f);// need to change this
+
 	    fanPanel.add(fan);
 	    fanListModel.addElement(f);
-	    fanList.addListSelectionListener(new ListSelectionListener(){
+	    fanList.addListSelectionListener(new ListSelectionListener() {
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
-		    CardLayout cardLayout = (CardLayout)(fanPanel.getLayout());
+		    CardLayout cardLayout = (CardLayout) (fanPanel.getLayout());
 		    String selection = fanList.getSelectedValue().toString();
-		    if(selection.equals(f)){
+		    if (selection.equals(f)) {
 			cardLayout.show(fanPanel, selection);
 		    }
 		    model.getFanCostVector(selection);
@@ -343,33 +386,70 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	}
 	fanListScrollPane = new JScrollPane(fanList);
     }
-    
-    private void updateCondenserUnit(){
+
+    private void updateCondenserUnit() {
 	condenserUnitListModel = new DefaultListModel<String>();
 	condenserUnitList = new JList<String>(condenserUnitListModel);
 	condenserUnitList.setFont(new Font("Helvetica", Font.BOLD, 20));
-	
+
 	String[] condenserUnit = model.getCondenserUnitList();
 	condenserUnitListModel.clear();
-	for(String c: condenserUnit){
-	    //model.setFanMasterFormat(f);
-	    JPanel cu = new CondenserUnitPanel(model,c);// need to change this
+	for (String c : condenserUnit) {
+	    // model.setFanMasterFormat(f);
+	    JPanel cu = new CondenserUnitPanel(model, c);// need to change this
 	    condenserUnitPanel.add(cu);
 	    condenserUnitListModel.addElement(c);
-	    condenserUnitList.addListSelectionListener(new ListSelectionListener(){
-		@Override
-		public void valueChanged(ListSelectionEvent e) {
-		    CardLayout cardLayout = (CardLayout)(condenserUnitPanel.getLayout());
-		    String selection = condenserUnitList.getSelectedValue().toString();
-		    if(selection.equals(c)){
-			cardLayout.show(condenserUnitPanel, selection);
-		    }
-		    model.getCondenserUnitCostVector(selection);
-		}
-	    });
+	    condenserUnitList
+		    .addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+			    CardLayout cardLayout = (CardLayout) (condenserUnitPanel
+				    .getLayout());
+			    String selection = condenserUnitList
+				    .getSelectedValue().toString();
+			    if (selection.equals(c)) {
+				cardLayout.show(condenserUnitPanel, selection);
+			    }
+			    model.getCondenserUnitCostVector(selection);
+			}
+		    });
 	}
 	condenserUnitListScrollPane = new JScrollPane(condenserUnitList);
-	
+    }
+
+    private void updateFurnace() {
+	furnaceModel = new DefaultListModel<String>();
+	furnaceList = new JList<String>(furnaceModel);
+	furnaceList.setFont(new Font("Helvetica", Font.BOLD, 20));
+
+	String[] furnaces = model.getFurnaceList();
+	furnaceModel.clear();
+
+	for (String f : furnaces) {
+
+	    model.setFurnaceMasterFormat(f);
+	    JPanel furnace = new FurnacePanel(model, f);// need to change this
+	    furnacePanel.add(furnace, f);
+
+	    furnaceModel.addElement(f);
+	    furnaceList.addListSelectionListener(new ListSelectionListener() {
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    CardLayout cardLayout = (CardLayout) (furnacePanel
+			    .getLayout());
+		    String selection = furnaceList.getSelectedValue()
+			    .toString();
+		    if (selection.equals(f)) {
+			cardLayout.show(furnacePanel, selection);
+			model.getFurnaceCostVector(selection);
+		    }
+		}
+	    });
+
+	}
+
+	furnaceScrollPane = new JScrollPane(furnaceList);
+
     }
 
     private JTabbedPane makeTabbedPanel(String construction) {
@@ -394,7 +474,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	}
 	tableModel.fireTableDataChanged();
     }
-    
+
     /**
      * Create the GUI and show it. For thread safety, this method should be
      * invoked from the event dispatch thread.

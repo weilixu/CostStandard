@@ -10,7 +10,9 @@ import java.util.List;
 import eplus.MaterialAnalyzer.Material;
 import eplus.htmlparser.EnergyPlusHTMLParser;
 import masterformat.api.MasterFormat;
+import masterformat.listener.BoilerListener;
 import masterformat.listener.CostTableListener;
+import masterformat.listener.FurnaceListener;
 import masterformat.standard.model.MasterFormatModel;
 
 /**
@@ -32,13 +34,15 @@ public class EnergyPlusModel {
     private BoilerAnalyzer boilerModule;
     private FanAnalyzer fanModule;
     private CondenserUnitAnalyzer condenserUnitModule;
+    private FurnaceAnalyzer furnaceModule;
 
     // files locations etc.
     private final File eplusFile;
     private final File parentFolder;
 
     // useful data
-    private final String[] domainList = { "Construction", "Boiler","Fan","DX Coils" };// comboBox
+    private final String[] domainList = { "Construction", "Boiler", "Fan",
+	    "DX Coils", "Furnace" };// comboBox
 
     private String[][] costData;
     private final String componentCostDescription = "Name:Type:Line Item Type:Item Name:Object End-Use Key:Cost per Each:Cost per Area:"
@@ -48,12 +52,14 @@ public class EnergyPlusModel {
     private final String componentCostObject = "ComponentCost:LineItem";
     // count the generated idf file
     private Integer generatedCounter = 0;
-    
+
     private String[] selectionOptions;
     private Integer[] selectionOptionQuantities;
 
     // listeners
     private List<CostTableListener> tableListeners;
+    private List<FurnaceListener> furnaceListeners;
+    private List<BoilerListener> boilerListeners;
 
     public EnergyPlusModel(File file) {
 	eplusFile = file;
@@ -61,6 +67,8 @@ public class EnergyPlusModel {
 	masterformat = new MasterFormatModel();
 
 	tableListeners = new ArrayList<CostTableListener>();
+	furnaceListeners = new ArrayList<FurnaceListener>();
+	boilerListeners = new ArrayList<BoilerListener>();
 
 	idfDomain = new IdfReader();
 	idfDomain.setFilePath(eplusFile.getAbsolutePath());
@@ -74,6 +82,7 @@ public class EnergyPlusModel {
 	setUpBoilerAnalyzer();
 	setUpFanAnalyzer();
 	setUpCondenserUnitAnalyzer();
+	setUpFurnaceAnalyzer();
     }
 
     /**
@@ -85,6 +94,14 @@ public class EnergyPlusModel {
 	tableListeners.add(ct);
     }
 
+    public void addFurnaceListener(FurnaceListener fl) {
+	furnaceListeners.add(fl);
+    }
+    
+    public void addBoilerListener(BoilerListener bl){
+	boilerListeners.add(bl);
+    }
+
     /**
      * get the domain list which indicates the domain items according to
      * EnergyPlus specifications
@@ -94,15 +111,15 @@ public class EnergyPlusModel {
     public String[] getDomainList() {
 	return domainList;
     }
-    
-    public String[] getOptionList(){
+
+    public String[] getOptionList() {
 	return selectionOptions;
     }
-    
-    public Integer[] getQuantityList(){
+
+    public Integer[] getQuantityList() {
 	return selectionOptionQuantities;
     }
-	    
+
     // Below are all the methods to retrieve the object list from Energyplus
     /**
      * retrieve the material list from a specific construction This is used for
@@ -131,9 +148,13 @@ public class EnergyPlusModel {
     public String[] getFanList() {
 	return fanModule.getFanList();
     }
-    
-    public String[] getCondenserUnitList(){
+
+    public String[] getCondenserUnitList() {
 	return condenserUnitModule.getCondenserList();
+    }
+
+    public String[] getFurnaceList() {
+	return furnaceModule.getFurnaceList();
     }
 
     /**
@@ -176,16 +197,25 @@ public class EnergyPlusModel {
     /**
      * For fans mapping
      * 
-     * @param description: type of the object in energyplus
+     * @param description
+     *            : type of the object in energyplus
      */
-    public void setFanMasterFormat(String fanName,String description) {
+    public void setFanMasterFormat(String fanName, String description) {
 	MasterFormat mf = masterformat.getUserInputFromMap("FAN", description);
 	fanModule.setFanMasterFormat(fanName, mf);
     }
-    
-    public void setCondenserMasterFormat(String condenserName, String description){
-	MasterFormat mf = masterformat.getUserInputFromMap("CONDENSERUNIT", description);
+
+    public void setCondenserMasterFormat(String condenserName,
+	    String description) {
+	MasterFormat mf = masterformat.getUserInputFromMap("CONDENSERUNIT",
+		description);
 	condenserUnitModule.setCondenserUnitMasterFormat(condenserName, mf);
+    }
+
+    public void setFurnaceMasterFormat(String furnaceName) {
+	String type = furnaceModule.getFurnaceType(furnaceName);
+	MasterFormat mf = masterformat.getUserInputFromMap("FURNACE", type);
+	furnaceModule.setFurnaceMasterFormat(furnaceName, mf);
     }
 
     // All the methods to retrieve user inputs from the mapping results
@@ -209,9 +239,13 @@ public class EnergyPlusModel {
     public ArrayList<String> getFanUserInputs(String fanName) {
 	return fanModule.getFan(fanName).getUserInputs();
     }
-    
-    public ArrayList<String> getCondenserUnitInputs(String condenserName){
+
+    public ArrayList<String> getCondenserUnitInputs(String condenserName) {
 	return condenserUnitModule.getCondenser(condenserName).getUserInputs();
+    }
+
+    public ArrayList<String> getFurnaceInputs(String furnaceName) {
+	return furnaceModule.getFurnace(furnaceName).getUserInputs();
     }
 
     // All the methods to extract the cost vector from the masterformat
@@ -233,6 +267,7 @@ public class EnergyPlusModel {
     public void getBoilerCostVector(String item) {
 	costData = boilerModule.getCostListForBoiler(item);
 	updateCostVectorInformation();
+	updateBoilerQuantities(item);
     }
 
     /**
@@ -244,51 +279,104 @@ public class EnergyPlusModel {
 	costData = fanModule.getCostListForFan(item);
 	updateCostVectorInformation();
     }
-    
-    public void getCondenserUnitCostVector(String item){
+
+    public void getCondenserUnitCostVector(String item) {
 	costData = condenserUnitModule.getCostListForCondenserUnit(item);
 	updateCostVectorInformation();
     }
+
+    public void getFurnaceCostVector(String item) {
+	costData = furnaceModule.getCostListForFurnace(item);
+	updateCostVectorInformation();
+	//System.out.println("here? "+item);
+	updateFurnaceQuantities(item);
+    }
+
+    /**
+     * 
+     * @param fanName
+     */
+    public void getBoilerOptionList(String boilerName){
+	ArrayList<String> list = boilerModule.getBoiler(boilerName).getOptionList();
+	String[] temp = new String[list.size()];
+	for (int i = 0; i < list.size(); i++) {
+	    temp[i] = list.get(i);
+	}
+	selectionOptions = temp;
+    }
     
-    //All the methods to get the options under one category and quantities
-    public void getFanOptionList(String fanName){
+    public void getBoilerOptionQuantities(String boilerName){
+	ArrayList<Integer> list = boilerModule.getBoiler(boilerName)
+		.getOptionQuantities();
+	Integer[] temp = new Integer[list.size()];
+	for (int i = 0; i < list.size(); i++) {
+	    temp[i] = list.get(i);
+	}
+	selectionOptionQuantities = temp;
+    }
+    
+    // All the methods to get the options under one category and quantities
+    public void getFanOptionList(String fanName) {
+	System.out.println(fanName);
 	ArrayList<String> list = fanModule.getFan(fanName).getOptionList();
 	String[] temp = new String[list.size()];
-	for(int i=0; i<list.size(); i++){
+	for (int i = 0; i < list.size(); i++) {
 	    temp[i] = list.get(i);
 	}
 	selectionOptions = temp;
     }
-    
-    //All the methods to get the options quantities under one category
-    public void getFanOptionQuantities(String fanName){
-	ArrayList<Integer> list = fanModule.getFan(fanName).getOptionQuantities();
+
+    // All the methods to get the options quantities under one category
+    public void getFanOptionQuantities(String fanName) {
+	ArrayList<Integer> list = fanModule.getFan(fanName)
+		.getOptionQuantities();
 	Integer[] temp = new Integer[list.size()];
-	for(int i=0; i<list.size(); i++){
+	for (int i = 0; i < list.size(); i++) {
 	    temp[i] = list.get(i);
 	}
 	selectionOptionQuantities = temp;
-	
     }
-    
-    public void getCondenserUnitOptionList(String condenserName){
-	ArrayList<String> list = condenserUnitModule.getCondenser(condenserName).getOptionList();
+
+    public void getCondenserUnitOptionList(String condenserName) {
+	ArrayList<String> list = condenserUnitModule
+		.getCondenser(condenserName).getOptionList();
 	String[] temp = new String[list.size()];
-	for(int i=0; i<list.size(); i++){
+	for (int i = 0; i < list.size(); i++) {
 	    temp[i] = list.get(i);
 	}
 	selectionOptions = temp;
     }
-    
-    //All the methods to get the options quantities under one category
-    public void getCondenserUnitOptionQuantities(String condenserName){
-	ArrayList<Integer> list = condenserUnitModule.getCondenser(condenserName).getOptionQuantities();
+
+    // All the methods to get the options quantities under one category
+    public void getCondenserUnitOptionQuantities(String condenserName) {
+	ArrayList<Integer> list = condenserUnitModule.getCondenser(
+		condenserName).getOptionQuantities();
 	Integer[] temp = new Integer[list.size()];
-	for(int i=0; i<list.size(); i++){
+	for (int i = 0; i < list.size(); i++) {
 	    temp[i] = list.get(i);
 	}
 	selectionOptionQuantities = temp;
-	
+    }
+
+    public void getFurnaceOptionList(String furnaceName) {
+	ArrayList<String> list = furnaceModule.getFurnace(furnaceName)
+		.getOptionList();
+	String[] temp = new String[list.size()];
+	for (int i = 0; i < list.size(); i++) {
+	    temp[i] = list.get(i);
+	}
+	selectionOptions = temp;
+    }
+
+    public void getFurnaceOptionQuantities(String furnaceName) {
+	ArrayList<Integer> list = furnaceModule.getFurnace(furnaceName)
+		.getOptionQuantities();
+	Integer[] temp = new Integer[list.size()];
+	for (int i = 0; i < list.size(); i++) {
+	    temp[i] = list.get(i);
+	}
+	// System.out.println(Arrays.toString(temp));
+	selectionOptionQuantities = temp;
     }
 
     // All the methods that feed back user inputs to the masterformat for the
@@ -325,10 +413,17 @@ public class EnergyPlusModel {
 	fanModule.setUserInput(map, fanName);
 	getFanCostVector(fanName);
     }
-    
-    public void setCondenserUnitUserInput(HashMap<String, String> map, String condenserName){
+
+    public void setCondenserUnitUserInput(HashMap<String, String> map,
+	    String condenserName) {
 	condenserUnitModule.setUserInput(map, condenserName);
 	getCondenserUnitCostVector(condenserName);
+    }
+
+    public void setFurnaceUserInput(HashMap<String, String> map,
+	    String furnaceName) {
+	furnaceModule.setUserInput(map, furnaceName);
+	getFurnaceCostVector(furnaceName);
     }
 
     // All the method that retrieve the cost information and put it down to
@@ -343,8 +438,7 @@ public class EnergyPlusModel {
 	Integer totalCostIndex = 5;
 	Double cost = Double
 		.parseDouble(costData[costData.length - 1][totalCostIndex]);
-	System.out.println(Arrays.toString(costData[costData.length-1]));
-	
+
 	String[] description = componentCostDescription.split(":");
 	if (category.equalsIgnoreCase("CONSTRUCTION")) {
 	    String[] value = { item.toUpperCase(), "", category, item, "", "",
@@ -356,12 +450,17 @@ public class EnergyPlusModel {
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
-	} else if(category.equalsIgnoreCase("FAN")){
+	} else if (category.equalsIgnoreCase("FAN")) {
 	    String[] value = { item.toUpperCase(), "", "General", item, "",
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
-	} else if(category.equalsIgnoreCase("DX Coils")){
+	} else if (category.equalsIgnoreCase("DX Coils")) {
+	    String[] value = { item.toUpperCase(), "", "General", item, "",
+		    cost.toString(), "", "", "", "", "", "", "1" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
+	} else if (category.equalsIgnoreCase("FURNACE")) {
 	    String[] value = { item.toUpperCase(), "", "General", item, "",
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
@@ -391,12 +490,17 @@ public class EnergyPlusModel {
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
-	} else if(category.equalsIgnoreCase("FAN")){
+	} else if (category.equalsIgnoreCase("FAN")) {
 	    String[] value = { item.toUpperCase(), "", "General", item, "",
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
-	} else if(category.equalsIgnoreCase("CONDENSERUNIT")){
+	} else if (category.equalsIgnoreCase("CONDENSERUNIT")) {
+	    String[] value = { item.toUpperCase(), "", "General", item, "",
+		    cost.toString(), "", "", "", "", "", "", "1" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
+	} else if (category.equalsIgnoreCase("FURNACE")) {
 	    String[] value = { item.toUpperCase(), "", "General", item, "",
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
@@ -412,12 +516,12 @@ public class EnergyPlusModel {
 		generatedCounter.toString());
 	generatedCounter++;
     }
-    
-    private void processHTML(){
+
+    private void processHTML() {
 	File[] fList = parentFolder.listFiles();
-	for(File file:fList){
-	    if(file.isFile()){
-		if(file.getName().endsWith(".html")){
+	for (File file : fList) {
+	    if (file.isFile()) {
+		if (file.getName().endsWith(".html")) {
 		    htmlParser = new EnergyPlusHTMLParser(file);
 		}
 	    }
@@ -433,16 +537,37 @@ public class EnergyPlusModel {
     }
 
     private void setUpFanAnalyzer() {
-	fanModule = new FanAnalyzer(idfDomain,htmlParser);
+	fanModule = new FanAnalyzer(idfDomain, htmlParser);
     }
-    
-    private void setUpCondenserUnitAnalyzer(){
+
+    private void setUpCondenserUnitAnalyzer() {
 	condenserUnitModule = new CondenserUnitAnalyzer(idfDomain);
+    }
+
+    private void setUpFurnaceAnalyzer() {
+	furnaceModule = new FurnaceAnalyzer(idfDomain, htmlParser);
     }
 
     private void updateCostVectorInformation() {
 	for (CostTableListener ct : tableListeners) {
 	    ct.onCostTableUpdated(costData);
+	}
+    }
+    
+    private void updateBoilerQuantities(String name){
+	for (BoilerListener bl : boilerListeners) {
+	    System.out.println(name+" "+bl.getName());
+	    if (name.equals(bl.getName())) {
+		bl.onQuanatitiesUpdates();
+	    }
+	}
+    }
+
+    private void updateFurnaceQuantities(String name) {
+	for (FurnaceListener fl : furnaceListeners) {
+	    if (name.equals(fl.getName())) {
+		fl.onQuanatitiesUpdates();
+	    }
 	}
     }
 }

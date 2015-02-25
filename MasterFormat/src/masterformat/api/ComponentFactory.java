@@ -4,6 +4,7 @@ import masterformat.standard.concrete.Concrete;
 import masterformat.standard.hvac.boiler.Boiler;
 import masterformat.standard.hvac.condenserunits.CondenserUnits;
 import masterformat.standard.hvac.fan.Fan;
+import masterformat.standard.hvac.furnaces.Furnace;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
@@ -21,4 +22,6 @@ public abstract class ComponentFactory {
     public abstract Fan getFan(String fan);
     
     public abstract CondenserUnits getCondenserUnit(String condenserunit);
+    
+    public abstract Furnace getFurnace(String furnace);
 }

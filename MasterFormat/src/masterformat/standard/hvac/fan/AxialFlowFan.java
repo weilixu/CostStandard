@@ -11,10 +11,10 @@ import masterformat.standard.model.CostMultiRegressionModel;
 public class AxialFlowFan extends AbstractFan {
 
     private Double flowRate;
-    private final Double[] flowRateList = {1.0,1.9,3.8};
-    
-    private static final Double[] Default_Cost_Vector = {0.0,0.0,0.0,0.0,0.0};
+    private final Double[] flowRateList = { 1.0, 1.9, 3.8 };
 
+    private static final Double[] Default_Cost_Vector = { 0.0, 0.0, 0.0, 0.0,
+	    0.0 };
 
     public AxialFlowFan() {
 	unit = "$/Ea";
@@ -51,11 +51,14 @@ public class AxialFlowFan extends AbstractFan {
 
 	optionLists = new ArrayList<String>();
 	optionQuantities = new ArrayList<Integer>();
-	optionLists.add("Air conditioning and process air handling, Vaneaxial, low pressure, 1 m3/s, 372 Watts");
+	optionLists
+		.add("Air conditioning and process air handling, Vaneaxial, low pressure, 1 m3/s, 372 Watts");
 	optionQuantities.add(0);
-	optionLists.add("Air conditioning and process air handling, Vaneaxial, low pressure, 1.9 m3/s, 746 Watts");
+	optionLists
+		.add("Air conditioning and process air handling, Vaneaxial, low pressure, 1.9 m3/s, 746 Watts");
 	optionQuantities.add(0);
-	optionLists.add("Air conditioning and process air handling, Vaneaxial, low pressure, 3.8 m3/s, 1491 Watts");
+	optionLists
+		.add("Air conditioning and process air handling, Vaneaxial, low pressure, 3.8 m3/s, 1491 Watts");
 	optionQuantities.add(0);
 
 	for (int i = 0; i < optionLists.size(); i++) {
@@ -65,76 +68,84 @@ public class AxialFlowFan extends AbstractFan {
 
     @Override
     public void selectCostVector() {
+	setToZero();
+	Integer index = 0;
 	if (flowRate <= 1.0) {
-	    description = "Air conditioning and process air handling, Vaneaxial, low pressure, 1 m3/s, 372 Watts";
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 1.0 && flowRate <= 1.9) {
-	    description = "Air conditioning and process air handling, Vaneaxial, low pressure, 1.9 m3/s, 746 Watts";
+	    index = 1;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
 	} else if (flowRate > 1.9 && flowRate <= 3.8) {
-	    description = "Air conditioning and process air handling, Vaneaxial, low pressure, 3.8 m3/s, 1491 Watts";
+	    index = 2;
+	    description = optionLists.get(index);
 	    costVector = deepCopyCost(priceData.get(description));
-	}else{
+	    Integer i = optionQuantities.get(index);
+	    optionQuantities.set(index, i + 1);
+	} else {
 	    description = "Air conditioning and process air handling, Vaneaxial, low pressure, groups";
 	    fittingFlowRate();
 	}
     }
-    
-    private void fittingFlowRate(){
-	setToZero();
-	//shows the best fit capacity
-	Double fittedFlowRate=0.0;
-	//shows the total capacity added
-	Double totalFlowRate=0.0;
-	costVector=deepCopyCost(Default_Cost_Vector);
-	
-	while(totalFlowRate<flowRate){
+
+    private void fittingFlowRate() {
+	// shows the best fit capacity
+	Double fittedFlowRate = 0.0;
+	// shows the total capacity added
+	Double totalFlowRate = 0.0;
+	costVector = deepCopyCost(Default_Cost_Vector);
+
+	while (totalFlowRate < flowRate) {
 	    fittedFlowRate = findFittedFlowRate(totalFlowRate);
-	    totalFlowRate+=fittedFlowRate;
+	    totalFlowRate += fittedFlowRate;
 	}
     }
-    
-    private Double findFittedFlowRate(Double total){
-	//the difference between capacity and total capacity
+
+    private Double findFittedFlowRate(Double total) {
+	// the difference between capacity and total capacity
 	Double temp = flowRate;
-	//index shows the current best fit capacity
+	// index shows the current best fit capacity
 	int criticalIndex = 0;
-	
-	for(int i=0; i<flowRateList.length; i++){
-	    Double residual = Math.abs(flowRate-total-flowRateList[i]);
-	    if(residual<temp){
+
+	for (int i = 0; i < flowRateList.length; i++) {
+	    Double residual = Math.abs(flowRate - total - flowRateList[i]);
+	    if (residual < temp) {
 		temp = residual;
 		criticalIndex = i;
 	    }
 	}
-	//add to the cost vector
+	// add to the cost vector
 	Double[] itemCost = priceData.get(optionLists.get(criticalIndex));
-	for(int j=0; j<costVector.length; j++){
-	    costVector[j]+=itemCost[j];
+	for (int j = 0; j < costVector.length; j++) {
+	    costVector[j] += itemCost[j];
 	}
-	Integer q = optionQuantities.get(criticalIndex)+1;
+	Integer q = optionQuantities.get(criticalIndex) + 1;
 	optionQuantities.set(criticalIndex, q);
-	
+
 	return flowRateList[criticalIndex];
     }
-    
-    private void setToZero(){
-	for(int i=0; i<optionQuantities.size(); i++){
+
+    private void setToZero() {
+	for (int i = 0; i < optionQuantities.size(); i++) {
 	    optionQuantities.set(i, 0);
 	}
     }
 
-    
-    private Double[] deepCopyCost(Double[] costVector){
+    private Double[] deepCopyCost(Double[] costVector) {
 	Double[] temp = new Double[costVector.length];
-	for(int i=0; i<costVector.length; i++){
-	    temp[i]= costVector[i];
+	for (int i = 0; i < costVector.length; i++) {
+	    temp[i] = costVector[i];
 	}
 	return temp;
     }
 
-//    private Double[] regressionCosts() {
-//	System.out.println("here?");
-//	return regressionModel.predictCostVector(flowRate);
-//    }
+    // private Double[] regressionCosts() {
+    // System.out.println("here?");
+    // return regressionModel.predictCostVector(flowRate);
+    // }
 }
