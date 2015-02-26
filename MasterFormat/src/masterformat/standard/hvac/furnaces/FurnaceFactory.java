@@ -4,6 +4,7 @@ import masterformat.api.ComponentFactory;
 import masterformat.standard.concrete.Concrete;
 import masterformat.standard.hvac.boiler.Boiler;
 import masterformat.standard.hvac.condenserunits.CondenserUnits;
+import masterformat.standard.hvac.decentralized.heatpump.HeatPump;
 import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
@@ -54,6 +55,12 @@ public class FurnaceFactory extends ComponentFactory{
 	}else if(furnace.equalsIgnoreCase("Coil:Heating:Gas")){
 	    return new FuelFiredFurnaces();
 	}
+	return null;
+    }
+
+    @Override
+    public HeatPump getHeatPump(String heatpump) {
+	// TODO Auto-generated method stub
 	return null;
     }
 

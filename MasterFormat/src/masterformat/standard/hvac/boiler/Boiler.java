@@ -13,5 +13,4 @@ public interface Boiler extends MasterFormat{
     /*
      * this is a marker interface
      */
-
 }

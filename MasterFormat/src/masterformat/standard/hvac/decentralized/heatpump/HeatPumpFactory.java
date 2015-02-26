@@ -1,16 +1,15 @@
-package masterformat.standard.hvac.fan;
+package masterformat.standard.hvac.decentralized.heatpump;
 
 import masterformat.api.ComponentFactory;
 import masterformat.standard.concrete.Concrete;
 import masterformat.standard.hvac.boiler.Boiler;
 import masterformat.standard.hvac.condenserunits.CondenserUnits;
-import masterformat.standard.hvac.decentralized.heatpump.HeatPump;
+import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.hvac.furnaces.Furnace;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
-
-public class FanFactory extends ComponentFactory{
+public class HeatPumpFactory extends ComponentFactory{
 
     @Override
     public Masonry getMasonry(String masonryType) {
@@ -39,21 +38,7 @@ public class FanFactory extends ComponentFactory{
 
     @Override
     public Fan getFan(String fan) {
-	if(fan.equalsIgnoreCase("AXIAL FLOW HVAC FANS")){
-	    return new AxialFlowFan();
-	}else if(fan.equalsIgnoreCase("BLOWER TYPE HVAC CEILING FANS")){
-	    return new BlowerCeilingFan();
-	}else if(fan.equalsIgnoreCase("BLOWER TYPE HVAC UTILITY SET")){
-	    return new BlowerUtilitySetFan();
-	}else if(fan.equalsIgnoreCase("CENTRIFUGAL TYPE HVAC SUPPLY OR EXHAUST BOOSTER")){
-	    return new CentrifugalBooster();
-	}else if(fan.equalsIgnoreCase("CENTRIFUGAL TYPE HVAC UTILITY SET")){
-	    return new CentrifugalUtilitySetFan();
-	}else if(fan.equalsIgnoreCase("CENTRIFUGAL TYPE HVAC ROOF EXHAUST")){
-	    return new CentrifugalRoofExhauster();
-	}else if(fan.equalsIgnoreCase("CENTRIFUGAL TYPE HVAC WALL EXHAUST")){
-	    return new CentrifugalWallExhauster();
-	}
+	// TODO Auto-generated method stub
 	return null;
     }
 
@@ -71,7 +56,10 @@ public class FanFactory extends ComponentFactory{
 
     @Override
     public HeatPump getHeatPump(String heatpump) {
-	// TODO Auto-generated method stub
+	if(heatpump.equalsIgnoreCase("Air-Source Heat Pumps")){
+	    return new AirSourceHeatPump();
+	}
 	return null;
     }
+
 }

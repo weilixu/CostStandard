@@ -3,6 +3,7 @@ package masterformat.standard.hvac.condenserunits;
 import masterformat.api.ComponentFactory;
 import masterformat.standard.concrete.Concrete;
 import masterformat.standard.hvac.boiler.Boiler;
+import masterformat.standard.hvac.decentralized.heatpump.HeatPump;
 import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.hvac.furnaces.Furnace;
 import masterformat.standard.masonry.Masonry;
@@ -52,6 +53,12 @@ public class CondenserUnitsFactory extends ComponentFactory{
 
     @Override
     public Furnace getFurnace(String furnace) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public HeatPump getHeatPump(String heatpump) {
 	// TODO Auto-generated method stub
 	return null;
     }

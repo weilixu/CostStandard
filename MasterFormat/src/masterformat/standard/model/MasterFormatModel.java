@@ -5,6 +5,7 @@ import masterformat.api.MasterFormat;
 import masterformat.standard.concrete.ConcreteFactory;
 import masterformat.standard.hvac.boiler.BoilerFactory;
 import masterformat.standard.hvac.condenserunits.CondenserUnitsFactory;
+import masterformat.standard.hvac.decentralized.heatpump.HeatPumpFactory;
 import masterformat.standard.hvac.fan.FanFactory;
 import masterformat.standard.hvac.furnaces.FurnaceFactory;
 import masterformat.standard.masonry.MasonryFactory;
@@ -40,6 +41,9 @@ public class MasterFormatModel {
 	}else if(type.equalsIgnoreCase("FURNACE")){
 	    factory = new FurnaceFactory();
 	    return factory.getFurnace(description);
+	}else if(type.equalsIgnoreCase("UnitaryHVAC")){
+	    factory = new HeatPumpFactory();
+	    return factory.getHeatPump(description);
 	}
 	return null;
     }
