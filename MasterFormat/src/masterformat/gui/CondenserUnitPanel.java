@@ -197,15 +197,17 @@ public class CondenserUnitPanel extends JPanel implements TreeSelectionListener 
 		    Object source = e.getItemSelectable();
 		    if (source == tempCheckedBox) {
 			userInputMap.put(description, "true");
-			model.setFanUserInput(userInputMap, condenserName);
-			    disPlayOptions();
+			model.setCondenserUnitUserInput(userInputMap,
+				condenserName);
+			disPlayOptions();
 
 		    }
 
 		    if (e.getStateChange() == ItemEvent.DESELECTED) {
 			userInputMap.remove(description);
-			model.setFanUserInput(userInputMap, condenserName);
-			    disPlayOptions();
+			model.setCondenserUnitUserInput(userInputMap,
+				condenserName);
+			disPlayOptions();
 
 		    }
 		}
@@ -233,7 +235,8 @@ public class CondenserUnitPanel extends JPanel implements TreeSelectionListener 
 		public void actionPerformed(ActionEvent evt) {
 		    String input = (String) tempCombo.getSelectedItem();
 		    userInputMap.put(option, input);
-		    model.setFanUserInput(userInputMap, condenserName);
+		    System.out.println(option+" "+input);
+		    model.setCondenserUnitUserInput(userInputMap, condenserName);
 		    disPlayOptions();
 
 		}
@@ -259,9 +262,8 @@ public class CondenserUnitPanel extends JPanel implements TreeSelectionListener 
 		public void actionPerformed(ActionEvent e) {
 		    String data = (String) inputField.getText();
 		    userInputMap.put(input, data);
-		    model.setFanUserInput(userInputMap, condenserName);
+		    model.setCondenserUnitUserInput(userInputMap, condenserName);
 		    disPlayOptions();
-
 		}
 
 	    });

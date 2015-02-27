@@ -484,7 +484,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	JFrame frame = new JFrame("MasterFormatTreeDemo");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	File file = new File(
-		"C:\\Users\\Weili\\Desktop\\New folder\\CostTestSimulation\\CostTester.idf");
+		"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\FanCoil\\FanCoil.idf");
 
 	EnergyPlusModel model = new EnergyPlusModel(file);
 	// Add content to the window.

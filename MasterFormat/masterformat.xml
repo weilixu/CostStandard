@@ -43,6 +43,9 @@
 		<package tag="236213" description = "Packaged Air-Cooled Refrigerant Compressor and Condenser Units" type="CondenserUnit">
 			<package_air tag="236213.10" description = "Packaged Air-Cooled Refrigerant Condensing Units" type = "CondenserUnit"/>
 		</package>
+		<aircoolchiller tag="236313" description="Air-Cooled Refrigerant Condensers" type="CondenserUnit">
+			<condenser tag="236313.10" description="Air-Cooled Refrigerant Condensers" type="CondenserUnit"/>
+		</aircoolchiller>
 	</condenserunit>
 	<unitary>
 		<packagedterminal tag="238113" description = "Packaged Terminal Air-Conditioners" type = "UnitaryHVAC">

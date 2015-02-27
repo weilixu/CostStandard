@@ -541,7 +541,7 @@ public class EnergyPlusModel {
     }
 
     private void setUpCondenserUnitAnalyzer() {
-	condenserUnitModule = new CondenserUnitAnalyzer(idfDomain);
+	condenserUnitModule = new CondenserUnitAnalyzer(idfDomain,htmlParser);
     }
 
     private void setUpFurnaceAnalyzer() {

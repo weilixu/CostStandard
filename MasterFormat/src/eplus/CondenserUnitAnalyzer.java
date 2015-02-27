@@ -2,15 +2,18 @@ package eplus;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
 import eplus.IdfReader.ValueNode;
+import eplus.htmlparser.EnergyPlusHTMLParser;
 import masterformat.api.MasterFormat;
 
 public class CondenserUnitAnalyzer {
     private final IdfReader reader;
+    private final EnergyPlusHTMLParser parser;
     private HashMap<String, CondenserUnit> condenserUnitMap;
 
     private final int stringArraySize = 3;
@@ -20,6 +23,7 @@ public class CondenserUnitAnalyzer {
     private final static String twoSpeed = "Coil:Cooling:DX:TwoSpeed";
     private final static String multiSpeed = "Coil:Cooling:DX:MultiSpeed";
     private final static String variableSpeed = "Coil:Cooling:DX:VariableSpeed";
+    private final static String chillerEIR = "Chiller:Electric:EIR";
 
     protected final int capacityIndex = 0;
     protected final int copIndex = 1;
@@ -30,8 +34,9 @@ public class CondenserUnitAnalyzer {
 
     private final Integer rowElement = 7;
     
-    public CondenserUnitAnalyzer(IdfReader reader){
+    public CondenserUnitAnalyzer(IdfReader reader, EnergyPlusHTMLParser p){
 	this.reader = reader;
+	parser = p;
 	condenserUnitMap = new HashMap<String, CondenserUnit>();
 	processCondenserUnitData();
     }
@@ -93,6 +98,7 @@ public class CondenserUnitAnalyzer {
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> twoSpeedList = reader.getObjectList(twoSpeed);
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> multiSpeedList = reader.getObjectList(multiSpeed);
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> variableSpeedList = reader.getObjectList(variableSpeed);
+	HashMap<String, HashMap<String, ArrayList<ValueNode>>> chillerList = reader.getObjectList(chillerEIR);
 	
 	if(singleSpeedList!=null){
 	    processSingleSpeed(singleSpeedList);
@@ -108,6 +114,10 @@ public class CondenserUnitAnalyzer {
 	
 	if(variableSpeedList!=null){
 	    processVariableSpeed(variableSpeedList);
+	}
+	
+	if(chillerList!=null){
+	    processAirCoolChiller(chillerList);
 	}
     }
     
@@ -200,6 +210,37 @@ public class CondenserUnitAnalyzer {
 		}
 	    }
 	    condenserUnitMap.put(name, cu);
+	}
+    }
+    
+    private void processAirCoolChiller(HashMap<String, HashMap<String, ArrayList<ValueNode>>> list){
+	Set<String> condenserCount = list.get(chillerEIR).keySet();
+	Iterator<String> condenserIterator = condenserCount.iterator();
+	while(condenserIterator.hasNext()){
+	    String count = condenserIterator.next();
+	    ArrayList<ValueNode> tempNodeList = list.get(chillerEIR).get(count);
+	    String name = tempNodeList.get(0).getAttribute();
+	    //first loop, identify this is an aircool chiller
+	    for(ValueNode vn: tempNodeList){
+		if(vn.getDescription().equalsIgnoreCase("Condenser Type")){
+		    if(vn.getAttribute().equalsIgnoreCase("AIRCOOLED")){
+			    CondenserUnit cu = new CondenserUnit(chillerEIR,name);
+			    //secondloop, extract data
+			    for(ValueNode v: tempNodeList){
+				if(v.getDescription().equalsIgnoreCase("Reference Capacity")){
+				    String capacity = v.getAttribute();
+				    if(capacity.equals("autosize")){
+					capacity = parser.getCentralPlantSummary(name)[0];
+				    }
+				    cu.setCapacity(capacity);
+				}else if(vn.getDescription().equalsIgnoreCase("Reference COP")){
+				    cu.setCOP(v.getAttribute());
+				}
+			    }
+			    condenserUnitMap.put(name, cu);
+		    }
+		}
+	    }  
 	}
     }
     

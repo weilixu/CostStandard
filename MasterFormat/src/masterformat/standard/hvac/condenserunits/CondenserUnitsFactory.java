@@ -47,6 +47,8 @@ public class CondenserUnitsFactory extends ComponentFactory{
 	System.out.println(condenserunit);
 	if(condenserunit.equalsIgnoreCase("Packaged Air-Cooled Refrigerant Condensing Units")){
 	    return new PackagedCU();
+	}else if(condenserunit.equalsIgnoreCase("Air-Cooled Refrigerant Condensers")){
+	    return new RefrigerantCondenser();
 	}
 	return null;
     }
