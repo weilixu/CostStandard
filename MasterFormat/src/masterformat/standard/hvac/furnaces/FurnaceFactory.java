@@ -6,6 +6,7 @@ import masterformat.standard.hvac.boiler.Boiler;
 import masterformat.standard.hvac.condenserunits.CondenserUnits;
 import masterformat.standard.hvac.decentralized.heatpump.HeatPump;
 import masterformat.standard.hvac.fan.Fan;
+import masterformat.standard.hvac.pump.Pump;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
@@ -60,6 +61,12 @@ public class FurnaceFactory extends ComponentFactory{
 
     @Override
     public HeatPump getHeatPump(String heatpump) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public Pump getPump(String pump) {
 	// TODO Auto-generated method stub
 	return null;
     }

@@ -25,7 +25,7 @@ public class FuelFiredFurnaces extends AbstractFurnace{
 	    if (temp.equals("Power")) {
 		power = Double.parseDouble(userInputsMap.get(temp));
 	    }
-	}	
+	}
     }
 
     @Override

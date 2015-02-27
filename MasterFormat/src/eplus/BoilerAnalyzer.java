@@ -8,6 +8,7 @@ import java.util.Set;
 
 import eplus.IdfReader.ValueNode;
 import eplus.MaterialAnalyzer.Material;
+import eplus.htmlparser.EnergyPlusHTMLParser;
 import masterformat.api.MasterFormat;
 
 /**
@@ -20,6 +21,7 @@ import masterformat.api.MasterFormat;
  */
 public class BoilerAnalyzer {
     private final IdfReader reader;
+    private final EnergyPlusHTMLParser parser;
     private HashMap<String, BoilerObject> boilerMap;
     
     
@@ -38,8 +40,9 @@ public class BoilerAnalyzer {
     
     private final Integer rowElement = 7;
     
-    public BoilerAnalyzer(IdfReader reader){
+    public BoilerAnalyzer(IdfReader reader, EnergyPlusHTMLParser p){
 	this.reader = reader;
+	parser = p;
 	boilerMap = new HashMap<String, BoilerObject>();
 	processBoilerData();
     }
@@ -133,7 +136,11 @@ public class BoilerAnalyzer {
 		if(vn.getDescription().equals("Fuel Type")){
 		    bo.setSourceType(vn.getAttribute());
 		}else if(vn.getDescription().equals("Nominal Capacity")){
-		    bo.setCapacity(vn.getAttribute());
+		    String capacity = vn.getAttribute();
+		    if(capacity.equalsIgnoreCase("autosize")){
+			capacity = parser.getCentralPlantSummary(name)[0];
+		    }
+		    bo.setCapacity(capacity);
 		}else if(vn.getDescription().equals("Nominal Thermal Efficiency")){
 		    bo.setEfficiency(vn.getAttribute());
 		}

@@ -6,6 +6,7 @@ import masterformat.standard.hvac.condenserunits.CondenserUnits;
 import masterformat.standard.hvac.decentralized.heatpump.HeatPump;
 import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.hvac.furnaces.Furnace;
+import masterformat.standard.hvac.pump.Pump;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
@@ -27,4 +28,6 @@ public abstract class ComponentFactory {
     public abstract Furnace getFurnace(String furnace);
     
     public abstract HeatPump getHeatPump(String heatpump);
+    
+    public abstract Pump getPump(String pump);
 }

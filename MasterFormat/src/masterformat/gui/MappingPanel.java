@@ -165,7 +165,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		    itemPanel.repaint();
 		    EnergyPlusObjectPanel.revalidate();
 		    EnergyPlusObjectPanel.repaint();
-		} else if (category.equalsIgnoreCase("DX Coils")) {
+		} else if (category.equalsIgnoreCase("Condenser Unit")) {
 		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
 			    .getLayout();
 		    EnergyPlusObjectPanel.remove(layout
@@ -242,7 +242,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		} else if (category.equals("Fan")) {
 		    model.addTotalCostToComponentCost(fanList
 			    .getSelectedValue().toString(), category);
-		} else if (category.equals("DX Coils")) {
+		} else if (category.equals("Condenser Unit")) {
 		    model.addTotalCostToComponentCost(condenserUnitList
 			    .getSelectedValue().toString(), category);
 		}
@@ -265,7 +265,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		} else if (category.equals("Fan")) {
 		    model.addTotalOPCostToComponentCost(fanList
 			    .getSelectedValue().toString(), category);
-		} else if (category.equals("DX Coils")) {
+		} else if (category.equals("Condenser Unit")) {
 		    model.addTotalOPCostToComponentCost(condenserUnitList
 			    .getSelectedValue().toString(), category);
 		}

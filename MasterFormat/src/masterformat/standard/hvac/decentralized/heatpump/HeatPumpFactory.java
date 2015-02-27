@@ -6,6 +6,7 @@ import masterformat.standard.hvac.boiler.Boiler;
 import masterformat.standard.hvac.condenserunits.CondenserUnits;
 import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.hvac.furnaces.Furnace;
+import masterformat.standard.hvac.pump.Pump;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
@@ -59,6 +60,12 @@ public class HeatPumpFactory extends ComponentFactory{
 	if(heatpump.equalsIgnoreCase("Air-Source Heat Pumps")){
 	    return new AirSourceHeatPump();
 	}
+	return null;
+    }
+
+    @Override
+    public Pump getPump(String pump) {
+	// TODO Auto-generated method stub
 	return null;
     }
 

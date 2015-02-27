@@ -1,4 +1,4 @@
-package masterformat.standard.masonry;
+package masterformat.standard.hvac.pump;
 
 import masterformat.api.ComponentFactory;
 import masterformat.standard.concrete.Concrete;
@@ -7,43 +7,32 @@ import masterformat.standard.hvac.condenserunits.CondenserUnits;
 import masterformat.standard.hvac.decentralized.heatpump.HeatPump;
 import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.hvac.furnaces.Furnace;
-import masterformat.standard.hvac.pump.Pump;
+import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
-public class MasonryFactory extends ComponentFactory{
+public class PumpFactory extends ComponentFactory{
 
     @Override
     public Masonry getMasonry(String masonryType) {
-	if(masonryType==null){
-	    return null;
-	}
-	
-	if(masonryType.equalsIgnoreCase("BRICK VENEER MASONRY")){
-		return new BrickVennerMasonry();
-	}
-	
-	if(masonryType.equalsIgnoreCase("THIN BRICK VENEER")){
-	    return new ThinBrickVeneer();
-	}
-	
+	// TODO Auto-generated method stub
 	return null;
     }
 
     @Override
     public Concrete getConcrete(String concreteType) {
-	//this factory would not produce concrete
+	// TODO Auto-generated method stub
 	return null;
     }
 
     @Override
     public ThermalMoistureProtection getThermalMoistureProtection(
 	    String thermalMoistureProtectionType) {
-	//this factory would not produce thermal and moisture protection
+	// TODO Auto-generated method stub
 	return null;
     }
 
     @Override
-    public Boiler getBoiler(String hvac) {
+    public Boiler getBoiler(String boiler) {
 	// TODO Auto-generated method stub
 	return null;
     }
@@ -77,4 +66,5 @@ public class MasonryFactory extends ComponentFactory{
 	// TODO Auto-generated method stub
 	return null;
     }
+
 }

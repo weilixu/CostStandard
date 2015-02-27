@@ -42,7 +42,7 @@ public class EnergyPlusModel {
 
     // useful data
     private final String[] domainList = { "Construction", "Boiler", "Fan",
-	    "DX Coils", "Furnace" };// comboBox
+	    "Condenser Unit", "Furnace" };// comboBox
 
     private String[][] costData;
     private final String componentCostDescription = "Name:Type:Line Item Type:Item Name:Object End-Use Key:Cost per Each:Cost per Area:"
@@ -455,7 +455,7 @@ public class EnergyPlusModel {
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
-	} else if (category.equalsIgnoreCase("DX Coils")) {
+	} else if (category.equalsIgnoreCase("Condenser Unit")) {
 	    String[] value = { item.toUpperCase(), "", "General", item, "",
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
@@ -533,7 +533,7 @@ public class EnergyPlusModel {
     }
 
     private void setUpBoilerAnalyzer() {
-	boilerModule = new BoilerAnalyzer(idfDomain);
+	boilerModule = new BoilerAnalyzer(idfDomain, htmlParser);
     }
 
     private void setUpFanAnalyzer() {
