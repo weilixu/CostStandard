@@ -259,12 +259,12 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 	costVector = deepCopyCost(Default_Cost_Vector);
 
 	while (totalFlowRate < flowRate) {
-	    fittedFlowRate = findFittedPower(totalFlowRate, upper, lower);
+	    fittedFlowRate = findFittedFlowRate(totalFlowRate, upper, lower);
 	    totalFlowRate += fittedFlowRate;
 	}
     }
 
-    private Double findFittedPower(Double total, Integer upper, Integer lower) {
+    private Double findFittedFlowRate(Double total, Integer upper, Integer lower) {
 	// the difference between capacity and total capacity
 	Double temp = flowRate;
 	// index shows the current best fit capacity

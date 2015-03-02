@@ -14,7 +14,8 @@ public class FanAnalyzer {
     private final IdfReader reader;
     private final EnergyPlusHTMLParser parser;
     private HashMap<String, Fan> fanMap;
-
+    
+    //size shows the data string size in fan segment
     private final int stringArraySize = 4;
     private final DecimalFormat df = new DecimalFormat("###.##");
 

@@ -3,7 +3,6 @@ package eplus;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,6 +34,7 @@ public class EnergyPlusModel {
     private FanAnalyzer fanModule;
     private CondenserUnitAnalyzer condenserUnitModule;
     private FurnaceAnalyzer furnaceModule;
+    private PumpAnalyzer pumpModule;
 
     // files locations etc.
     private final File eplusFile;
@@ -42,7 +42,7 @@ public class EnergyPlusModel {
 
     // useful data
     private final String[] domainList = { "Construction", "Boiler", "Fan",
-	    "Condenser Unit", "Furnace" };// comboBox
+	    "Condenser Unit", "Furnace","Pump" };// comboBox
 
     private String[][] costData;
     private final String componentCostDescription = "Name:Type:Line Item Type:Item Name:Object End-Use Key:Cost per Each:Cost per Area:"
@@ -83,6 +83,7 @@ public class EnergyPlusModel {
 	setUpFanAnalyzer();
 	setUpCondenserUnitAnalyzer();
 	setUpFurnaceAnalyzer();
+	setUpPumpAnalyzer();
     }
 
     /**
@@ -156,6 +157,10 @@ public class EnergyPlusModel {
     public String[] getFurnaceList() {
 	return furnaceModule.getFurnaceList();
     }
+    
+    public String[] getPumpList(){
+	return pumpModule.getPumpList();
+    }
 
     /**
      * get the material cost data from the material analyzer
@@ -217,6 +222,11 @@ public class EnergyPlusModel {
 	MasterFormat mf = masterformat.getUserInputFromMap("FURNACE", type);
 	furnaceModule.setFurnaceMasterFormat(furnaceName, mf);
     }
+    
+    public void setPumpMasterFormat(String pumpName,String description){
+	MasterFormat mf = masterformat.getUserInputFromMap("Pump", description);
+	pumpModule.setPumpMasterFormat(pumpName, mf);
+    }
 
     // All the methods to retrieve user inputs from the mapping results
     /**
@@ -246,6 +256,10 @@ public class EnergyPlusModel {
 
     public ArrayList<String> getFurnaceInputs(String furnaceName) {
 	return furnaceModule.getFurnace(furnaceName).getUserInputs();
+    }
+    
+    public ArrayList<String> getPumpUserInputs(String pumpName) {
+	return pumpModule.getPump(pumpName).getUserInputs();
     }
 
     // All the methods to extract the cost vector from the masterformat
@@ -290,6 +304,11 @@ public class EnergyPlusModel {
 	updateCostVectorInformation();
 	//System.out.println("here? "+item);
 	updateFurnaceQuantities(item);
+    }
+    
+    public void getPumpCostVector(String item){
+	costData = pumpModule.getCostListForFan(item);
+	updateCostVectorInformation();
     }
 
     /**
@@ -378,6 +397,26 @@ public class EnergyPlusModel {
 	// System.out.println(Arrays.toString(temp));
 	selectionOptionQuantities = temp;
     }
+    
+    public void getPumpOptionList(String pumpName) {
+	ArrayList<String> list = pumpModule.getPump(pumpName).getOptionList();
+	String[] temp = new String[list.size()];
+	for (int i = 0; i < list.size(); i++) {
+	    temp[i] = list.get(i);
+	}
+	selectionOptions = temp;
+    }
+
+    // All the methods to get the options quantities under one category
+    public void getPumpOptionQuantities(String pumpName) {
+	ArrayList<Integer> list = pumpModule.getPump(pumpName)
+		.getOptionQuantities();
+	Integer[] temp = new Integer[list.size()];
+	for (int i = 0; i < list.size(); i++) {
+	    temp[i] = list.get(i);
+	}
+	selectionOptionQuantities = temp;
+    }
 
     // All the methods that feed back user inputs to the masterformat for the
     // cost mapping
@@ -425,6 +464,11 @@ public class EnergyPlusModel {
 	furnaceModule.setUserInput(map, furnaceName);
 	getFurnaceCostVector(furnaceName);
     }
+    
+    public void setPumpUserInput(HashMap<String, String> map, String pumpName) {
+	pumpModule.setUserInput(map, pumpName);
+	getPumpCostVector(pumpName);
+    }
 
     // All the method that retrieve the cost information and put it down to
     // EnergyPlus Component line object
@@ -465,6 +509,11 @@ public class EnergyPlusModel {
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
+	} else if (category.equalsIgnoreCase("PUMP")){
+	    String[] value = { item.toUpperCase(), "", "General", item, "",
+		    cost.toString(), "", "", "", "", "", "", "1" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
 	}
     }
 
@@ -501,6 +550,11 @@ public class EnergyPlusModel {
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
 	} else if (category.equalsIgnoreCase("FURNACE")) {
+	    String[] value = { item.toUpperCase(), "", "General", item, "",
+		    cost.toString(), "", "", "", "", "", "", "1" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
+	} else if (category.equalsIgnoreCase("PUMP")){
 	    String[] value = { item.toUpperCase(), "", "General", item, "",
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
@@ -546,6 +600,10 @@ public class EnergyPlusModel {
 
     private void setUpFurnaceAnalyzer() {
 	furnaceModule = new FurnaceAnalyzer(idfDomain, htmlParser);
+    }
+    
+    private void setUpPumpAnalyzer(){
+	pumpModule = new PumpAnalyzer(idfDomain, htmlParser);
     }
 
     private void updateCostVectorInformation() {

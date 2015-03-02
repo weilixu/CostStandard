@@ -90,4 +90,18 @@ public class EnergyPlusHTMLParser {
 	centralPlant[1] = plantSummary.getEquipmentEfficiency(plantName);
 	return centralPlant;
     }
+    
+    /**
+     * So far the method extracts{pump power, pump head, pump flow rate}
+     * future element can be added to this list
+     * @param pumpName
+     * @return
+     */
+    public String[] getPumpSummary(String pumpName){
+	String[] pump = new String[3];
+	pump[0] = pumpSummary.getPumpPower(pumpName);
+	pump[1] = pumpSummary.getPumpHead(pumpName);
+	pump[2] = pumpSummary.getPumpWaterFlow(pumpName);
+	return pump;
+    }
 }

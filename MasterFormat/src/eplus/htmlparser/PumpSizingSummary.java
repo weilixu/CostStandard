@@ -4,12 +4,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 public class PumpSizingSummary {
-    private final int pumpControl = 1;
-    private final int pumpHead = 2;
-    private final int pumpWaterFlow = 3;
-    private final int pumpPower = 4;
-    private final int pumpPowerperFlow = 5;
-    private final int pumpEfficiency = 6;
+    private final int pumpControl = 2;
+    private final int pumpHead = 3;
+    private final int pumpWaterFlow = 4;
+    private final int pumpPower = 5;
+    private final int pumpPowerperFlow = 6;
+    private final int pumpEfficiency = 7;
     
     private final Document doc;
     private final Elements pumpSummaryTable;
@@ -76,7 +76,7 @@ public class PumpSizingSummary {
 	Elements pumpList = pumpSummaryTable.get(0).getElementsByTag("td");
 	for(int i=0; i<pumpList.size();i++){
 	    if(pumpList.get(i).text().equalsIgnoreCase(name)){
-		return pumpList.get(i+pumpControl).text();
+		return pumpList.get(i+pumpPower).text();
 	    }
 	}
 	return null;

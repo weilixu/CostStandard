@@ -58,6 +58,11 @@
 			<airsourceheatpump tag = "238143.10" description = "Air-Source Heat Pumps" type = "UnitaryHVAC"/>
 		</airsourceheatpump>
 	</unitary>
+	<pump>
+		<hydronic tag="232123" description = "Hydronic Pumps" type = "Pump">
+			<centrifugal tag="232123.13" description = "In-Line Centrifugal Hydronic Pumps" type="Pump"/>
+		</hydronic>
+	</pump>
 </masterformat>
 
 

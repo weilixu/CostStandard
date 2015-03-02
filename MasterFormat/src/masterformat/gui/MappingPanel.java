@@ -40,6 +40,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private final JPanel fanPanel;
     private final JPanel condenserUnitPanel;
     private final JPanel furnacePanel;
+    private final JPanel pumpPanel;
     private final JPanel tablePanel;
     private final DefaultTableModel tableModel;
     private final JTable table;
@@ -71,6 +72,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private DefaultListModel<String> furnaceModel;
     private JList<String> furnaceList;
     private JScrollPane furnaceScrollPane;
+    private DefaultListModel<String> pumpListModel;
+    private JList<String> pumpList;
+    private JScrollPane pumpListScrollPane;
 
     // private final String[] costColumnName =
     // {"Material Name","Material Cost ($)",
@@ -111,6 +115,10 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	furnacePanel = new JPanel(new CardLayout());
 	furnacePanel.setBackground(Color.WHITE);
 	updateFurnace();
+
+	pumpPanel = new JPanel(new CardLayout());
+	pumpPanel.setBackground(Color.WHITE);
+	updatePump();
 
 	// initialize the selection combo list
 	objectSelectionCombo = new JComboBox<String>(model.getDomainList());
@@ -195,6 +203,21 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		    itemPanel.repaint();
 		    EnergyPlusObjectPanel.revalidate();
 		    EnergyPlusObjectPanel.repaint();
+		} else if (category.equalsIgnoreCase("PUMP")) {
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+
+		    itemPanel.add(pumpPanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(pumpListScrollPane,
+			    BorderLayout.CENTER);
+
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
 		}
 	    }
 	});
@@ -245,6 +268,12 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		} else if (category.equals("Condenser Unit")) {
 		    model.addTotalCostToComponentCost(condenserUnitList
 			    .getSelectedValue().toString(), category);
+		} else if (category.equals("Furnace")) {
+		    model.addTotalCostToComponentCost(furnaceList
+			    .getSelectedValue().toString(), category);
+		} else if (category.equals("Pump")) {
+		    model.addTotalCostToComponentCost(pumpList
+			    .getSelectedValue().toString(), category);
 		}
 	    }
 	});
@@ -267,6 +296,12 @@ public class MappingPanel extends JPanel implements CostTableListener {
 			    .getSelectedValue().toString(), category);
 		} else if (category.equals("Condenser Unit")) {
 		    model.addTotalOPCostToComponentCost(condenserUnitList
+			    .getSelectedValue().toString(), category);
+		} else if (category.equals("Furnace")) {
+		    model.addTotalOPCostToComponentCost(furnaceList
+			    .getSelectedValue().toString(), category);
+		} else if (category.equals("Pump")) {
+		    model.addTotalOPCostToComponentCost(pumpList
 			    .getSelectedValue().toString(), category);
 		}
 
@@ -450,6 +485,35 @@ public class MappingPanel extends JPanel implements CostTableListener {
 
 	furnaceScrollPane = new JScrollPane(furnaceList);
 
+    }
+
+    private void updatePump() {
+	pumpListModel = new DefaultListModel<String>();
+	pumpList = new JList<String>(pumpListModel);
+	pumpList.setFont(new Font("Helvetica", Font.BOLD, 20));
+
+	String[] pumps = model.getPumpList();
+	pumpListModel.clear();
+	for (String p : pumps) {
+	    // model.setFanMasterFormat(f);
+	    JPanel pump = new PumpPanel(model, p);// need to change this
+
+	    pumpPanel.add(pump);
+	    pumpListModel.addElement(p);
+	    pumpList.addListSelectionListener(new ListSelectionListener() {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    CardLayout cardLayout = (CardLayout) (pumpPanel.getLayout());
+		    String selection = pumpList.getSelectedValue().toString();
+		    if (selection.equals(p)) {
+			cardLayout.show(pumpPanel, selection);
+		    }
+		    model.getPumpCostVector(selection);
+		}
+	    });
+	}
+	pumpListScrollPane = new JScrollPane(pumpList);
     }
 
     private JTabbedPane makeTabbedPanel(String construction) {
