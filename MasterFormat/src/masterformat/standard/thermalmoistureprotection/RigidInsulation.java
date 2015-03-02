@@ -47,7 +47,7 @@ public class RigidInsulation extends AbstractThermalMoistureProtection {
 		{ 0.50, 0.51, 0.00, 1.01, 1.34},
 		{ 0.75, 0.51, 0.00, 1.25, 1.62} };
 
-	ArrayList<String> typesOne = new ArrayList<String>();	
+	ArrayList<String> typesOne = new ArrayList<String>();
 	userInputs.add("OPTION:InsulationType:Fiberglass, 0.04#/m3, unfaced");
 	userInputs.add("OPTION:InsulationType:Fiberglass, 0.085#/m3, unfaced");
 	userInputs.add("OPTION:InsulationType:Fiberglass, 0.085#/m3, Foil faced");
