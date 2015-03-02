@@ -5,11 +5,11 @@ import java.util.HashMap;
 
 public abstract class AbstractUnitarySystem implements UnitarySystem{
     
-    private final int materialIndex = 0;
-    private final int laborIndex = 1;
-    private final int equipIndex = 2;
-    private final int totalIndex = 3;
-    private final int totalOPIndex = 4;
+    protected final int materialIndex = 0;
+    protected final int laborIndex = 1;
+    protected final int equipIndex = 2;
+    protected final int totalIndex = 3;
+    protected final int totalOPIndex = 4;
     
     protected final int coolingCapacityIndex = 0;
     protected final int heatingCapacityIndex = 1;

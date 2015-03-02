@@ -111,6 +111,13 @@ public class CabinetAC extends AbstractUnitarySystem {
 	    Integer i = optionQuantities.get(selectedIndex);
 	    optionQuantities.set(selectedIndex, i + 1);
 	}
+	
+	//multiply the cost function
+	if(heatCoilType.equals("Hot Water")){
+	    multiplyCost(1.05,1.10);
+	}else if(heatCoilType.equals("Steam")){
+	    multiplyCost(1.08,1.10);
+	}
     }
 
     private void fittingPower() {
@@ -171,6 +178,21 @@ public class CabinetAC extends AbstractUnitarySystem {
 	    capacity = capacity * steamHeatPercent;
 	}
 	return capacity;
+    }
+    
+    private void multiplyCost(Double materialMultiplier, Double laborMultiplier){
+	Double materialCost = costVector[materialIndex];
+	Double laborCost = costVector[laborIndex];
+	
+	costVector[totalIndex] = costVector[totalIndex]-materialCost-laborCost;
+	costVector[totalOPIndex] = costVector[totalOPIndex]-materialCost-laborCost;
+	
+	materialCost = materialCost*materialMultiplier;
+	laborCost = laborCost*laborMultiplier;
+	
+	costVector[totalIndex] = costVector[totalIndex]+materialCost+laborCost;
+	costVector[totalOPIndex] = costVector[totalOPIndex]+materialCost+laborCost;
+	
     }
 
     private void setToZero() {

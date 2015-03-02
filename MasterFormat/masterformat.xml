@@ -51,9 +51,6 @@
 		<packagedterminal tag="238113" description = "Packaged Terminal Air-Conditioners" type = "UnitaryHVAC">
 			<packagedaircon tag = "238113.10" description = "Packaged Cabinet type air-conditioners" type = "UnitaryHVAC"/>
 		</packagedterminal>
-		<selfcontain tag="238119" description = "Self-Contained Air-Conditioner" type = "UnitaryHVAC">
-			<selfcontainedsinglepackage tag = "238119.20" description = "Self-contained single package" type = "UnitaryHVAC"/>
-		</selfcontain>
 		<airsourceheatpump tag = "238143" description = "Air-Source Unitary Heat Pumps" type="UnitaryHVAC">
 			<airsourceheatpump tag = "238143.10" description = "Air-Source Heat Pumps" type = "UnitaryHVAC"/>
 		</airsourceheatpump>
