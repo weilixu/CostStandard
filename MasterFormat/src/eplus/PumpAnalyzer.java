@@ -44,7 +44,7 @@ public class PumpAnalyzer {
 	processPumpRawDatafromPumps();
     }
     
-    protected String[][] getCostListForFan(String fan){
+    protected String[][] getCostListForPump(String fan){
 	Pump p = pumpMap.get(fan);	
 	String[][] costList = new String[1][rowElement];
 	

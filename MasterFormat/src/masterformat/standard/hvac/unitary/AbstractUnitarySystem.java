@@ -1,9 +1,9 @@
-package masterformat.standard.hvac.decentralized.heatpump;
+package masterformat.standard.hvac.unitary;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class AbstractHeatPump implements HeatPump{
+public abstract class AbstractUnitarySystem implements UnitarySystem{
     
     private final int materialIndex = 0;
     private final int laborIndex = 1;
@@ -29,7 +29,7 @@ public abstract class AbstractHeatPump implements HeatPump{
     protected ArrayList<String> optionLists;
     protected ArrayList<Integer> optionQuantities;
     
-    public AbstractHeatPump(){
+    public AbstractUnitarySystem(){
 	userInputs = new ArrayList<String>();
 	initializeData();
     }
@@ -111,6 +111,5 @@ public abstract class AbstractHeatPump implements HeatPump{
      * This method is used to initialize the product's cost data
      */
     abstract protected void initializeData();
-
 
 }

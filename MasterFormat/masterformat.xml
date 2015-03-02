@@ -47,7 +47,7 @@
 			<condenser tag="236313.10" description="Air-Cooled Refrigerant Condensers" type="CondenserUnit"/>
 		</aircoolchiller>
 	</condenserunit>
-	<unitary>
+	<unitaryhvac>
 		<packagedterminal tag="238113" description = "Packaged Terminal Air-Conditioners" type = "UnitaryHVAC">
 			<packagedaircon tag = "238113.10" description = "Packaged Cabinet type air-conditioners" type = "UnitaryHVAC"/>
 		</packagedterminal>
@@ -57,7 +57,7 @@
 		<airsourceheatpump tag = "238143" description = "Air-Source Unitary Heat Pumps" type="UnitaryHVAC">
 			<airsourceheatpump tag = "238143.10" description = "Air-Source Heat Pumps" type = "UnitaryHVAC"/>
 		</airsourceheatpump>
-	</unitary>
+	</unitaryhvac>
 	<pump>
 		<hydronic tag="232123" description = "Hydronic Pumps" type = "Pump">
 			<centrifugal tag="232123.13" description = "In-Line Centrifugal Hydronic Pumps" type="Pump"/>

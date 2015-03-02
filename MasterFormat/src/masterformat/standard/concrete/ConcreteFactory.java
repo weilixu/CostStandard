@@ -3,10 +3,10 @@ package masterformat.standard.concrete;
 import masterformat.api.ComponentFactory;
 import masterformat.standard.hvac.boiler.Boiler;
 import masterformat.standard.hvac.condenserunits.CondenserUnits;
-import masterformat.standard.hvac.decentralized.heatpump.HeatPump;
 import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.hvac.furnaces.Furnace;
 import masterformat.standard.hvac.pump.Pump;
+import masterformat.standard.hvac.unitary.UnitarySystem;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
@@ -61,13 +61,13 @@ public class ConcreteFactory extends ComponentFactory{
     }
 
     @Override
-    public HeatPump getHeatPump(String heatpump) {
+    public Pump getPump(String pump) {
 	// TODO Auto-generated method stub
 	return null;
     }
 
     @Override
-    public Pump getPump(String pump) {
+    public UnitarySystem getUnitarySystem(String unitary) {
 	// TODO Auto-generated method stub
 	return null;
     }

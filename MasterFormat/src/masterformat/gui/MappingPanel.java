@@ -41,6 +41,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private final JPanel condenserUnitPanel;
     private final JPanel furnacePanel;
     private final JPanel pumpPanel;
+    private final JPanel unitaryPanel;
     private final JPanel tablePanel;
     private final DefaultTableModel tableModel;
     private final JTable table;
@@ -75,6 +76,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private DefaultListModel<String> pumpListModel;
     private JList<String> pumpList;
     private JScrollPane pumpListScrollPane;
+    private DefaultListModel<String> unitaryListModel;
+    private JList<String> unitaryList;
+    private JScrollPane unitaryListScrollPane;
 
     // private final String[] costColumnName =
     // {"Material Name","Material Cost ($)",
@@ -119,6 +123,10 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	pumpPanel = new JPanel(new CardLayout());
 	pumpPanel.setBackground(Color.WHITE);
 	updatePump();
+	
+	unitaryPanel = new JPanel(new CardLayout());
+	unitaryPanel.setBackground(Color.WHITE);
+	updateUnitary();
 
 	// initialize the selection combo list
 	objectSelectionCombo = new JComboBox<String>(model.getDomainList());
@@ -218,6 +226,21 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		    itemPanel.repaint();
 		    EnergyPlusObjectPanel.revalidate();
 		    EnergyPlusObjectPanel.repaint();
+		}else if(category.equalsIgnoreCase("UNITARY SYSTEM")){
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+
+		    itemPanel.add(unitaryPanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(unitaryListScrollPane,
+			    BorderLayout.CENTER);
+
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
 		}
 	    }
 	});
@@ -274,6 +297,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		} else if (category.equals("Pump")) {
 		    model.addTotalCostToComponentCost(pumpList
 			    .getSelectedValue().toString(), category);
+		} else if (category.equals("Unitary System")){
+		    model.addTotalCostToComponentCost(unitaryList
+			    .getSelectedValue().toString(), category);
 		}
 	    }
 	});
@@ -303,10 +329,12 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		} else if (category.equals("Pump")) {
 		    model.addTotalOPCostToComponentCost(pumpList
 			    .getSelectedValue().toString(), category);
+		} else if(category.equals("Unitary System")){
+		    model.addTotalOPCostToComponentCost(unitaryList
+			    .getSelectedValue().toString(), category);
 		}
 
 	    }
-
 	});
 
 	writeButton = new JButton(WRITE);
@@ -515,6 +543,35 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	}
 	pumpListScrollPane = new JScrollPane(pumpList);
     }
+    
+    private void updateUnitary() {
+	unitaryListModel = new DefaultListModel<String>();
+	unitaryList = new JList<String>(unitaryListModel);
+	unitaryList.setFont(new Font("Helvetica", Font.BOLD, 20));
+
+	String[] unitaries = model.getUnitaryList();
+	unitaryListModel.clear();
+	for (String u : unitaries) {
+	    // model.setFanMasterFormat(f);
+	    JPanel unitary = new UnitaryPanel(model, u);// need to change this
+
+	    unitaryPanel.add(unitary);
+	    unitaryListModel.addElement(u);
+	    unitaryList.addListSelectionListener(new ListSelectionListener() {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    CardLayout cardLayout = (CardLayout) (unitaryPanel.getLayout());
+		    String selection = unitaryList.getSelectedValue().toString();
+		    if (selection.equals(u)) {
+			cardLayout.show(unitaryPanel, selection);
+		    }
+		    model.getUnitaryCostVector(selection);
+		}
+	    });
+	}
+	unitaryListScrollPane = new JScrollPane(unitaryList);
+    }
 
     private JTabbedPane makeTabbedPanel(String construction) {
 	JTabbedPane tp = new JTabbedPane();
@@ -547,9 +604,10 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	// Create and set up the window.
 	JFrame frame = new JFrame("MasterFormatTreeDemo");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	//File file = new File(
+	//	"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\FanCoil\\FanCoil.idf");
 	File file = new File(
-		"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\FanCoil\\FanCoil.idf");
-
+		"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\ConstantAC\\SingleZoneCA.idf");	
 	EnergyPlusModel model = new EnergyPlusModel(file);
 	// Add content to the window.
 	frame.add(new MappingPanel(model));

@@ -3,10 +3,10 @@ package masterformat.api;
 import masterformat.standard.concrete.Concrete;
 import masterformat.standard.hvac.boiler.Boiler;
 import masterformat.standard.hvac.condenserunits.CondenserUnits;
-import masterformat.standard.hvac.decentralized.heatpump.HeatPump;
 import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.hvac.furnaces.Furnace;
 import masterformat.standard.hvac.pump.Pump;
+import masterformat.standard.hvac.unitary.UnitarySystem;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
@@ -27,7 +27,7 @@ public abstract class ComponentFactory {
     
     public abstract Furnace getFurnace(String furnace);
     
-    public abstract HeatPump getHeatPump(String heatpump);
+    public abstract UnitarySystem getUnitarySystem(String unitary);
     
     public abstract Pump getPump(String pump);
 }

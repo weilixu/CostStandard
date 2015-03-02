@@ -16,6 +16,7 @@ public class EnergyPlusHTMLParser {
     private FanSizingSummary fanSummary;
     private PumpSizingSummary pumpSummary;
     private HeatingCoilSummary heatCoilSummary;
+    private CoolingCoilSummary coolCoilSummary;
     private CentralPlantSummary plantSummary;
 
     public EnergyPlusHTMLParser(File f) {
@@ -27,6 +28,7 @@ public class EnergyPlusHTMLParser {
 	    fanSummary = new FanSizingSummary(doc);
 	    pumpSummary = new PumpSizingSummary(doc);
 	    heatCoilSummary = new HeatingCoilSummary(doc);
+	    coolCoilSummary = new CoolingCoilSummary(doc);
 	    plantSummary = new CentralPlantSummary(doc);
 	} catch (IOException e) {
 	    // do nothing
@@ -63,41 +65,65 @@ public class EnergyPlusHTMLParser {
 	fanProperties[3] = fanSummary.getFanPower(fanName);
 	return fanProperties;
     }
-    
+
     /**
-     * So far the method extracts {heatingCoilCapacity, heatingCoilEfficiency}
-     * future element can be added to this list.
+     * So far the method extracts {heatingCoilCapacity, heatingCoilEfficiency,
+     * CoilType} future element can be added to this list.
      * 
      * @param heatCoilName
      * @return
      */
-    public String[] getHeatCoilSummary(String heatCoilName){
-	String[] heatCoilProperties = new String[2];
-	heatCoilProperties[0] = heatCoilSummary.getHeatingCoilCapacity(heatCoilName);
-	heatCoilProperties[1] = heatCoilSummary.getHeatingCoilEfficiency(heatCoilName);
+    public String[] getHeatCoilSummary(String heatCoilName) {
+	String[] heatCoilProperties = new String[3];
+	heatCoilProperties[0] = heatCoilSummary
+		.getHeatingCoilCapacity(heatCoilName);
+	heatCoilProperties[1] = heatCoilSummary
+		.getHeatingCoilEfficiency(heatCoilName);
+	heatCoilProperties[2] = heatCoilSummary
+		.getHeatingCoilType(heatCoilName);
 	return heatCoilProperties;
     }
-    
+
+    /**
+     * So far the method extracts {coolingcoil capacity, cooling coil sensible
+     * load, cooling coil latent load , cooling coil efficiency}
+     * Future element can be added to this list;
+     * 
+     * @param coolCoilName
+     * @return
+     */
+    public String[] getCoolCoilSummary(String coolCoilName) {
+	String[] coolCoilProperties = new String[4];
+	coolCoilProperties[0] = coolCoilSummary.getCoolingCoilTotalCapacity(coolCoilName);
+	coolCoilProperties[1] = coolCoilSummary.getCoolingCoilSensibleLoad(coolCoilName);
+	coolCoilProperties[2] = coolCoilSummary.getCoolingCoilLatentLoad(coolCoilName);
+	coolCoilProperties[3] = coolCoilSummary.getCoolingCoilEfficiency(coolCoilName);
+	
+	return coolCoilProperties;
+    }
+
     /**
      * So far the method extracts {equipment capacity, equipment efficiency}
      * future element can be added to this list
+     * 
      * @param plantName
      * @return
      */
-    public String[] getCentralPlantSummary(String plantName){
+    public String[] getCentralPlantSummary(String plantName) {
 	String[] centralPlant = new String[2];
-	centralPlant[0]=plantSummary.getEquipmentCapacity(plantName);
+	centralPlant[0] = plantSummary.getEquipmentCapacity(plantName);
 	centralPlant[1] = plantSummary.getEquipmentEfficiency(plantName);
 	return centralPlant;
     }
-    
+
     /**
-     * So far the method extracts{pump power, pump head, pump flow rate}
-     * future element can be added to this list
+     * So far the method extracts{pump power, pump head, pump flow rate} future
+     * element can be added to this list
+     * 
      * @param pumpName
      * @return
      */
-    public String[] getPumpSummary(String pumpName){
+    public String[] getPumpSummary(String pumpName) {
 	String[] pump = new String[3];
 	pump[0] = pumpSummary.getPumpPower(pumpName);
 	pump[1] = pumpSummary.getPumpHead(pumpName);

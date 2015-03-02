@@ -1,4 +1,4 @@
-package masterformat.standard.hvac.decentralized.heatpump;
+package masterformat.standard.hvac.unitary;
 
 import masterformat.api.ComponentFactory;
 import masterformat.standard.concrete.Concrete;
@@ -10,7 +10,7 @@ import masterformat.standard.hvac.pump.Pump;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
-public class HeatPumpFactory extends ComponentFactory{
+public class UnitarySystemFactory extends ComponentFactory{
 
     @Override
     public Masonry getMasonry(String masonryType) {
@@ -56,9 +56,11 @@ public class HeatPumpFactory extends ComponentFactory{
     }
 
     @Override
-    public HeatPump getHeatPump(String heatpump) {
-	if(heatpump.equalsIgnoreCase("Air-Source Heat Pumps")){
+    public UnitarySystem getUnitarySystem(String unitary) {
+	if(unitary.equalsIgnoreCase("Air-Source Heat Pumps")){
 	    return new AirSourceHeatPump();
+	}else if(unitary.equalsIgnoreCase("PACKAGED CABINET TYPE AIR-CONDITIONERS")){
+	    return new CabinetAC();
 	}
 	return null;
     }

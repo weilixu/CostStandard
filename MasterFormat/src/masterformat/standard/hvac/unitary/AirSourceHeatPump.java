@@ -1,11 +1,11 @@
-package masterformat.standard.hvac.decentralized.heatpump;
+package masterformat.standard.hvac.unitary;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-public class AirSourceHeatPump extends AbstractHeatPump {
+public class AirSourceHeatPump extends AbstractUnitarySystem {
 
     /**
      * indicates whether the heat pump is in package or condensing unit only
@@ -118,8 +118,8 @@ public class AirSourceHeatPump extends AbstractHeatPump {
 	Integer upperLimit = 6;
 	if (heatPumpPackage.equalsIgnoreCase("Condenser Only")) {
 	    for (int i = index; i < coolingList.length; i++) {
-		if (coolingCapacity > coolingList[i]
-			&& heatingCapacity > heatingList[i]) {
+		if (coolingCapacity <= coolingList[i]
+			&& heatingCapacity <= heatingList[i]) {
 		    selectedIndex = i;
 		    break;
 		}
@@ -129,10 +129,10 @@ public class AirSourceHeatPump extends AbstractHeatPump {
 		description = "Air-source heat pumps, air to air, split system, not including curbs, pads, fan coil and ductwork, outside condensing unit only, grouped";
 		fittingPower(index,upperLimit);
 	    } else {
-		description = optionLists.get(index);
+		description = optionLists.get(selectedIndex);
 		costVector = deepCopyCost(priceData.get(description));
-		Integer i = optionQuantities.get(index);
-		optionQuantities.set(index, i + 1);
+		Integer i = optionQuantities.get(selectedIndex);
+		optionQuantities.set(selectedIndex, i + 1);
 	    }
 	} else {
 	    index = 7;
@@ -149,27 +149,36 @@ public class AirSourceHeatPump extends AbstractHeatPump {
 		description = "Air-source heat pumps, air to air, split system, not including curbs, pads, fan coil and ductwork, single package, grouped";
 		fittingPower(index,upperLimit);
 	    }else{
-		description = optionLists.get(index);
+		description = optionLists.get(selectedIndex);
 		costVector = deepCopyCost(priceData.get(description));
-		Integer i = optionQuantities.get(index);
-		optionQuantities.set(index, i + 1);
+		Integer i = optionQuantities.get(selectedIndex);
+		optionQuantities.set(selectedIndex, i + 1);
 	    }
 	}
-
     }
 
     private void fittingPower(Integer start, Integer end) {
 	// shows the best fit capacity
 	Integer fittedIndex = 0;
 	// shows the total capacity added
-	Double totalCoolingPower = 0.0;
-	Double totalHeatingPower = 0.0;
+	Double totalCoolingPower = 0.0-coolingCapacity;
+	Double totalHeatingPower = 0.0 - heatingCapacity;
 	costVector = deepCopyCost(Default_Cost_Vector);
-	Double min = 0-coolingCapacity;
+	Double min = Math.min(totalCoolingPower, totalHeatingPower);
 	while (min<0) {
 	    fittedIndex = findFittedIndex(totalCoolingPower, totalHeatingPower,start,end);
 	    totalCoolingPower += coolingList[fittedIndex];
 	    totalHeatingPower += heatingList[fittedIndex];
+	    
+	    //write in the cost vector and optionQuantities
+	    Double[] itemCost = priceData.get(optionLists.get(fittedIndex));
+	    for(int j=0; j<costVector.length; j++){
+		costVector[j]+=itemCost[j];
+	    }
+	    Integer q = optionQuantities.get(fittedIndex)+1;
+	    optionQuantities.set(fittedIndex, q);
+	    
+	    //update the min
 	    min = Math.min(totalCoolingPower, totalHeatingPower);
 	}
     }
@@ -182,8 +191,8 @@ public class AirSourceHeatPump extends AbstractHeatPump {
 	int criticalIndex = 0;
 
 	for (int i = start; i <= end; i++) {
-	    Double residualCool = coolingCapacity - totalCool - coolingList[i];
-	    Double residualHeat = heatingCapacity - totalHeat - heatingList[i];
+	    Double residualCool = coolingCapacity + totalCool - coolingList[i];
+	    Double residualHeat = heatingCapacity + totalHeat - heatingList[i];
 	    if (residualCool<0 && Math.abs(residualCool)<Math.abs(tempCool)) {
 		tempCool = residualCool;
 		criticalIndex = i;

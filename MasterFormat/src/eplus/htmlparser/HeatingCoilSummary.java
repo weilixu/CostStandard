@@ -5,6 +5,7 @@ import org.jsoup.select.Elements;
 
 public class HeatingCoilSummary {
     
+    private final int coilTypeIndex = 1;
     private final int coilDesignLoadIndex = 2;
     private final int coilTotalCapacityIndex = 3;
     private final int coilEfficiencyIndex = 4;
@@ -18,6 +19,16 @@ public class HeatingCoilSummary {
     public HeatingCoilSummary(Document d){
 	doc = d;
 	heatingCoilSummaryTable = doc.getElementsByAttributeValue(TAG,HEAT_COIL_TABLE_ID);
+    }
+    
+    public String getHeatingCoilType(String name){
+	Elements coilList = heatingCoilSummaryTable.get(0).getElementsByTag("td");
+	for(int i=0; i<coilList.size(); i++){
+	    if(coilList.get(i).text().equalsIgnoreCase(name)){
+		return coilList.get(i+coilTypeIndex).text();
+	    }
+	}
+	return null;
     }
     
     /**
