@@ -2,7 +2,6 @@ package eplus.htmlparser;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +17,7 @@ public class EnergyPlusHTMLParser {
     private HeatingCoilSummary heatCoilSummary;
     private CoolingCoilSummary coolCoilSummary;
     private CentralPlantSummary plantSummary;
+    private InteriorLightingSummary lightSummary;
 
     public EnergyPlusHTMLParser(File f) {
 	htmlFile = f;
@@ -86,19 +86,23 @@ public class EnergyPlusHTMLParser {
 
     /**
      * So far the method extracts {coolingcoil capacity, cooling coil sensible
-     * load, cooling coil latent load , cooling coil efficiency}
-     * Future element can be added to this list;
+     * load, cooling coil latent load , cooling coil efficiency} Future element
+     * can be added to this list;
      * 
      * @param coolCoilName
      * @return
      */
     public String[] getCoolCoilSummary(String coolCoilName) {
 	String[] coolCoilProperties = new String[4];
-	coolCoilProperties[0] = coolCoilSummary.getCoolingCoilTotalCapacity(coolCoilName);
-	coolCoilProperties[1] = coolCoilSummary.getCoolingCoilSensibleLoad(coolCoilName);
-	coolCoilProperties[2] = coolCoilSummary.getCoolingCoilLatentLoad(coolCoilName);
-	coolCoilProperties[3] = coolCoilSummary.getCoolingCoilEfficiency(coolCoilName);
-	
+	coolCoilProperties[0] = coolCoilSummary
+		.getCoolingCoilTotalCapacity(coolCoilName);
+	coolCoilProperties[1] = coolCoilSummary
+		.getCoolingCoilSensibleLoad(coolCoilName);
+	coolCoilProperties[2] = coolCoilSummary
+		.getCoolingCoilLatentLoad(coolCoilName);
+	coolCoilProperties[3] = coolCoilSummary
+		.getCoolingCoilEfficiency(coolCoilName);
+
 	return coolCoilProperties;
     }
 
@@ -129,5 +133,18 @@ public class EnergyPlusHTMLParser {
 	pump[1] = pumpSummary.getPumpHead(pumpName);
 	pump[2] = pumpSummary.getPumpWaterFlow(pumpName);
 	return pump;
+    }
+
+    /**
+     * So far the method only extracts{light total power} future element can be
+     * added to this list
+     * 
+     * @param lightName
+     * @return
+     */
+    public String[] getInteriorLightSummary(String lightName) {
+	String[] lights = new String[1];
+	lights[0] = lightSummary.getLightPower(lightName);
+	return lights;
     }
 }

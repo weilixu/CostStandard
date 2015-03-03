@@ -1,6 +1,7 @@
 package masterformat.api;
 
 import masterformat.standard.concrete.Concrete;
+import masterformat.standard.electrical.Electrical;
 import masterformat.standard.hvac.boiler.Boiler;
 import masterformat.standard.hvac.condenserunits.CondenserUnits;
 import masterformat.standard.hvac.convectionunits.ConvectionUnits;
@@ -51,6 +52,10 @@ public abstract class ComponentFactory {
     }
     
     public ConvectionUnits getConvectionUnits(String unit){
+	return null;
+    }
+    
+    public Electrical getElectrical(String electrical){
 	return null;
     }
 }
