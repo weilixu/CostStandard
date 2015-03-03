@@ -3,6 +3,7 @@ package masterformat.api;
 import masterformat.standard.concrete.Concrete;
 import masterformat.standard.hvac.boiler.Boiler;
 import masterformat.standard.hvac.condenserunits.CondenserUnits;
+import masterformat.standard.hvac.convectionunits.ConvectionUnits;
 import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.hvac.furnaces.Furnace;
 import masterformat.standard.hvac.pump.Pump;
@@ -13,21 +14,43 @@ import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection
 public abstract class ComponentFactory {
     
     //manufacture masonry from the list
-    public abstract Masonry getMasonry(String masonryType);
+    public Masonry getMasonry(String masonryType){
+	return null;
+    }
     
-    public abstract Concrete getConcrete(String concreteType);
+    public Concrete getConcrete(String concreteType){
+	return null;
+    }
     
-    public abstract ThermalMoistureProtection getThermalMoistureProtection(String thermalMoistureProtectionType);
+    public ThermalMoistureProtection getThermalMoistureProtection(String thermalMoistureProtectionType){
+	return null;
+    }
     
-    public abstract Boiler getBoiler(String boiler);
+    public Boiler getBoiler(String boiler){
+	return null;
+    }
     
-    public abstract Fan getFan(String fan);
+    public Fan getFan(String fan){
+	return null;
+    }
     
-    public abstract CondenserUnits getCondenserUnit(String condenserunit);
+    public CondenserUnits getCondenserUnit(String condenserunit){
+	return null;
+    }
     
-    public abstract Furnace getFurnace(String furnace);
+    public Furnace getFurnace(String furnace){
+	return null;
+    }
     
-    public abstract UnitarySystem getUnitarySystem(String unitary);
+    public UnitarySystem getUnitarySystem(String unitary){
+	return null;
+    }
     
-    public abstract Pump getPump(String pump);
+    public Pump getPump(String pump){
+	return null;
+    }
+    
+    public ConvectionUnits getConvectionUnits(String unit){
+	return null;
+    }
 }

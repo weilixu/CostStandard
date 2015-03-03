@@ -1,12 +1,9 @@
 package masterformat.standard.hvac.fan;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
-import masterformat.standard.model.CostMultiRegressionModel;
 
 public class CentrifugalRoofExhauster extends AbstractFan {
 

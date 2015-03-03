@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import masterformat.standard.model.CostMultiRegressionModel;
-
 public class CentrifugalWallExhauster extends AbstractFan {
     /**
      * have options V-belt drive or Direct drive
@@ -95,6 +93,7 @@ public class CentrifugalWallExhauster extends AbstractFan {
 		description = optionLists.get(upperIndex);
 		costVector = deepCopyCost(priceData.get(description));
 		Integer i = optionQuantities.get(upperIndex);
+		optionQuantities.set(upperIndex, i + 1);
 	    } else if (flowRate > 0.29 && flowRate <= 0.38) {
 		upperIndex = 1;
 		description = optionLists.get(upperIndex);

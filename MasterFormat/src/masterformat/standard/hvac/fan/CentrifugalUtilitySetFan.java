@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import masterformat.standard.model.CostMultiRegressionModel;
-
 /**
  * Utility ventilating set. This type of fans are self-contained units
  * consisting of a complete fan, motor and drive package. The arrangements offer
