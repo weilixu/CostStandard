@@ -42,6 +42,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private final JPanel furnacePanel;
     private final JPanel pumpPanel;
     private final JPanel unitaryPanel;
+    private final JPanel convectionUnitPanel;
     private final JPanel tablePanel;
     private final DefaultTableModel tableModel;
     private final JTable table;
@@ -79,6 +80,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private DefaultListModel<String> unitaryListModel;
     private JList<String> unitaryList;
     private JScrollPane unitaryListScrollPane;
+    private DefaultListModel<String> convectionUnitListModel;
+    private JList<String> convectionUnitList;
+    private JScrollPane convectionUnitListScrollPane;
 
     // private final String[] costColumnName =
     // {"Material Name","Material Cost ($)",
@@ -127,6 +131,10 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	unitaryPanel = new JPanel(new CardLayout());
 	unitaryPanel.setBackground(Color.WHITE);
 	updateUnitary();
+	
+	convectionUnitPanel = new JPanel(new CardLayout());
+	convectionUnitPanel.setBackground(Color.WHITE);
+	updateConvectionUnit();
 
 	// initialize the selection combo list
 	objectSelectionCombo = new JComboBox<String>(model.getDomainList());
@@ -241,6 +249,21 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		    itemPanel.repaint();
 		    EnergyPlusObjectPanel.revalidate();
 		    EnergyPlusObjectPanel.repaint();
+		}else if(category.equalsIgnoreCase("CONVECTION UNIT")){
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+
+		    itemPanel.add(convectionUnitPanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(convectionUnitListScrollPane,
+			    BorderLayout.CENTER);
+
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
 		}
 	    }
 	});
@@ -300,6 +323,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		} else if (category.equals("Unitary System")){
 		    model.addTotalCostToComponentCost(unitaryList
 			    .getSelectedValue().toString(), category);
+		} else if (category.equals("Convection Unit")){
+		    model.addTotalCostToComponentCost(convectionUnitList
+			    .getSelectedValue().toString(), category);
 		}
 	    }
 	});
@@ -331,6 +357,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
 			    .getSelectedValue().toString(), category);
 		} else if(category.equals("Unitary System")){
 		    model.addTotalOPCostToComponentCost(unitaryList
+			    .getSelectedValue().toString(), category);
+		} else if (category.equals("Convection Unit")){
+		    model.addTotalOPCostToComponentCost(convectionUnitList
 			    .getSelectedValue().toString(), category);
 		}
 
@@ -432,7 +461,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	    // model.setFanMasterFormat(f);
 	    JPanel fan = new FanPanel(model, f);// need to change this
 
-	    fanPanel.add(fan);
+	    fanPanel.add(fan,f);
 	    fanListModel.addElement(f);
 	    fanList.addListSelectionListener(new ListSelectionListener() {
 
@@ -460,7 +489,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	for (String c : condenserUnit) {
 	    // model.setFanMasterFormat(f);
 	    JPanel cu = new CondenserUnitPanel(model, c);// need to change this
-	    condenserUnitPanel.add(cu);
+	    condenserUnitPanel.add(cu,c);
 	    condenserUnitListModel.addElement(c);
 	    condenserUnitList
 		    .addListSelectionListener(new ListSelectionListener() {
@@ -526,7 +555,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	    // model.setFanMasterFormat(f);
 	    JPanel pump = new PumpPanel(model, p);// need to change this
 
-	    pumpPanel.add(pump);
+	    pumpPanel.add(pump,p);
 	    pumpListModel.addElement(p);
 	    pumpList.addListSelectionListener(new ListSelectionListener() {
 
@@ -555,7 +584,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	    // model.setFanMasterFormat(f);
 	    JPanel unitary = new UnitaryPanel(model, u);// need to change this
 
-	    unitaryPanel.add(unitary);
+	    unitaryPanel.add(unitary,u);
 	    unitaryListModel.addElement(u);
 	    unitaryList.addListSelectionListener(new ListSelectionListener() {
 
@@ -571,6 +600,35 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	    });
 	}
 	unitaryListScrollPane = new JScrollPane(unitaryList);
+    }
+    
+    private void updateConvectionUnit(){
+	convectionUnitListModel = new DefaultListModel<String>();
+	convectionUnitList = new JList<String>(convectionUnitListModel);
+	convectionUnitList.setFont(new Font("Helvetica", Font.BOLD, 20));
+
+	String[] units = model.getConvectionUnitList();
+	convectionUnitListModel.clear();
+	for (String c : units) {
+	    // model.setFanMasterFormat(f);
+	    JPanel unit = new ConvectionUnitPanel(model, c);// need to change this
+
+	    convectionUnitPanel.add(unit,c);
+	    convectionUnitListModel.addElement(c);
+	    convectionUnitList.addListSelectionListener(new ListSelectionListener() {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    CardLayout cardLayout = (CardLayout) (convectionUnitPanel.getLayout());
+		    String selection = convectionUnitList.getSelectedValue().toString();
+		    if (selection.equals(c)) {
+			cardLayout.show(convectionUnitPanel, selection);
+		    }
+		    model.getConvectionUnitCostVector(selection);
+		}
+	    });
+	}
+	convectionUnitListScrollPane = new JScrollPane(convectionUnitList);
     }
 
     private JTabbedPane makeTabbedPanel(String construction) {

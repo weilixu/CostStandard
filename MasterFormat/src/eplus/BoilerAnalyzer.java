@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import eplus.IdfReader.ValueNode;
-import eplus.MaterialAnalyzer.Material;
 import eplus.htmlparser.EnergyPlusHTMLParser;
 import masterformat.api.MasterFormat;
 

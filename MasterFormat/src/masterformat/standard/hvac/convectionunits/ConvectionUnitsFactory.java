@@ -6,8 +6,9 @@ public class ConvectionUnitsFactory extends ComponentFactory{
 
     @Override
     public ConvectionUnits getConvectionUnits(String unit) {
-	// TODO Auto-generated method stub
+	if(unit.equalsIgnoreCase("Fan Coil Air Conditioning")){
+	    return new FanCoilAC();
+	}
 	return null;
     }
-
 }

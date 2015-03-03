@@ -117,7 +117,7 @@ public class AirSourceHeatPump extends AbstractUnitarySystem {
 	Integer index = 0;
 	Integer upperLimit = 6;
 	if (heatPumpPackage.equalsIgnoreCase("Condenser Only")) {
-	    for (int i = index; i < coolingList.length; i++) {
+	    for (int i = index; i <= upperLimit; i++) {
 		if (coolingCapacity <= coolingList[i]
 			&& heatingCapacity <= heatingList[i]) {
 		    selectedIndex = i;
@@ -137,7 +137,7 @@ public class AirSourceHeatPump extends AbstractUnitarySystem {
 	} else {
 	    index = 7;
 	    upperLimit = 9;
-	    for (int i = index; i < coolingList.length; i++) {
+	    for (int i = index; i <= upperLimit; i++) {
 		if (coolingCapacity > coolingList[i]
 			&& heatingCapacity > heatingList[i]) {
 		    selectedIndex = i;

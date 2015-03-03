@@ -60,6 +60,11 @@
 			<centrifugal tag="232123.13" description = "In-Line Centrifugal Hydronic Pumps" type="Pump"/>
 		</hydronic>
 	</pump>
+	<convectionunit>
+		<fancoil tag="238219" description="Fan Coil Units" type="Convection Heating and Cooling Units">
+			<fancoilac tag="238219.10" description="Fan Coil Air Conditioning" type="Convection Heating and Cooling Units"/>
+		</fancoil>
+	</convectionunit>
 </masterformat>
 
 

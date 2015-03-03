@@ -3,7 +3,6 @@ package eplus;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,6 +35,7 @@ public class EnergyPlusModel {
     private CondenserUnitAnalyzer condenserUnitModule;
     private FurnaceAnalyzer furnaceModule;
     private UnitaryHVACAnalyzer unitaryModule;
+    private ConvectionUnitAnalyzer unitModule;
     private PumpAnalyzer pumpModule;
 
     // files locations etc.
@@ -44,7 +44,7 @@ public class EnergyPlusModel {
 
     // useful data
     private final String[] domainList = { "Construction", "Boiler", "Fan",
-	    "Condenser Unit", "Furnace","Pump","Unitary System" };// comboBox
+	    "Condenser Unit", "Furnace","Pump","Unitary System","Convection Unit" };// comboBox
 
     private String[][] costData;
     private final String componentCostDescription = "Name:Type:Line Item Type:Item Name:Object End-Use Key:Cost per Each:Cost per Area:"
@@ -87,6 +87,7 @@ public class EnergyPlusModel {
 	setUpFurnaceAnalyzer();
 	setUpPumpAnalyzer();
 	setUpUnitaryAnalyzer();
+	setUpConvectionUnitAnalyzer();
     }
 
     /**
@@ -169,7 +170,9 @@ public class EnergyPlusModel {
 	return unitaryModule.getUnitaryList();
     }
     
-    
+    public String[] getConvectionUnitList(){
+	return unitModule.getConvectionUnitList();
+    }
 
     /**
      * get the material cost data from the material analyzer
@@ -242,6 +245,11 @@ public class EnergyPlusModel {
 	//System.out.println(mf==null);
 	unitaryModule.setUnitaryMasterFormat(unitaryName, mf);
     }
+    
+    public void setConvectionUnitMasterFormat(String unitName, String description){
+	MasterFormat mf = masterformat.getUserInputFromMap("ConvectionUnit", description);
+	unitModule.setConvectionUnitMasterFormat(unitName, mf);
+    }
 
     // All the methods to retrieve user inputs from the mapping results
     /**
@@ -279,6 +287,10 @@ public class EnergyPlusModel {
     
     public ArrayList<String> getUnitaryUserInputs(String unitaryName){
 	return unitaryModule.getUnitary(unitaryName).getUserInputs();
+    }
+    
+    public ArrayList<String> getConvectionUserInputs(String unitName){
+	return unitModule.getConvectionUnit(unitName).getUserInputs();
     }
 
     // All the methods to extract the cost vector from the masterformat
@@ -333,7 +345,11 @@ public class EnergyPlusModel {
     public void getUnitaryCostVector(String item){
 	costData = unitaryModule.getCostListForUnitary(item);
 	updateCostVectorInformation();
-
+    }
+    
+    public void getConvectionUnitCostVector(String item){
+	costData = unitModule.getCostListForConvectionUnit(item);
+	updateCostVectorInformation();
     }
 
     /**
@@ -463,6 +479,26 @@ public class EnergyPlusModel {
 	}
 	selectionOptionQuantities = temp;
     }
+    
+    public void getConvectionUnitOptionList(String unitName){
+	ArrayList<String> list = unitModule.getConvectionUnit(unitName).getOptionList();
+	String[] temp = new String[list.size()];
+	for (int i = 0; i < list.size(); i++) {
+	    temp[i] = list.get(i);
+	}
+	selectionOptions = temp;
+    }
+    
+    // All the methods to get the options quantities under one category
+    public void getConvectionUnitOptionQuantities(String unitName) {
+	ArrayList<Integer> list = unitModule.getConvectionUnit(unitName)
+		.getOptionQuantities();
+	Integer[] temp = new Integer[list.size()];
+	for (int i = 0; i < list.size(); i++) {
+	    temp[i] = list.get(i);
+	}
+	selectionOptionQuantities = temp;
+    }
 
     // All the methods that feed back user inputs to the masterformat for the
     // cost mapping
@@ -520,6 +556,11 @@ public class EnergyPlusModel {
 	unitaryModule.setUserInput(map, unitaryName);
 	getUnitaryCostVector(unitaryName);
     }
+    
+    public void setConvectionUnitUserInput(HashMap<String, String> map, String unitName){
+	unitModule.setUserInput(map, unitName);
+	getConvectionUnitCostVector(unitName);
+    }
 
     // All the method that retrieve the cost information and put it down to
     // EnergyPlus Component line object
@@ -566,6 +607,11 @@ public class EnergyPlusModel {
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
 	} else if (category.equalsIgnoreCase("UNITARYHVAC")){
+	    String[] value = { item.toUpperCase(), "", "General", item, "",
+		    cost.toString(), "", "", "", "", "", "", "1" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
+	} else if(category.equalsIgnoreCase("CONVECTIONUNIT")){
 	    String[] value = { item.toUpperCase(), "", "General", item, "",
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
@@ -620,6 +666,11 @@ public class EnergyPlusModel {
 		    cost.toString(), "", "", "", "", "", "", "1" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
 		    description);
+	} else if(category.equalsIgnoreCase("CONVECTIONUNIT")){
+	    String[] value = { item.toUpperCase(), "", "General", item, "",
+		    cost.toString(), "", "", "", "", "", "", "1" };
+	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,
+		    description);
 	}
     }
 
@@ -669,6 +720,10 @@ public class EnergyPlusModel {
     
     private void setUpUnitaryAnalyzer(){
 	unitaryModule = new UnitaryHVACAnalyzer(idfDomain, htmlParser);
+    }
+    
+    private void setUpConvectionUnitAnalyzer(){
+	unitModule = new ConvectionUnitAnalyzer(idfDomain,htmlParser);
     }
 
     private void updateCostVectorInformation() {
