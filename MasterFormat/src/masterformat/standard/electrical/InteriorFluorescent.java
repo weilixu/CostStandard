@@ -31,7 +31,7 @@ public class InteriorFluorescent extends AbstractElectrical {
 	while(iterator.hasNext()){
 	    String temp = iterator.next();
 	    if(temp.equals("Mount")){
-		//only "SurfaceMount" and "CeilingMount"
+		//only "Surface" and "Recessed"
 		mount = userInputsMap.get(temp);
 	    }
 	}

@@ -714,10 +714,10 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	// Create and set up the window.
 	JFrame frame = new JFrame("MasterFormatTreeDemo");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	File file = new File(
-		"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\FanCoil\\FanCoil.idf");
 	//File file = new File(
-	//	"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\ConstantAC\\SingleZoneCA.idf");	
+	//	"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\FanCoil\\FanCoil.idf");
+	File file = new File(
+		"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\ConstantAC\\SingleZoneCA.idf");	
 	EnergyPlusModel model = new EnergyPlusModel(file);
 	// Add content to the window.
 	frame.add(new MappingPanel(model));
