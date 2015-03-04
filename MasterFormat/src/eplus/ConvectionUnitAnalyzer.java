@@ -122,7 +122,6 @@ public class ConvectionUnitAnalyzer {
 		// in the fan coil unit
 		if (vn.getDescription().equalsIgnoreCase("COOLING COIL NAME")) {
 		    String coolCoilName = vn.getAttribute();
-		    System.out.println(coolCoilName);
 		    c.setConvectionUnitCoolingPower(parser
 			    .getCoolCoilSummary(coolCoilName)[0]);
 		}

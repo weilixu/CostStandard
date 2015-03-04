@@ -30,6 +30,7 @@ public class EnergyPlusHTMLParser {
 	    heatCoilSummary = new HeatingCoilSummary(doc);
 	    coolCoilSummary = new CoolingCoilSummary(doc);
 	    plantSummary = new CentralPlantSummary(doc);
+	    lightSummary = new InteriorLightingSummary(doc);
 	} catch (IOException e) {
 	    // do nothing
 	}

@@ -65,12 +65,12 @@
 			<fancoilac tag="238219.10" description="Fan Coil Air Conditioning" type="Convection Heating and Cooling Units"/>
 		</fancoil>
 	</convectionunit>
-	<electrical>
+	<lights>
 		<interiorlighting tag="265100" description="Interior Lighting" type="Electrical">
 			<fluorescent tag="265113.500100" description="Fluorescent" type="Electrical"/>
 			<led tag="265113.55" description="LED" type = "Electrical"/>
 		</interiorlighting>
-	</electrical>
+	</lights>
 </masterformat>
 
 

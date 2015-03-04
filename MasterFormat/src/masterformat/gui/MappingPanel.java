@@ -43,6 +43,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private final JPanel pumpPanel;
     private final JPanel unitaryPanel;
     private final JPanel convectionUnitPanel;
+    private final JPanel lightsPanel;
     private final JPanel tablePanel;
     private final DefaultTableModel tableModel;
     private final JTable table;
@@ -83,6 +84,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private DefaultListModel<String> convectionUnitListModel;
     private JList<String> convectionUnitList;
     private JScrollPane convectionUnitListScrollPane;
+    private DefaultListModel<String> lightsListModel;
+    private JList<String> lightsList;
+    private JScrollPane lightsScrollPane;
 
     // private final String[] costColumnName =
     // {"Material Name","Material Cost ($)",
@@ -135,6 +139,10 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	convectionUnitPanel = new JPanel(new CardLayout());
 	convectionUnitPanel.setBackground(Color.WHITE);
 	updateConvectionUnit();
+	
+	lightsPanel = new JPanel(new CardLayout());
+	lightsPanel.setBackground(Color.WHITE);
+	updateLightsPanel();
 
 	// initialize the selection combo list
 	objectSelectionCombo = new JComboBox<String>(model.getDomainList());
@@ -258,6 +266,21 @@ public class MappingPanel extends JPanel implements CostTableListener {
 
 		    itemPanel.add(convectionUnitPanel, BorderLayout.CENTER);
 		    EnergyPlusObjectPanel.add(convectionUnitListScrollPane,
+			    BorderLayout.CENTER);
+
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
+		}else if(category.equalsIgnoreCase("LIGHTS")){
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+
+		    itemPanel.add(lightsPanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(lightsScrollPane,
 			    BorderLayout.CENTER);
 
 		    itemPanel.revalidate();
@@ -629,6 +652,35 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	    });
 	}
 	convectionUnitListScrollPane = new JScrollPane(convectionUnitList);
+    }
+    
+    public void updateLightsPanel(){
+	lightsListModel = new DefaultListModel<String>();
+	lightsList = new JList<String>(lightsListModel);
+	lightsList.setFont(new Font("Helvetica", Font.BOLD, 20));
+
+	String[] lights = model.getElectricalList();
+	lightsListModel.clear();
+	for (String l : lights) {
+	    // model.setFanMasterFormat(f);
+	    JPanel unit = new LightsPanel(model, l);// need to change this
+
+	    lightsPanel.add(unit,l);
+	    lightsListModel.addElement(l);
+	    lightsList.addListSelectionListener(new ListSelectionListener() {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    CardLayout cardLayout = (CardLayout) (lightsPanel.getLayout());
+		    String selection = lightsList.getSelectedValue().toString();
+		    if (selection.equals(l)) {
+			cardLayout.show(lightsPanel, selection);
+		    }
+		    model.getElectricalCostVector(selection);
+		}
+	    });
+	}
+	lightsScrollPane = new JScrollPane(lightsList);
     }
 
     private JTabbedPane makeTabbedPanel(String construction) {

@@ -36,9 +36,62 @@ public class ElectricalAnalyzer {
     public ElectricalAnalyzer(IdfReader reader, EnergyPlusHTMLParser p){
 	this.reader = reader;
 	parser = p;
-	
+	electricMap = new HashMap<String,Electric>();
 	processElectricalEquipment();
     }
+    
+    protected String[][] getCostListForElectric(String electric){
+  	Electric e = electricMap.get(electric);
+  	String[][] costList = new String[1][rowElement];
+  	
+  	String generalUnit = e.getElectricUnit();
+  	
+  	String[] costVector = new String[rowElement];
+  	Double[] costInfo = e.getCostInformation();
+  	if(costInfo!=null){
+  	    //the first element in a vector is the electric name;
+  	    
+  	    costVector[0] = e.getElectricDescription();
+  	    costVector[1] = generalUnit;
+  	    for(int j=0; j<costInfo.length; j++){
+  		costVector[j+2] = df.format(costInfo[j]);
+  	    }
+  	    costList[0] = costVector;
+  	}else{
+  	    costList[0] = defaultCostData;
+  	}
+  	return costList;
+      }
+      
+      protected String[] getElectricList(){
+   	Set<String> electrics = electricMap.keySet();
+   	String[] electricArray = new String[electrics.size()];
+   	Iterator<String> electricIterator = electrics.iterator();
+   	
+   	int counter = 0;
+   	while(electricIterator.hasNext() && counter<electrics.size()){
+   	 electricArray[counter]=electricIterator.next();
+   	    counter++;
+   	}
+   	return electricArray;
+       }
+       
+       protected String getElectricType(String electricName){
+   	return electricMap.get(electricName).getElectricType();
+       }
+       
+       protected void setElectricMasterFormat(String electricName, MasterFormat mf){
+	   electricMap.get(electricName).setElectric(mf);
+       }
+       
+       protected Electric getElectric(String electricName){
+   	return electricMap.get(electricName);
+       }
+       
+       protected void setUserInput(HashMap<String, String> map,String electricName){
+   	Electric e = electricMap.get(electricName);
+   	e.setUserInputs(map);
+       }
     
     private void processElectricalEquipment(){
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> interiorLight = reader.getObjectList(lights);
@@ -52,7 +105,25 @@ public class ElectricalAnalyzer {
 	Set<String> lightCount = list.get(lights).keySet();
 	Iterator<String> lightIterator = lightCount.iterator();
 	while(lightIterator.hasNext()){
-	    String temp = lightIterator.next();
+	    String count = lightIterator.next();
+	    ArrayList<ValueNode> tempNodeList = list.get(lights).get(count);
+	    String name = tempNodeList.get(0).getAttribute();
+	    Electric e = new Electric(lights,name);
+	    //get the power from the html file
+	    e.setPower(parser.getInteriorLightSummary(name)[0]);   
+	    for(ValueNode vn: tempNodeList){
+		//estimate the mounting method from the inputs. This is a rough estimation,
+		//needs to be fixed later
+		if(vn.getDescription().equalsIgnoreCase("FRACTION RADIANT")){
+		    Double frac = Double.parseDouble(vn.getAttribute());
+		    if(frac<0.5){
+			e.setAdditionalProperty("Mount", "Recessed");
+		    }else{
+			e.setAdditionalProperty("Mount", "Surface");
+		    }
+		}
+	    }
+	    electricMap.put(name, e);
 	}
     }
     
@@ -62,10 +133,12 @@ public class ElectricalAnalyzer {
 	private final String electricName;
 	private String[] properties = new String[stringArraySize];
 	private MasterFormat electric;
+	private final HashMap<String, String> additionInput;
 	
 	public Electric(String type, String name){
 	    this.type = type;
 	    electricName = name;
+	    additionInput = new HashMap<String, String>();
 	}
 	
 	public void setPower(String power){
@@ -82,6 +155,10 @@ public class ElectricalAnalyzer {
 	
 	public void setAmps(String a){
 	    properties[ampIndex] =a;
+	}
+	
+	public void setAdditionalProperty(String key, String value){
+	    additionInput.put(key, value);
 	}
 	
 	public String getName(){
@@ -118,6 +195,9 @@ public class ElectricalAnalyzer {
 	    electric = m;
 	    properties = getProperties();
 	    electric.setVariable(properties);
+	    if(additionInput!=null){
+		electric.setUserInputs(additionInput);
+	    }
 	}
 	
 	public ArrayList<String> getUserInputs(){
