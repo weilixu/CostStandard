@@ -21,7 +21,6 @@ public class EnergyPlusHTMLParser {
 
     public EnergyPlusHTMLParser(File f) {
 	htmlFile = f;
-
 	try {
 	    doc = Jsoup.parse(htmlFile, "UTF-8");
 	    preprocessTable();

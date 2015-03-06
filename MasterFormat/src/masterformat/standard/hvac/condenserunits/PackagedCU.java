@@ -9,7 +9,7 @@ public class PackagedCU extends AbstractCondenserUnits {
 
     private Double capacity;
 
-    private final Double[] capacityList = { 5275.3, 17584.3, 35168.5, 70337.1 };
+    private final Double[] capacityList = { 5275.3, 25584.3, 35168.5, 70337.1 };
     private static final Double[] Default_Cost_Vector = {0.0,0.0,0.0,0.0,0.0};
     
 
@@ -51,7 +51,7 @@ public class PackagedCU extends AbstractCondenserUnits {
 	optionQuantities = new ArrayList<Integer>();
 	optionLists.add("Condensing unit, Air cooled, compressor, standard controls, 5200 watts");
 	optionQuantities.add(0);
-	optionLists.add("Condensing unit, Air cooled, compressor, standard controls, 17500 watts");
+	optionLists.add("Condensing unit, Air cooled, compressor, standard controls, 25500 watts");
 	optionQuantities.add(0);
 	optionLists.add("Condensing unit, Air cooled, compressor, standard controls, 35100 watts");
 	optionQuantities.add(0);
@@ -68,15 +68,19 @@ public class PackagedCU extends AbstractCondenserUnits {
 	if (capacity <= 5275.3) {
 	    description = "Condensing unit, Air cooled, compressor, standard controls, 5200 watts";
 	    costVector = deepCopyCost(priceData.get(description));
-	} else if (capacity > 5275.3 && capacity <= 17584.3) {
-	    description = "Condensing unit, Air cooled, compressor, standard controls, 17500 watts";
+	    optionQuantities.set(0, optionQuantities.get(0)+1);
+	} else if (capacity > 5275.3 && capacity <= 25584.3) {
+	    description = "Condensing unit, Air cooled, compressor, standard controls, 25500 watts";
 	    costVector = deepCopyCost(priceData.get(description));
+	    optionQuantities.set(1, optionQuantities.get(1)+1);
 	} else if (capacity > 17584.3 && capacity <= 35168.5) {
 	    description = "Condensing unit, Air cooled, compressor, standard controls, 35100 watts";
 	    costVector = deepCopyCost(priceData.get(description));
+	    optionQuantities.set(2, optionQuantities.get(2)+1);
 	} else if (capacity > 35168.8 && capacity <= 70337.1) {
 	    description = "Condensing unit, Air cooled, compressor, standard controls, 70300 watts";
 	    costVector = deepCopyCost(priceData.get(description));
+	    optionQuantities.set(3, optionQuantities.get(3)+1);
 	} else {
 	    description = "Condensing unit, Air cooled, compressor, standard controls, Groups ";
 	    fittingCapacity();

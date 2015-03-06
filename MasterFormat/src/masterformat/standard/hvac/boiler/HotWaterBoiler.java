@@ -11,7 +11,7 @@ public class HotWaterBoiler extends AbstractBoiler {
     private Double power;
 
     private final Double[] powerList = { 7500.0, 90000.0, 296000.0, 1036000.0,
-	    2400000.0, 3600000.0, 24000.0, 94000.0, 319000.0, 837000.0,
+	    2400000.0, 3600000.0, 40000.0, 94000.0, 319000.0, 837000.0,
 	    957000.0, 1788000.0, 2043000.0, 59000.0, 88000.0, 117000.0,
 	    147000.0, 171000.0, 428000.0, 1198000.0, 3956000.0, 32000.0,
 	    61000.0, 318000.0, 880000.0, 1618000.0, 2043000.0 };
@@ -101,7 +101,7 @@ public class HotWaterBoiler extends AbstractBoiler {
 		.add("Electric Boilers, ASME, Standard controls and trim, Hot water, 3600kW");
 	optionQuantities.add(0);
 	optionLists
-		.add("Gas-Fired Boilers, Natural or propane, standard controls, packaged, cast iron with insulated jacket, Hot water, 24 kW");
+		.add("Gas-Fired Boilers, Natural or propane, standard controls, packaged, cast iron with insulated jacket, Hot water, 40 kW");
 	optionQuantities.add(0);
 	optionLists
 		.add("Gas-Fired Boilers, Natural or propane, standard controls, packaged, cast iron with insulated jacket, Hot water, 94 kW");
@@ -170,6 +170,7 @@ public class HotWaterBoiler extends AbstractBoiler {
 
     @Override
     public void selectCostVector() {
+	System.out.println(power);
 	setToZero();
 	Integer upperindex = 0;
 	Integer lowerIndex = 0;
@@ -217,7 +218,7 @@ public class HotWaterBoiler extends AbstractBoiler {
 	} else if (sourceType.equals("NaturalGas")
 		|| sourceType.equals("PropaneGas")) {
 	    lowerIndex = 6;
-	    if (power <= 24000) {
+	    if (power <= 40000) {
 		upperindex = 6;
 		description = optionLists.get(upperindex);
 		costVector = deepCopyCost(priceData.get(description));

@@ -747,8 +747,11 @@ public class EnergyPlusModel {
 	File[] fList = parentFolder.listFiles();
 	for (File file : fList) {
 	    if (file.isFile()) {
-		if (file.getName().endsWith(".html")) {
+		String fileName = eplusFile.getName().substring(0,eplusFile.getName().indexOf("."))+"Table";
+		String htmlFileName = file.getName().substring(0,file.getName().indexOf("."));
+		if (fileName.equals(htmlFileName) && file.getName().endsWith(".html")) {
 		    htmlParser = new EnergyPlusHTMLParser(file);
+		    break;
 		}
 	    }
 	}

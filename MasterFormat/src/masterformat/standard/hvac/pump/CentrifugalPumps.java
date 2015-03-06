@@ -15,7 +15,7 @@ public class CentrifugalPumps extends AbstractPump{
     
     private final Double nonFerrousPercent = 1.3;
     
-    private final Double[] powerList = {18.6,62.1,93.2,248.6,124.3,186.4,62.2,248.6,248.6,124.3,186.4,186.4};
+    private final Double[] powerList = {18.6,62.1,93.2,124.3,186.4,248.6,62.2,248.6,124.3,186.4,186.4,248.6};
     
     public CentrifugalPumps(){
 	unit = "$/Ea.";
@@ -55,8 +55,8 @@ public class CentrifugalPumps extends AbstractPump{
 		{565.0,141.0,0.0,706.0,835.0},
 		{970.0,141.0,0.0,1111.0,1300.0},
 		{1400.0,169.0,0.0,1569.0,1775.0},
-		{1775.0,169.0,0.0,1944.0,2200.0},
 		{1075.0,141.0,0.0,1216.0,1425.0},
+		{1775.0,169.0,0.0,1944.0,2200.0},
 		{365.0,141.0,0.0,506.0,615.0},
 		{680.0,141.0,0.0,821.0,960.0},
 		{745.0,169.0,0.0,914.0,1075.0},
@@ -243,11 +243,14 @@ public class CentrifugalPumps extends AbstractPump{
 
 	for (int i = lower; i <= upper; i++) {
 	    Double residual = Math.abs(power - total - powerList[i]);
+	    System.out.println(powerList[i]);
+	    System.out.println(residual);
 	    if (residual < temp) {
 		temp = residual;
 		criticalIndex = i;
 	    }
 	}
+	System.out.println(criticalIndex);
 	// add to the cost vector
 	Double[] itemCost = priceData.get(optionLists.get(criticalIndex));
 	for (int j = 0; j < costVector.length; j++) {
