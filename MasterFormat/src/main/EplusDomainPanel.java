@@ -27,7 +27,7 @@ import eplus.IdfReader.ValueNode;
 
 public class EplusDomainPanel extends JPanel implements TreeSelectionListener {
 
-    private static final String FILE_PATH = "C:\\Users\\Weili\\Desktop\\New folder\\JIH_ProposedCase.idf";
+    private static final String FILE_PATH = "C:\\Users\\Weili\\Desktop\\CSL.idf";
 
     private final IdfReader eplusData;
     private JTree tree;
