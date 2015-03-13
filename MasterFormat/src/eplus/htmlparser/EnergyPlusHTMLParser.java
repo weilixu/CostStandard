@@ -18,6 +18,7 @@ public class EnergyPlusHTMLParser {
     private CoolingCoilSummary coolCoilSummary;
     private CentralPlantSummary plantSummary;
     private InteriorLightingSummary lightSummary;
+    private LineItemCostSummary itemCostSummary;
 
     public EnergyPlusHTMLParser(File f) {
 	htmlFile = f;
@@ -30,6 +31,7 @@ public class EnergyPlusHTMLParser {
 	    coolCoilSummary = new CoolingCoilSummary(doc);
 	    plantSummary = new CentralPlantSummary(doc);
 	    lightSummary = new InteriorLightingSummary(doc);
+	    itemCostSummary = new LineItemCostSummary(doc);
 	} catch (IOException e) {
 	    // do nothing
 	}
@@ -146,5 +148,9 @@ public class EnergyPlusHTMLParser {
 	String[] lights = new String[1];
 	lights[0] = lightSummary.getLightPower(lightName);
 	return lights;
+    }
+    
+    public LineItemCostSummary getCostSummary(){
+	return itemCostSummary;
     }
 }

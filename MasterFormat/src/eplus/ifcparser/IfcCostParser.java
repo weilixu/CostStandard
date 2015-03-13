@@ -1,27 +1,69 @@
 package eplus.ifcparser;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import ifc4javatoolbox.ifc4.IfcApplication;
+import ifc4javatoolbox.ifc4.IfcAppliedValue;
+import ifc4javatoolbox.ifc4.IfcAreaMeasure;
+import ifc4javatoolbox.ifc4.IfcArithmeticOperatorEnum;
 import ifc4javatoolbox.ifc4.IfcChangeActionEnum;
+import ifc4javatoolbox.ifc4.IfcCostItem;
+import ifc4javatoolbox.ifc4.IfcCostItemTypeEnum;
+import ifc4javatoolbox.ifc4.IfcCostValue;
+import ifc4javatoolbox.ifc4.IfcCountMeasure;
+import ifc4javatoolbox.ifc4.IfcDate;
 import ifc4javatoolbox.ifc4.IfcGloballyUniqueId;
+import ifc4javatoolbox.ifc4.IfcIdentifier;
+import ifc4javatoolbox.ifc4.IfcLabel;
+import ifc4javatoolbox.ifc4.IfcMeasureWithUnit;
+import ifc4javatoolbox.ifc4.IfcMonetaryMeasure;
+import ifc4javatoolbox.ifc4.IfcMonetaryUnit;
+import ifc4javatoolbox.ifc4.IfcNamedUnit;
 import ifc4javatoolbox.ifc4.IfcOwnerHistory;
 import ifc4javatoolbox.ifc4.IfcPersonAndOrganization;
+import ifc4javatoolbox.ifc4.IfcPhysicalQuantity;
+import ifc4javatoolbox.ifc4.IfcPhysicalSimpleQuantity;
+import ifc4javatoolbox.ifc4.IfcQuantityArea;
+import ifc4javatoolbox.ifc4.IfcQuantityCount;
+import ifc4javatoolbox.ifc4.IfcSIUnit;
 import ifc4javatoolbox.ifc4.IfcStateEnum;
+import ifc4javatoolbox.ifc4.IfcText;
 import ifc4javatoolbox.ifc4.IfcTimeStamp;
+import ifc4javatoolbox.ifc4.IfcUnit;
+import ifc4javatoolbox.ifc4.IfcValue;
+import ifc4javatoolbox.ifc4.LIST;
 import ifc4javatoolbox.ifc4.STRING;
 import eplus.IdfReader;
+import eplus.htmlparser.EnergyPlusHTMLParser;
+import eplus.htmlparser.LineItemCostSummary;
+import eplus.htmlparser.LineItemCostSummary.LineItem;
 
 public class IfcCostParser {
     private final IdfReader model;
-    
+    private final LineItemCostSummary parser;
+
     private final String COMPONENT = "ComponentCost:LineItem";
 
     private final IfcGloballyUniqueId uniqueId;
     private final IfcOwnerHistory history;
 
-    public IfcCostParser(IdfReader r) {
+    private LIST<IfcPhysicalQuantity> physicalquantityList;
+    private LIST<IfcCostValue> costValueList;
+
+    private final IfcCostItem estimateItem;
+
+    public IfcCostParser(IdfReader r, EnergyPlusHTMLParser p) {
 	model = r;
+	parser = p.getCostSummary();
+	physicalquantityList = new LIST<IfcPhysicalQuantity>();
+	costValueList = new LIST<IfcCostValue>();
+
+	processCostItem();
 
 	STRING id = new STRING();
 	id.setDecodedValue(model.getValue("Building", "Name"));
@@ -32,24 +74,82 @@ public class IfcCostParser {
 		new IfcChangeActionEnum(), new IfcTimeStamp(time),
 		new IfcPersonAndOrganization(), new IfcApplication(),
 		new IfcTimeStamp());
+
+	estimateItem = new IfcCostItem(uniqueId, history, new IfcLabel(
+		"Cost Estimation", true), new IfcText("For Budget Control",
+		true), new IfcLabel(), new IfcIdentifier("0", true),
+		new IfcCostItemTypeEnum("USERDEFINED"), costValueList,
+		physicalquantityList);
+
+    }
+
+    private void processCostItem() {
+	Integer size = parser.getLineItemSize();
+	String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+	for (int i = 0; i < size; i++) {
+	    LineItem item = parser.getLineItem(i);
+	    if (item.getUnit().equals("m2")) {
+		IfcPhysicalQuantity pq = new IfcQuantityArea(new IfcLabel(
+			item.getUnit(), true), new IfcText("", true),
+			new IfcSIUnit(), new IfcAreaMeasure(
+				Double.parseDouble(item.getQuantity())),
+			new IfcLabel());
+		IfcValue v = new IfcMonetaryMeasure(Double.parseDouble(item
+			.getUnitValue()));
+		IfcUnit mu = new IfcMonetaryUnit(new IfcLabel("$", true));
+		LIST<IfcAppliedValue> list = new LIST<IfcAppliedValue>();
+		IfcCostValue cv = new IfcCostValue(new IfcLabel(item.getName(),
+			true), new IfcText(), new IfcMeasureWithUnit(v, mu),
+			new IfcMeasureWithUnit(), new IfcDate(date, true),
+			new IfcDate(), new IfcLabel("Estimated Cost", true),
+			new IfcLabel("New", true),
+			new IfcArithmeticOperatorEnum("MULTIPLY"), list);
+		physicalquantityList.add(pq);
+		costValueList.add(cv);
+
+	    } else if (item.getUnit().equals("Ea.")) {
+		IfcPhysicalQuantity pq = new IfcQuantityCount(new IfcLabel(
+			item.getUnit(), true), new IfcText("", true),
+			new IfcSIUnit(), new IfcCountMeasure(
+				Double.parseDouble(item.getQuantity())),
+			new IfcLabel());
+		IfcValue v = new IfcMonetaryMeasure(Double.parseDouble(item
+			.getUnitValue()));
+		IfcUnit mu = new IfcMonetaryUnit(new IfcLabel("$", true));
+		LIST<IfcAppliedValue> list = new LIST<IfcAppliedValue>();
+		IfcCostValue cv = new IfcCostValue(new IfcLabel(item.getName(),
+			true), new IfcText(), new IfcMeasureWithUnit(v, mu),
+			new IfcMeasureWithUnit(), new IfcDate(date, true),
+			new IfcDate(), new IfcLabel("Estimated Cost", true),
+			new IfcLabel("New", true),
+			new IfcArithmeticOperatorEnum("MULTIPLY"), list);
+		physicalquantityList.add(pq);
+		costValueList.add(cv);
+	    }
+	}
     }
 
     public void printTest() {
-	String u = uniqueId.toString();
-	String step = uniqueId.getStepLine();
-	System.out.println(step + " " + u);
-	String stephis = history.getStepLine();
-	String h = history.toString();
-	System.out.println(stephis + " " + h);
-
+	System.out.println(estimateItem.getStepLine());
+	System.out.println(estimateItem.getPredefinedType().getStepLine());
+	for(int i=0; i<estimateItem.getCostValues().size(); i++){
+	    System.out.println(estimateItem.getCostValues().get(i).getStepLine());
+	}
+	for(int i=0; i<estimateItem.getCostQuantities().size(); i++){
+	    System.out.println(estimateItem.getCostQuantities().get(i).getStepLine());
+	}
     }
 
     public static void main(String[] args) throws IOException {
 	IdfReader reader = new IdfReader();
-	reader.setFilePath("C:\\Users\\Weili\\Desktop\\New folder\\CostTester.idf");
+	reader.setFilePath("C:\\Users\\Weili\\Desktop\\New folder\\OptimizedCase\\72.idf");
 	reader.readEplusFile();
 
-	IfcCostParser parser = new IfcCostParser(reader);
+	EnergyPlusHTMLParser p = new EnergyPlusHTMLParser(
+		new File(
+			"C:\\Users\\Weili\\Desktop\\New folder\\OptimizedCase\\72Table.html"));
+
+	IfcCostParser parser = new IfcCostParser(reader, p);
 	parser.printTest();
     }
 
