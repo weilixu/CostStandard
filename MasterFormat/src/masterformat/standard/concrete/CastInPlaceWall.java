@@ -1,16 +1,18 @@
 package masterformat.standard.concrete;
 
-import java.util.ArrayList;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
 public class CastInPlaceWall extends AbstractConcrete {
+    private static String TAG = "Wall";
 
     private double thickness;
     private double height;
-    
-    public CastInPlaceWall(){
+
+    public CastInPlaceWall() {
 	unit = "$/m2";
 	hierarchy = "030000 Concrete:033000 Cast-In-Place Concrete:033053.40 Concrete In Place";
     }
@@ -35,86 +37,66 @@ public class CastInPlaceWall extends AbstractConcrete {
 	    userInputs.add("INPUT:Thickness:m");
 	}
     }
-    
+
     @Override
-    public void setUserInputs(HashMap<String, String> userInputsMap){
+    public void setUserInputs(HashMap<String, String> userInputsMap) {
 	Set<String> inputs = userInputsMap.keySet();
 	Iterator<String> iterator = inputs.iterator();
-	while(iterator.hasNext()){
+	while (iterator.hasNext()) {
 	    String temp = iterator.next();
-	    if(temp.equals("Height")){
+	    if (temp.equals("Height")) {
 		height = Double.parseDouble(userInputsMap.get(temp));
-	    }else if(temp.equals("Thickness")){
+	    } else if (temp.equals("Thickness")) {
 		thickness = Double.parseDouble(userInputsMap.get(temp));
 	    }
 	}
     }
-    
+
     @Override
     public void selectCostVector() {
-	if (thickness <= 0.3) {
-	    if (height <= 2.4) {
-		description = "Wall, free-standing (20 mPa), 200 mm thick, 2400 mm high";
-	    } else {
-		description = "Wall, free-standing (20 mPa), 200 mm thick, 4200 mm high";
+	Double[] cost = new Double[numOfCostElement];
+
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from concrete.castinplace where construction = '"
+			    + TAG
+			    + "' and height >= '"
+			    + height
+			    + "' and thickness >= '"
+			    + thickness
+			    + "' order by totalcost;");
+	    //if there is no matching, select the most expensive product in the database
+	    if (!resultSet.next()) {
+
+		resultSet = statement
+			.executeQuery("select * from concrete.castinplace where construction = '"
+				+ TAG
+				+ "' and totalcost = (select max(totalcost) from concrete.castinplace where construction = '"
+				+ TAG + "');");
+		resultSet.next();
 	    }
-	} else if (thickness <= 0.38) {
-	    if (height <= 2.4) {
-		description = "Wall, free-standing (20 mPa), 300 mm thick, 2400 mm high";
-	    } else {
-		description = "Wall, free-standing (20 mPa), 300 mm thick, 4200 mm high";
-	    }
-	} else {
-	    if (height <= 2.4) {
-		description = "Wall, free-standing (20 mPa), 380 mm thick, 2400 mm high";
-	    } else if (height <= 3.6) {
-		description = "Wall, free-standing (20 mPa), 380 mm thick, 3600 mm high";
-	    } else {
-		description = "Wall, free-standing (20 mPa), 380 mm thick, 5500 mm high";
-	    }
+	    cost[materialIndex] = resultSet.getDouble("materialcost");
+	    cost[laborIndex] = resultSet.getDouble("laborcost");
+	    cost[equipIndex] = resultSet.getDouble("equipmentcost");
+	    cost[totalIndex] = resultSet.getDouble("totalCost");
+	    cost[totalOPIndex] = resultSet.getDouble("totalInclop");
+
+	    description = TAG + " " + resultSet.getString("type");
+	    costVector = cost;
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
 	}
-	Double[] temp = priceData.get(description);
-	Double[] vector = new Double[temp.length];
-	for(int i=0; i<temp.length; i++){
-	    vector[i] = temp[i]*thickness;
-	}
-	costVector = vector;
     }
 
     @Override
     protected void initializeData() {
-	// the data is in IP unit, conversion factor from C.Y to m3 is 1yd =
-	// 0.76455 m3
-	Double[][] costsMatrix = { { 160.00, 204.44, 16.40, 380.40, 510.00 },
-		{ 190.00, 345.00, 27.50, 562.50, 770.00 },
-		{ 145.00, 146.00, 11.70, 302.70, 395.00 },
-		{ 154.00, 234.00, 18.80, 406.80, 550.00 },
-		{ 139.00, 117.00, 9.40, 265.40, 345.00 },
-		{ 139.00, 183.00, 14.65, 336.65, 450.00 },
-		{ 157.00, 192.00, 15.40, 364.00, 485.00 } };
-
-	ArrayList<String> typesOne = new ArrayList<String>();
-	typesOne.add("Wall, free-standing (20 mPa), 200 mm thick, 2400 mm high");
-	typesOne.add("Wall, free-standing (20 mPa), 200 mm thick, 4200 mm high");
-	typesOne.add("Wall, free-standing (20 mPa), 300 mm thick, 2400 mm high");
-	typesOne.add("Wall, free-standing (20 mPa), 300 mm thick, 4200 mm high");
-	typesOne.add("Wall, free-standing (20 mPa), 380 mm thick, 2400 mm high");
-	typesOne.add("Wall, free-standing (20 mPa), 380 mm thick, 3600 mm high");
-	typesOne.add("Wall, free-standing (20 mPa), 380 mm thick, 5500 mm high");
-
-	for (int i = 0; i < typesOne.size(); i++) {
-	    priceData.put(typesOne.get(i), unitConversion(costsMatrix[i]));
-	}
+	// no need to initialize data Becasue there is no further requirement
+	// needed for mapping
     }
-
-    private Double[] unitConversion(Double[] data) {
-	// the data is in IP unit, conversion factor from C.Y to m3 is 1yd =
-	// 0.76455 m3
-	Double[] temp = new Double[data.length];
-	for (int i = 0; i < temp.length; i++) {
-	    temp[i] = data[i] / 0.76455;
-	}
-	return temp;
-    }
-
 }
