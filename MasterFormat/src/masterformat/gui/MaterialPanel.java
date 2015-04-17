@@ -89,8 +89,13 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	Object nodeInfo = node.getUserObject();
 	if (node.isLeaf()) {
 	    TreeNode tn = (TreeNode) nodeInfo;
-	    model.setConstructionMasterFormat(tn.getType(), tn.getDescription(),
+	    try {
+		model.setConstructionMasterFormat(tn.getType(), tn.getDescription(),
 		    constructionName, index);
+	    } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
 	    userInputs = model.getConstructionUserInputs(constructionName, index);
 	    model.getConstructionCostVector(constructionName);
 	    disPlayData(userInputs);

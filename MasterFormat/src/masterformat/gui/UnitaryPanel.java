@@ -108,7 +108,12 @@ public class UnitaryPanel extends JPanel implements TreeSelectionListener{
 	Object nodeInfo = node.getUserObject();
 	if (node.isLeaf()) {
 	    TreeNode tn = (TreeNode) nodeInfo;
-	    model.setUnitaryMasterFormat(unitaryName, tn.getDescription());
+	    try {
+		model.setUnitaryMasterFormat(unitaryName, tn.getDescription());
+	    } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
 	    userInputs = model.getUnitaryUserInputs(unitaryName);
 	    model.getUnitaryCostVector(unitaryName);
 	    model.setUnitaryUserInput(userInputMap, unitaryName);

@@ -28,7 +28,7 @@ public class EnergyPlusModel {
     // models
     private final IdfReader idfDomain;
     private EnergyPlusHTMLParser htmlParser;
-    private final MasterFormatModel masterformat;
+    private MasterFormatModel masterformat;
     private MaterialAnalyzer materialModule;
     private BoilerAnalyzer boilerModule;
     private FanAnalyzer fanModule;
@@ -44,7 +44,7 @@ public class EnergyPlusModel {
     private final File parentFolder;
 
     // useful data
-    private final String[] domainList = { "Construction", "Boiler", "Fan",
+    private final String[] domainList = { "Opaque Construction", "Transparent Construction","Boiler", "Fan",
 	    "Condenser Unit", "Furnace","Pump","Unitary System","Convection Unit","Lights","Equipment" };// comboBox
 
     private String[][] costData;
@@ -67,7 +67,12 @@ public class EnergyPlusModel {
     public EnergyPlusModel(File file) {
 	eplusFile = file;
 	parentFolder = eplusFile.getParentFile();
-	masterformat = new MasterFormatModel();
+	try {
+	    masterformat = new MasterFormatModel();
+	} catch (Exception e1) {
+	    // TODO Auto-generated catch block
+	    e1.printStackTrace();
+	}
 
 	tableListeners = new ArrayList<CostTableListener>();
 	furnaceListeners = new ArrayList<FurnaceListener>();
@@ -199,9 +204,10 @@ public class EnergyPlusModel {
      * @param description
      * @param construction
      * @param index
+     * @throws Exception 
      */
     public void setConstructionMasterFormat(String type, String description,
-	    String item, Integer index) {
+	    String item, Integer index) throws Exception {
 	MasterFormat mf = masterformat.getUserInputFromMap(type, description);
 	materialModule.getMaterialList(item).get(index).setMaterial(mf);
     }
@@ -210,8 +216,9 @@ public class EnergyPlusModel {
      * For boilers mapping
      * 
      * @param description
+     * @throws Exception 
      */
-    public void setBoilerMasterFormat(String description) {
+    public void setBoilerMasterFormat(String description) throws Exception {
 	String type = boilerModule.getBoilerType(description);
 	MasterFormat mf = masterformat.getUserInputFromMap("BOILER", type);
 	boilerModule.setBoilerMasterFormat(description, mf);
@@ -222,42 +229,43 @@ public class EnergyPlusModel {
      * 
      * @param description
      *            : type of the object in energyplus
+     * @throws Exception 
      */
-    public void setFanMasterFormat(String fanName, String description) {
+    public void setFanMasterFormat(String fanName, String description) throws Exception {
 	MasterFormat mf = masterformat.getUserInputFromMap("FAN", description);
 	fanModule.setFanMasterFormat(fanName, mf);
     }
 
     public void setCondenserMasterFormat(String condenserName,
-	    String description) {
+	    String description) throws Exception {
 	MasterFormat mf = masterformat.getUserInputFromMap("CONDENSERUNIT",
 		description);
 	condenserUnitModule.setCondenserUnitMasterFormat(condenserName, mf);
     }
 
-    public void setFurnaceMasterFormat(String furnaceName) {
+    public void setFurnaceMasterFormat(String furnaceName) throws Exception {
 	String type = furnaceModule.getFurnaceType(furnaceName);
 	MasterFormat mf = masterformat.getUserInputFromMap("FURNACE", type);
 	furnaceModule.setFurnaceMasterFormat(furnaceName, mf);
     }
     
-    public void setPumpMasterFormat(String pumpName,String description){
+    public void setPumpMasterFormat(String pumpName,String description) throws Exception{
 	MasterFormat mf = masterformat.getUserInputFromMap("Pump", description);
 	pumpModule.setPumpMasterFormat(pumpName, mf);
     }
     
-    public void setUnitaryMasterFormat(String unitaryName, String description){
+    public void setUnitaryMasterFormat(String unitaryName, String description) throws Exception{
 	MasterFormat mf = masterformat.getUserInputFromMap("UnitaryHVAC", description);
 	//System.out.println(mf==null);
 	unitaryModule.setUnitaryMasterFormat(unitaryName, mf);
     }
     
-    public void setConvectionUnitMasterFormat(String unitName, String description){
+    public void setConvectionUnitMasterFormat(String unitName, String description) throws Exception{
 	MasterFormat mf = masterformat.getUserInputFromMap("ConvectionUnit", description);
 	unitModule.setConvectionUnitMasterFormat(unitName, mf);
     }
     
-    public void setElectricalMasterFormat(String electric, String description){
+    public void setElectricalMasterFormat(String electric, String description) throws Exception{
 	MasterFormat mf = masterformat.getUserInputFromMap("Electrical", description);
 	electricalModule.setElectricMasterFormat(electric, mf);
     }
@@ -621,7 +629,7 @@ public class EnergyPlusModel {
 		.parseDouble(costData[costData.length - 1][totalCostIndex]);
 
 	String[] description = componentCostDescription.split(":");
-	if (category.equalsIgnoreCase("CONSTRUCTION")) {
+	if (category.equalsIgnoreCase("OPAQUE CONSTRUCTION")) {
 	    String[] value = { item.toUpperCase(), "", category, item, "", "",
 		    cost.toString(), "", "", "", "", "", "" };
 	    idfDomain.addNewEnergyPlusObject(componentCostObject, value,

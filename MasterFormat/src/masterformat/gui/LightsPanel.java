@@ -108,7 +108,12 @@ public class LightsPanel extends JPanel implements TreeSelectionListener{
 	Object nodeInfo = node.getUserObject();
 	if (node.isLeaf()) {
 	    TreeNode tn = (TreeNode) nodeInfo;
-	    model.setElectricalMasterFormat(lightsName, tn.getDescription());
+	    try {
+		model.setElectricalMasterFormat(lightsName, tn.getDescription());
+	    } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
 	    userInputs = model.getElectricalUserInputs(lightsName);
 	    model.getElectricalCostVector(lightsName);
 	    model.setElectricalUserInput(userInputMap, lightsName);

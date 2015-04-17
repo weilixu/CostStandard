@@ -94,7 +94,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
     // private String[][] costData = {{"Unknown","0","0","0","0","0"}}; //temp,
     // will move to wrapper model class later
 
-    public MappingPanel(EnergyPlusModel m) {
+    public MappingPanel(EnergyPlusModel m) throws Exception {
 	model = m;
 	model.addTableListener(this);
 
@@ -151,7 +151,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	    public void itemStateChanged(ItemEvent evt) {
 		String category = (String) evt.getItem();
 
-		if (category.equals("Construction")) {
+		if (category.equals("Opaque Construction")) {
 		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
 			    .getLayout();
 		    EnergyPlusObjectPanel.remove(layout
@@ -325,7 +325,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	    public void actionPerformed(ActionEvent e) {
 		String category = (String) objectSelectionCombo
 			.getSelectedItem();
-		if (category.equals("Construction")) {
+		if (category.equals("Opaque Construction")) {
 		    model.addTotalCostToComponentCost(constructionList
 			    .getSelectedValue().toString(), category);
 		} else if (category.equals("Boiler")) {
@@ -360,7 +360,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	    public void actionPerformed(ActionEvent e) {
 		String category = (String) objectSelectionCombo
 			.getSelectedItem();
-		if (category.equals("Construction")) {
+		if (category.equals("Opaque Construction")) {
 		    model.addTotalOPCostToComponentCost(constructionList
 			    .getSelectedValue().toString(), category);
 		} else if (category.equals("Boiler")) {
@@ -440,7 +440,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	constructionListScrollPane = new JScrollPane(constructionList);
     }
 
-    private void updateBoilers() {
+    private void updateBoilers() throws Exception {
 	boilerListModel = new DefaultListModel<String>();
 	boilerList = new JList<String>(boilerListModel);
 	boilerList.setFont(new Font("Helvetica", Font.BOLD, 20));
@@ -532,7 +532,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	condenserUnitListScrollPane = new JScrollPane(condenserUnitList);
     }
 
-    private void updateFurnace() {
+    private void updateFurnace() throws Exception {
 	furnaceModel = new DefaultListModel<String>();
 	furnaceList = new JList<String>(furnaceModel);
 	furnaceList.setFont(new Font("Helvetica", Font.BOLD, 20));
@@ -709,17 +709,18 @@ public class MappingPanel extends JPanel implements CostTableListener {
     /**
      * Create the GUI and show it. For thread safety, this method should be
      * invoked from the event dispatch thread.
+     * @throws Exception 
      */
-    private static void createAndShowGUI() {
+    private static void createAndShowGUI() throws Exception {
 	// Create and set up the window.
-	JFrame frame = new JFrame("MasterFormatTreeDemo");
+	JFrame frame = new JFrame("BEM-QTO Application V1");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	//File file = new File(
 	//	"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\FanCoil\\FanCoil.idf");
 	//File file = new File(
 	//	"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\ConstantAC\\SingleZoneCA.idf");
 	File file = new File(
-		"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\SimulationFile\\1.idf");
+		"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\SimulationFile\\5.idf");
 	//File file = new File(
 	//	"C:\\Users\\Weili\\Desktop\\One_Montgomery_Plaza_appTest.idf");
 	EnergyPlusModel model = new EnergyPlusModel(file);
@@ -736,7 +737,12 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	// creating and showing this application's GUI.
 	javax.swing.SwingUtilities.invokeLater(new Runnable() {
 	    public void run() {
-		createAndShowGUI();
+		try {
+		    createAndShowGUI();
+		} catch (Exception e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
 	    }
 	});
     }

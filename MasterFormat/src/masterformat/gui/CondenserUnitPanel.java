@@ -107,7 +107,11 @@ public class CondenserUnitPanel extends JPanel implements TreeSelectionListener 
 	Object nodeInfo = node.getUserObject();
 	if (node.isLeaf()) {
 	    TreeNode tn = (TreeNode) nodeInfo;
-	    model.setCondenserMasterFormat(condenserName, tn.getDescription());
+	    try {
+		model.setCondenserMasterFormat(condenserName, tn.getDescription());
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
 	    userInputs = model.getCondenserUnitInputs(condenserName);
 	    model.getCondenserUnitCostVector(condenserName);
 	    disPlayOptions();

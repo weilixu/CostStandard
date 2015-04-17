@@ -15,7 +15,7 @@ import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection
 public abstract class ComponentFactory {
     
     //manufacture masonry from the list
-    public Masonry getMasonry(String masonryType){
+    public Masonry getMasonry(String masonryType) throws Exception{
 	return null;
     }
     

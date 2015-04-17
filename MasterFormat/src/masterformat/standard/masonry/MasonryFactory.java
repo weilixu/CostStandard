@@ -3,9 +3,10 @@ package masterformat.standard.masonry;
 import masterformat.api.ComponentFactory;
 
 public class MasonryFactory extends ComponentFactory{
+    
 
     @Override
-    public Masonry getMasonry(String masonryType) {
+    public Masonry getMasonry(String masonryType) throws Exception {
 	if(masonryType==null){
 	    return null;
 	}

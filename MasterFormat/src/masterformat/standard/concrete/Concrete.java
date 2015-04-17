@@ -6,5 +6,4 @@ public interface Concrete extends MasterFormat{
     /**
      * this is a marker interface
      */
-    
 }

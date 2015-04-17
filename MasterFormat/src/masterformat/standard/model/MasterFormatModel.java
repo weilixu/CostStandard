@@ -17,12 +17,12 @@ import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection
 public class MasterFormatModel {
     
     private ComponentFactory factory;
-    
-    public MasterFormatModel(){
-	
+        
+    public MasterFormatModel() throws Exception{
+
     }
     
-    public MasterFormat getUserInputFromMap(String type, String description){
+    public MasterFormat getUserInputFromMap(String type, String description) throws Exception{
 	if(type.equalsIgnoreCase("CONCRETE")){
 	    factory = new ConcreteFactory();
 	    return factory.getConcrete(description);

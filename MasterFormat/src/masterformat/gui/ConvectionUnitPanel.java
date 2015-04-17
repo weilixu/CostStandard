@@ -109,7 +109,12 @@ public class ConvectionUnitPanel extends JPanel implements TreeSelectionListener
 	Object nodeInfo = node.getUserObject();
 	if (node.isLeaf()) {
 	    TreeNode tn = (TreeNode) nodeInfo;
-	    model.setConvectionUnitMasterFormat(unitName, tn.getDescription());
+	    try {
+		model.setConvectionUnitMasterFormat(unitName, tn.getDescription());
+	    } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
 	    userInputs = model.getConvectionUserInputs(unitName);
 	    model.getConvectionUnitCostVector(unitName);
 	    model.setConvectionUnitUserInput(userInputMap, unitName);

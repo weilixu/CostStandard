@@ -108,7 +108,12 @@ public class PumpPanel extends JPanel implements TreeSelectionListener{
 	Object nodeInfo = node.getUserObject();
 	if (node.isLeaf()) {
 	    TreeNode tn = (TreeNode) nodeInfo;
-	    model.setPumpMasterFormat(pumpName, tn.getDescription());
+	    try {
+		model.setPumpMasterFormat(pumpName, tn.getDescription());
+	    } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
 	    userInputs = model.getPumpUserInputs(pumpName);
 	    model.getPumpCostVector(pumpName);
 	    disPlayOptions();

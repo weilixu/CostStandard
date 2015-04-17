@@ -109,7 +109,12 @@ public class FanPanel extends JPanel implements TreeSelectionListener {
 	Object nodeInfo = node.getUserObject();
 	if (node.isLeaf()) {
 	    TreeNode tn = (TreeNode) nodeInfo;
-	    model.setFanMasterFormat(fanName, tn.getDescription());
+	    try {
+		model.setFanMasterFormat(fanName, tn.getDescription());
+	    } catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
 	    userInputs = model.getFanUserInputs(fanName);
 	    model.getFanCostVector(fanName);
 	    disPlayOptions();
