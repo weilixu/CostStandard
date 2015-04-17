@@ -31,7 +31,6 @@ public class ThinBrickVeneer extends AbstractMasonry {
 
 	    statement = connect.createStatement();
 	    
-	    System.out.println(brickType);
 	    resultSet = statement
 		    .executeQuery("select * from masonry.brickmasonry where type='"
 			    + brickType + "'");
@@ -63,7 +62,6 @@ public class ThinBrickVeneer extends AbstractMasonry {
 		}
 	    }
 	    description = TAG + " "+brickType;
-	    System.out.println(description);
 	    costVector = cost;
 	} catch (SQLException e) {
 	    e.printStackTrace();
