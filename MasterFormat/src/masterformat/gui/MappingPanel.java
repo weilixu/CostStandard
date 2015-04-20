@@ -461,7 +461,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		    CardLayout cardLayout = (CardLayout) (boilerPanel
 			    .getLayout());
 		    String selection = boilerList.getSelectedValue().toString();
-		    if (selection.equals(s)) {
+		    if (selection.equals(s)&& e.getValueIsAdjusting()==true) {
 			cardLayout.show(boilerPanel, selection);
 			model.getBoilerCostVector(selection);
 		    }
