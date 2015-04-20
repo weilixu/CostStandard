@@ -2,6 +2,8 @@ package masterformat.standard.thermalmoistureprotection;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -27,6 +29,8 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 
     @Override
     protected void initializeData() {
+	optionLists = new ArrayList<String>();
+	optionQuantities = new ArrayList<Integer>();
 	try {
 	    connect = DriverManager
 		    .getConnection("jdbc:mysql://localhost/masonry?"
@@ -40,9 +44,9 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 		resultSet = statement
 			.executeQuery("select * from insulation.thermalinsulation");
 		while (resultSet.next()) {
-			userInputs.add("OPTION:TYPE:"
-				+ resultSet.getString("insulationtype"));
-		    
+		    userInputs.add("OPTION:TYPE:"
+			    + resultSet.getString("insulationtype"));
+
 		}
 	    } else {
 		userInputs.clear();
@@ -135,29 +139,19 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 		    selectQuery.append("faced = '");
 		    selectQuery.append(faced);
 		}
-		
-//		String countQuery = selectQuery.toString();
-//		countQuery = countQuery.replace(" * ", " count(*) ");
-//		resultSet = statement.executeQuery(countQuery
-//			+ "' and thickness>='" + thickness + "' and rvalue>='"
-//			+ rvalue + "'");
-//
-//		resultSet.next();
-		
-//		double d= resultSet.getInt("count(*)");
-		if (insulationProduct==null || insulationConstruction==null || material==null) {
-			System.out.println(selectQuery.toString()
-				+ "' and thickness>='" + thickness + "' and rvalue>='"
-				+ rvalue + "' ");
+
+		if (insulationProduct == null || insulationConstruction == null
+			|| material == null) {
+	
 		    initializeData();
-		    
+		} else if (material.equals("Fiberglass") && faced == null) {
+		    initializeData();
 		} else {
-		    System.out.println(selectQuery.toString()
-			    + "' and thickness>='" + thickness
-			    + "' and rvalue>='" + rvalue + "' order by totalcost");
+
 		    resultSet = statement.executeQuery(selectQuery.toString()
 			    + "' and thickness>='" + thickness
-			    + "' and rvalue>='" + rvalue + "' order by totalcost");
+			    + "' and rvalue>='" + rvalue
+			    + "' order by totalcost");
 
 		    if (!resultSet.next()) {
 			// this means the selected insulation can not satisfy
@@ -168,13 +162,13 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 			while (!resultSet.next()) {
 			    numberOfLayer += 1;
 			    tempRvalue = rvalue / 2;
-			    System.out.println(selectQuery + "' and rvalue>='"
-				    + tempRvalue + "' order by totalcost");
+	
 			    resultSet = statement.executeQuery(selectQuery
 				    + "' and rvalue>='" + tempRvalue
 				    + "' order by totalcost");
 			}
 		    }
+
 		    cost[materialIndex] = resultSet.getDouble("materialcost")
 			    * numberOfLayer;
 		    cost[laborIndex] = resultSet.getDouble("laborcost")
@@ -192,7 +186,6 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 		    optionLists.add(description);
 		    optionQuantities.add(numberOfLayer);
 		}
-
 	    } catch (SQLException e) {
 		e.printStackTrace();
 	    } finally {

@@ -572,7 +572,6 @@ public class MaterialAnalyzer {
 	    if (material.getCostVector() == null) {
 		return null;
 	    }
-
 	    return material.getCostVector();
 	}
 
