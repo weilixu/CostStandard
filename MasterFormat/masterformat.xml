@@ -17,11 +17,7 @@
 			</clay_masonry>
 		</masonry>
 		<thermal_moisture tag = "070000" description = "Thermal Moisture Protection" type = "thermal moisture protection">
-			<thermal_insulation tag = "072100" description = "Thermal Insulation" type = "thermal moisture protection">
-				<board_insulation tag = "072113" description = "Board Insulation" type = "thermal moisture protection">
-					<rigid tag = "072113.10" description = "Rigid Insulation" type = "thermal moisture protection"/>
-				</board_insulation>
-			</thermal_insulation>
+			<thermal_insulation tag = "072100" description = "Thermal Insulation" type = "thermal moisture protection"/>
 		</thermal_moisture>
 	</material>
 	<fan>
