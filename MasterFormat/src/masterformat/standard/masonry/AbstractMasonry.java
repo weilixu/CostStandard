@@ -15,9 +15,6 @@ abstract class AbstractMasonry extends AbstractMasterFormatComponent implements 
     protected final int specificHeatIndex=6;
     protected final int resistanceIndex=7;
     
-    protected String unit = "m2";
-    protected String hierarchy = "040000 Masonry";
-    
     public AbstractMasonry(){
 	userInputs = new ArrayList<String>();
 	unit = "m2";

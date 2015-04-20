@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -93,7 +94,6 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 		model.setConstructionMasterFormat(tn.getType(), tn.getDescription(),
 		    constructionName, index);
 	    } catch (Exception e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }
 	    userInputs = model.getConstructionUserInputs(constructionName, index);
@@ -139,7 +139,8 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	while (optionIterator.hasNext()) {
 	    String option = optionIterator.next();
 	    ArrayList<String> temp = optionMap.get(option);
-
+	    temp = removeDuplicates(temp);
+	    
 	    JComboBox<String> tempCombo = new JComboBox<String>(
 		    temp.toArray(new String[temp.size()]));
 	    tempCombo.addActionListener(new ActionListener(){
@@ -149,6 +150,8 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 		    String input = (String)tempCombo.getSelectedItem();
 		    userInputMap.put(option, input);
 		    model.setConstructionUserInput(userInputMap, constructionName, index);
+		    userInputs = model.getConstructionUserInputs(constructionName, index);
+		    disPlayData(userInputs);
 		}
 	    });
 	    optionPanel.add(tempCombo);
@@ -171,6 +174,7 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 		public void actionPerformed(ActionEvent e) {
 		    String data = (String)inputField.getText();
 		    userInputMap.put(input, data);  
+		    userInputs = model.getConstructionUserInputs(constructionName, index);
 		    model.setConstructionUserInput(userInputMap, constructionName, index);
 		}
 		
@@ -201,5 +205,17 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 	}
 
 	return dataMap;
+    }
+    
+    private ArrayList<String> removeDuplicates(ArrayList<String> list){
+	ArrayList<String> temp = new ArrayList<String>();
+	HashSet<String> set = new HashSet<String>();
+	for(String s: list){
+	    if(!set.contains(s)){
+		temp.add(s);
+	    }
+	    set.add(s);
+	}
+	return temp;
     }
 }

@@ -8,7 +8,7 @@ public class ThermalMoistureProtectionFactory extends ComponentFactory{
     public ThermalMoistureProtection getThermalMoistureProtection(
 	    String thermalMoistureProtectionType) {
 	if(thermalMoistureProtectionType.equalsIgnoreCase("RIGID INSULATION")){
-	    return new RigidInsulation();
+	    return new ThermalInsulation();
 	}
 	return null;
     }
