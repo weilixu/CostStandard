@@ -176,6 +176,8 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 		    userInputMap.put(input, data);  
 		    userInputs = model.getConstructionUserInputs(constructionName, index);
 		    model.setConstructionUserInput(userInputMap, constructionName, index);
+		    disPlayData(userInputs);
+
 		}
 		
 	    });
