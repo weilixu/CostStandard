@@ -2,7 +2,6 @@ package masterformat.standard.hvac.fan;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -18,17 +17,6 @@ public class CentrifugalRoofExhauster extends AbstractFan {
     private Double flowRate;
 
     private String character;
-
-    private final Double speedWindPercent = 1.15;
-    private final Double[] explosionproofAddition = { 600.0, 0.0, 0.0, 600.0,
-	    660.0 };
-    private final Double topdischargePercent = 1.15;
-
-    private Double[] flowRateVector = { 0.15, 0.28, 0.38, 0.68, 0.97, 0.78,
-	    1.30, 1.65, 2.32, 4.02, 6.50, 9.70 };
-
-    private static final Double[] Default_Cost_Vector = { 0.0, 0.0, 0.0, 0.0,
-	    0.0 };
 
     public CentrifugalRoofExhauster() {
 	unit = "$/Ea";

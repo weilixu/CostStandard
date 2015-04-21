@@ -117,7 +117,7 @@ public class CentrifugalUtilitySetFan extends AbstractFan {
 		    fanFlowRate = fanFlowRate / 2;
 		    resultSet = statement
 			    .executeQuery("select * from hvacfan.centrifugalutilityset where flowrate>='"
-				    + fanFlowRate + "' and drive = '" + drives);
+				    + fanFlowRate + "' and drive = '" + drives+"'");
 		}
 	    }
 	    
