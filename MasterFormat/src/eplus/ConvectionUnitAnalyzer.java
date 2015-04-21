@@ -124,6 +124,9 @@ public class ConvectionUnitAnalyzer {
 		    String coolCoilName = vn.getAttribute();
 		    c.setConvectionUnitCoolingPower(parser
 			    .getCoolCoilSummary(coolCoilName)[0]);
+		}else if(vn.getDescription().equalsIgnoreCase("Heating Coil Name")){
+		    String heatCoilName = vn.getAttribute();
+		    c.setConvectionUnitHeatingPower(parser.getHeatCoilSummary(heatCoilName)[0]);
 		}
 	    }
 	    convectionUnitMap.put(name, c);
