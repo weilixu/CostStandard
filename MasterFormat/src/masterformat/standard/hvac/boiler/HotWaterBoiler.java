@@ -64,7 +64,7 @@ public class HotWaterBoiler extends AbstractBoiler {
 	optionLists.clear();
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
-	Double[] factor = new Double[numOfCostElement];
+	//Double[] factor = new Double[numOfCostElement];
 	try {
 	    connect = DriverManager
 		    .getConnection("jdbc:mysql://localhost/hvac?"

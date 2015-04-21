@@ -1,7 +1,6 @@
 package masterformat.standard.hvac.boiler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import masterformat.api.AbstractMasterFormatComponent;
 

@@ -270,6 +270,9 @@ public class MaterialAnalyzer {
      * @param constructionCount
      */
     private void findSurfaceRelatedData(String cons, String constructionCount) {
+	surfaceType = null;
+	floorArea = null;
+	ceilingHeight = null;
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> surfaceMap = reader
 		.getObjectList(surface);
 
@@ -285,7 +288,7 @@ public class MaterialAnalyzer {
 		if (nodes.get(i).getDescription().equals("Construction Name")
 			&& nodes.get(i).getAttribute().equals(cons)) {
 		    // the surface type is the previous node
-		    String tempSurfaceType = nodes.get(i - 1).getAttribute();
+		    String tempSurfaceType = nodes.get(i-1).getAttribute();
 		    // get the data from zone object
 		    String[] zoneRelatedData = findZoneRelatedData(nodes.get(
 			    i + 1).getAttribute());
