@@ -30,7 +30,6 @@ public class SquareMeterModel {
     private int simulationNumber;
     // this indicates the factor truncate the distribution of the cost by 2
     // variance
-    private final double cutOffFactor = 1.5;
     
     private List<SquareMeterCostModelListener> costModelListeners;
 

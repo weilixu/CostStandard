@@ -9,6 +9,11 @@ import org.apache.commons.math3.distribution.NormalDistribution;
  */
 public class SquareMeterEstimationNormalDistribution extends NormalDistribution{
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public SquareMeterEstimationNormalDistribution(double m, double std){
    	super(m,std);
 

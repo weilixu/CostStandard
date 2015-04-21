@@ -67,7 +67,7 @@ public class IdfReader {
     // indexes for variableKeySets
     private final int ObjectNameIndex = 0;
     private final int ObjectElementCountIndex = 1;
-    private final int ObjectInputDescriptionIndex = 2;
+    //private final int ObjectInputDescriptionIndex = 2;
 
     /**
      * constructor

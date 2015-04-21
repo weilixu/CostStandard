@@ -1,7 +1,6 @@
 package masterformat.standard.concrete;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import masterformat.api.AbstractMasterFormatComponent;
 
