@@ -85,6 +85,8 @@ public class CentrifugalPumps extends AbstractPump {
 
     @Override
     public void selectCostVector() {
+	optionLists.clear();
+	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	Double[] factor = new Double[numOfCostElement];
 	int numberOfPump = 1;
@@ -113,7 +115,7 @@ public class CentrifugalPumps extends AbstractPump {
 			// we need to modularize the pump based on power
 			double tempPower = power;
 			while (!resultSet.next()) {
-			    numberOfPump += 1;
+			    numberOfPump *=2;
 			    tempPower = tempPower / 2;
 			    
 			    resultSet = statement

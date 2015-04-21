@@ -22,6 +22,8 @@ public class BrickVennerMasonry extends AbstractMasonry {
 
     @Override
     public void selectCostVector() {
+	optionLists.clear();
+	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	Double[] factor = new Double[numOfCostElement];
 	String operation = null;

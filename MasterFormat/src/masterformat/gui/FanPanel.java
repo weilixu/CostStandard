@@ -11,6 +11,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -231,7 +232,8 @@ public class FanPanel extends JPanel implements TreeSelectionListener {
 	while (optionIterator.hasNext()) {
 	    String option = optionIterator.next();
 	    ArrayList<String> temp = optionMap.get(option);
-
+	    temp = removeDuplicates(temp);
+	    
 	    JComboBox<String> tempCombo = new JComboBox<String>(
 		    temp.toArray(new String[temp.size()]));
 	    tempCombo.addActionListener(new ActionListener() {
@@ -299,5 +301,17 @@ public class FanPanel extends JPanel implements TreeSelectionListener {
 
 	return dataMap;
     }
+    
+    private ArrayList<String> removeDuplicates(ArrayList<String> list){
+ 	ArrayList<String> temp = new ArrayList<String>();
+ 	HashSet<String> set = new HashSet<String>();
+ 	for(String s: list){
+ 	    if(!set.contains(s)){
+ 		temp.add(s);
+ 	    }
+ 	    set.add(s);
+ 	}
+ 	return temp;
+     }
 
 }

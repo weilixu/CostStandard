@@ -1,6 +1,7 @@
 package masterformat.standard.hvac.fan;
 
-import java.util.ArrayList;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -34,12 +35,6 @@ public class BlowerUtilitySetFan extends AbstractFan {
     private String drives;
     private Double flowRate;
 
-    private Double[] flowRateVector = { 0.07, 0.23, 0.92, 1.14, 1.57, 0.38,
-	    0.61, 0.94, 1.37 };
-
-    private static final Double[] Default_Cost_Vector = { 0.0, 0.0, 0.0, 0.0,
-	    0.0 };
-
     public BlowerUtilitySetFan() {
 	unit = "$/Ea";
 	hierarchy = "230000 HVAC:233400 HVAC Fans:233414 Blower HVAC Fans:233414.107500 Utility Set";
@@ -70,176 +65,81 @@ public class BlowerUtilitySetFan extends AbstractFan {
 
     @Override
     protected void initializeData() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/hvac?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
 
-	Double[][] costsMatrix = { { 870.0, 160.0, 0.0, 1030.0, 1200.0 },
-		{ 1100.0, 177.0, 0.0, 1277.0, 1475.0 },
-		{ 1275.0, 213.0, 0.0, 1488.0, 1725.0 },
-		{ 2375.0, 233.0, 0.0, 2608.0, 2950.0 },
-		{ 2625.0, 340.0, 0.0, 2965.0, 3425.0 },
-		{ 980.0, 171.0, 0.0, 1151.0, 1325.0 },
-		{ 1025.0, 205.0, 0.0, 1230.0, 1425.0 },
-		{ 1225.0, 223.0, 0.0, 1448.0, 1700.0 },
-		{ 1650.0, 244.0, 0.0, 1894.0, 2175.0 } };
+	    resultSet = statement
+		    .executeQuery("select * from hvacfan.blowerutilityset");
+	    // initialize the default driver
+	    resultSet.next();
+	    drives = resultSet.getString("drive");
+	    userInputs.add("OPTION:Drive:"+drives);
 
-	optionLists = new ArrayList<String>();
-	optionQuantities = new ArrayList<Integer>();
-	optionLists
-		.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.07 m3/s, 93 watts");
-	optionQuantities.add(0);
-	optionLists
-		.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.23 m3/s, 124 watts");
-	optionQuantities.add(0);
-	optionLists
-		.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 0.92 m3/s, 373 watts");
-	optionQuantities.add(0);
-	optionLists
-		.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 1.14 m3/s, 560 watts");
-	optionQuantities.add(0);
-	optionLists
-		.add("Utility set, steel construction, pedestal, 623Pa, Direct drive, 1.57 m3/s, 1120 watts");
-	optionQuantities.add(0);
-	optionLists
-		.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.38 m3/s, 186 watts");
-	optionQuantities.add(0);
-	optionLists
-		.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.61 m3/s, 248 watts");
-	optionQuantities.add(0);
-	optionLists
-		.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 0.94 m3/s, 746 watts");
-	optionQuantities.add(0);
-	optionLists
-		.add("Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases 1.37 m3/s, 560 watts");
-	optionQuantities.add(0);
+	    while (resultSet.next()) {
+		userInputs.add("OPTION:Drive:" + resultSet.getString("drive"));
+	    }
 
-	for (int i = 0; i < optionLists.size(); i++) {
-	    priceData.put(optionLists.get(i), costsMatrix[i]);
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
 	}
-
-	userInputs.add("OPTION:Drive:Direct Drive");
-	userInputs.add("OPTION:Drive:V-belt drive, drive cover, 3 phases");
     }
 
     @Override
     public void selectCostVector() {
-	setToZero();
-	Integer upperIndex = 0;
-	Integer lowerIndex = 0;
-	if (drives.equals("Direct Drive")) {
-	    if (flowRate <= 0.07) {
-		description = optionLists.get(upperIndex);
-		costVector = deepCopyCost(priceData.get(description));
-		Integer i = optionQuantities.get(upperIndex);
-		optionQuantities.set(upperIndex, i + 1);
-	    } else if (flowRate > 0.07 && flowRate <= 0.23) {
-		upperIndex = 1;
-		description = optionLists.get(upperIndex);
-		costVector = deepCopyCost(priceData.get(description));
-		Integer i = optionQuantities.get(upperIndex);
-		optionQuantities.set(upperIndex, i + 1);
-	    } else if (flowRate > 0.23 && flowRate <= 0.92) {
-		upperIndex = 2;
-		description = optionLists.get(upperIndex);
-		costVector = deepCopyCost(priceData.get(description));
-		Integer i = optionQuantities.get(upperIndex);
-		optionQuantities.set(upperIndex, i + 1);
-	    } else if (flowRate > 0.92 && flowRate <= 1.14) {
-		upperIndex = 3;
-		description = optionLists.get(upperIndex);
-		costVector = deepCopyCost(priceData.get(description));
-		Integer i = optionQuantities.get(upperIndex);
-		optionQuantities.set(upperIndex, i + 1);
-	    } else if (flowRate > 1.14 && flowRate <= 1.57) {
-		upperIndex = 4;
-		description = optionLists.get(upperIndex);
-		costVector = deepCopyCost(priceData.get(description));
-		Integer i = optionQuantities.get(upperIndex);
-		optionQuantities.set(upperIndex, i + 1);
-	    } else {
-		upperIndex = 4;
-		description = "Utility set, steel construction, pedestal, 623Pa, Direct drive, grouped";
-		fittingFlowRate(upperIndex, lowerIndex);
+	optionLists.clear();
+	optionQuantities.clear();
+	Double[] cost = new Double[numOfCostElement];
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/hvac?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    int numberOfFan = 1;
+
+	    resultSet = statement
+		    .executeQuery("select * from hvacfan.blowerutilityset where flowrate>='"
+			    + flowRate + "' and drive = '" + drives+"'");
+
+	    if (!resultSet.next()) {
+		// this means there is no such blower utility set can satisfy the
+		// flow rate, we need to modularize the fan
+		double fanFlowRate = flowRate;
+		while (!resultSet.next()) {
+		    numberOfFan *= 2;
+
+		    fanFlowRate = fanFlowRate / 2;
+		    resultSet = statement
+			    .executeQuery("select * from hvacfan.blowerutilityset where flowrate>='"
+				    + fanFlowRate + "' and drive = '" + drives);
+		}
 	    }
-	} else if (drives.equals("V-belt drive, drive cover, 3 phases")) {
-	    lowerIndex = 5;
-	    if (flowRate <= 0.38) {
-		upperIndex = 5;
-		description = optionLists.get(upperIndex);
-		costVector = deepCopyCost(priceData.get(description));
-		Integer i = optionQuantities.get(upperIndex);
-		optionQuantities.set(upperIndex, i + 1);
-	    } else if (flowRate > 0.38 && flowRate <= 0.61) {
-		upperIndex = 6;
-		description = optionLists.get(upperIndex);
-		costVector = deepCopyCost(priceData.get(description));
-		Integer i = optionQuantities.get(upperIndex);
-		optionQuantities.set(upperIndex, i + 1);
-	    } else if (flowRate > 0.61 && flowRate <= 0.94) {
-		upperIndex = 7;
-		description = optionLists.get(upperIndex);
-		costVector = deepCopyCost(priceData.get(description));
-		Integer i = optionQuantities.get(upperIndex);
-		optionQuantities.set(upperIndex, i + 1);
-	    } else if (flowRate > 0.94 && flowRate <= 1.37) {
-		upperIndex = 8;
-		description = optionLists.get(upperIndex);
-		costVector = deepCopyCost(priceData.get(description));
-		Integer i = optionQuantities.get(upperIndex);
-		optionQuantities.set(upperIndex, i + 1);
-	    } else {
-		upperIndex = 8;
-		description = "Utility set, steel construction, pedestal, 623Pa, V-belt drive, drive cover, 3 phases, grouped";
-		fittingFlowRate(upperIndex, lowerIndex);
-	    }
-	}
-    }
+	    
+	    cost[materialIndex] = resultSet.getDouble("materialcost")
+		    * numberOfFan;
+	    cost[laborIndex] = resultSet.getDouble("laborcost") * numberOfFan;
+	    cost[equipIndex] = resultSet.getDouble("equipmentcost")
+		    * numberOfFan;
+	    cost[totalIndex] = resultSet.getDouble("totalCost") * numberOfFan;
+	    cost[totalOPIndex] = resultSet.getDouble("totalInclop")
+		    * numberOfFan;
 
-    private void fittingFlowRate(Integer upper, Integer lower) {
-	// shows the best fit capacity
-	Double fittedFlowRate = 0.0;
-	// shows the total capacity added
-	Double totalFlowRate = 0.0;
-	costVector = deepCopyCost(Default_Cost_Vector);
+	    // set the description
+	    description = resultSet.getString("description");
 
-	while (totalFlowRate < flowRate) {
-	    fittedFlowRate = findFittedPower(totalFlowRate, upper, lower);
-	    totalFlowRate += fittedFlowRate;
-	}
-    }
+	    costVector = cost;
 
-    private Double findFittedPower(Double total, Integer upper, Integer lower) {
-	// the difference between capacity and total capacity
-	Double temp = flowRate;
-	// index shows the current best fit capacity
-	int criticalIndex = 0;
-
-	for (int i = lower; i <= upper; i++) {
-	    Double residual = Math.abs(flowRate - total - flowRateVector[i]);
-	    if (residual < temp) {
-		temp = residual;
-		criticalIndex = i;
-	    }
+	    optionLists.add(description);
+	    optionQuantities.add(numberOfFan);
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
 	}
-	// add to the cost vector
-	Double[] itemCost = priceData.get(optionLists.get(criticalIndex));
-	for (int j = 0; j < costVector.length; j++) {
-	    costVector[j] += itemCost[j];
-	}
-	Integer q = optionQuantities.get(criticalIndex) + 1;
-	optionQuantities.set(criticalIndex, q);
-	return flowRateVector[criticalIndex];
-    }
-
-    private void setToZero() {
-	for (int i = 0; i < optionQuantities.size(); i++) {
-	    optionQuantities.set(i, 0);
-	}
-    }
-
-    private Double[] deepCopyCost(Double[] costVector) {
-	Double[] temp = new Double[costVector.length];
-	for (int i = 0; i < costVector.length; i++) {
-	    temp[i] = costVector[i];
-	}
-	return temp;
     }
 }

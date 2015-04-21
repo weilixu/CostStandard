@@ -101,6 +101,8 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 
     @Override
     public void selectCostVector() {
+	optionLists.clear();
+	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	int numberOfLayer = 1;
 	if (insulationType != null) {
@@ -160,7 +162,7 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 			// we need to modularize the insulation based on r-value
 			double tempRvalue = rvalue;
 			while (!resultSet.next()) {
-			    numberOfLayer += 1;
+			    numberOfLayer *=2;
 			    tempRvalue = tempRvalue / 2;
 	
 			    resultSet = statement.executeQuery(selectQuery

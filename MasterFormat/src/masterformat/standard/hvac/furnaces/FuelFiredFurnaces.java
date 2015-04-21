@@ -44,6 +44,8 @@ public class FuelFiredFurnaces extends AbstractFurnace {
 
     @Override
     public void selectCostVector() {
+	optionLists.clear();
+	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
 	    connect = DriverManager
@@ -62,7 +64,7 @@ public class FuelFiredFurnaces extends AbstractFurnace {
 		// capacity. We need to modularize the furnace
 		double furnaceCapacity = power;
 		while (!resultSet.next()) {
-		    numberOfFurnace += 1;
+		    numberOfFurnace *=2;
 		    furnaceCapacity = furnaceCapacity / 2;
 		    resultSet = statement
 			    .executeQuery("select * from hvac.furnaces where source = gas and power>='"

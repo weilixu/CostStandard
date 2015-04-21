@@ -1,25 +1,18 @@
 package masterformat.standard.hvac.fan;
 
-import java.util.ArrayList;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-
 public class BlowerCeilingFan extends AbstractFan {
 
+    private static final String fanType = "Blower Type HVAC Fans";
+    private static final String fanFunction = "Ceiling Fan";
+
     private Double flowRate;
-    private boolean speedControl;
-    private String mountMethod;
-
-    private final Double[] speedControlAddition = { 164.0, 27.50, 0.0, 191.50,
-	    222.0 };
-    private final Double[] wallcap = { 300.0, 28.0, 0.0, 328.0, 375.0 };
-    private final Double straightfan = 1.1;
-    
-    private final Double[] flowRateList = {0.05,0.10,0.18,0.42,0.78,1.40};
-
-    private static final Double[] Default_Cost_Vector = {0.0,0.0,0.0,0.0,0.0};
+    private String character;
 
     public BlowerCeilingFan() {
 	unit = "$/Ea";
@@ -32,17 +25,10 @@ public class BlowerCeilingFan extends AbstractFan {
 	Iterator<String> iterator = inputs.iterator();
 	while (iterator.hasNext()) {
 	    String temp = iterator.next();
-	    if (temp.equals("SpeedControl")) {
-		String control = userInputsMap.get(temp);
-		if (control.equals("true")) {
-		    speedControl = true;
-		} else {
-		    speedControl = false;
-		}
-	    } else if (temp.equals("Mount")) {
-		mountMethod = userInputsMap.get(temp);
-	    } else if (temp.equals("Flow Rate")) {
+	    if (temp.equals("Flow Rate")) {
 		flowRate = Double.parseDouble(userInputsMap.get(temp));
+	    } else if (temp.equals("CHARACTER")) {
+		character = userInputsMap.get(temp);
 	    }
 	}
     }
@@ -63,165 +49,103 @@ public class BlowerCeilingFan extends AbstractFan {
 
     @Override
     protected void initializeData() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/hvac?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
 
-	Double[][] costsMatrix = { { 300.0, 51.0, 0.0, 351.0, 410.0 },
-		{ 355.0, 54.0, 0.0, 409.0, 470.0 },
-		{ 450.0, 57.0, 0.0, 507.0, 580.0 },
-		{ 890.0, 64.0, 0.0, 954.0, 1075.0 },
-		{ 1225.0, 79.0, 0.0, 1304.0, 1475.0 },
-		{ 1650.0, 93.0, 0.0, 1743.0, 1950.0 } };
-	optionLists = new ArrayList<String>();
-	optionQuantities = new ArrayList<Integer>();
-	optionLists.add("Ceiling fan, right angle, extra quiet, 25 pa,0.05 m3/s");
-	optionQuantities.add(0);
-	optionLists.add("Ceiling fan, right angle, extra quiet, 25 pa,0.10 m3/s");
-	optionQuantities.add(0);
-	optionLists.add("Ceiling fan, right angle, extra quiet, 25 pa,0.18 m3/s");
-	optionQuantities.add(0);
-	optionLists.add("Ceiling fan, right angle, extra quiet, 25 pa,0.42 m3/s");
-	optionQuantities.add(0);
-	optionLists.add("Ceiling fan, right angle, extra quiet, 25 pa,0.78 m3/s");
-	optionQuantities.add(0);
-	optionLists.add("Ceiling fan, right angle, extra quiet, 25 pa,1.40 m3/s");
-	optionQuantities.add(0);
-	
+	    resultSet = statement
+		    .executeQuery("select * from hvacfan.specialcharacter where fantype>='"
+			    + fanType
+			    + "' and function = '"
+			    + fanFunction
+			    + "'");
+	    while (resultSet.next()) {
+		userInputs.add("OPTION:CHARACTER:"
+			+ resultSet.getString("description"));
+	    }
 
-	for (int i = 0; i < optionLists.size(); i++) {
-	    priceData.put(optionLists.get(i), costsMatrix[i]);
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
 	}
-
-	userInputs.add("OPTION:Mount:None");
-	userInputs.add("OPTION:Mount:For wall or roof cap");
-	userInputs.add("OPTION:Mount:For straight thru fan");
-	userInputs.add("BOOL:SpeedControl:Speed Control Switch");
     }
 
     @Override
     public void selectCostVector() {
-	setToZero();
-	Integer index = 0;
-	if (flowRate <= 0.05) {
-	    description = optionLists.get(index);
-	    costVector = deepCopyCost(priceData.get(description));
-	    Integer i = optionQuantities.get(index);
-	    optionQuantities.set(index, i + 1);
-	} else if (flowRate > 0.05 && flowRate <= 0.10) {
-	    index = 1;
-	    description = optionLists.get(index);
-	    costVector = deepCopyCost(priceData.get(description));
-	    Integer i = optionQuantities.get(index);
-	    optionQuantities.set(index, i + 1);
-	} else if (flowRate > 0.10 && flowRate <= 0.18) {
-	    index = 2;
-	    description = optionLists.get(index);
-	    costVector = deepCopyCost(priceData.get(description));
-	    Integer i = optionQuantities.get(index);
-	    optionQuantities.set(index, i + 1);
-	} else if (flowRate > 0.18 && flowRate <= 0.42) {
-	    index = 3;
-	    description = optionLists.get(index);
-	    costVector = deepCopyCost(priceData.get(description));
-	    Integer i = optionQuantities.get(index);
-	    optionQuantities.set(index, i + 1);
-	} else if (flowRate > 0.42 && flowRate <= 0.78) {
-	    index = 4;
-	    description = optionLists.get(index);
-	    costVector = deepCopyCost(priceData.get(description));
-	    Integer i = optionQuantities.get(index);
-	    optionQuantities.set(index, i + 1);
-	} else if (flowRate > 0.78 && flowRate <= 1.4) {
-	    index = 5;
-	    description = optionLists.get(index);
-	    costVector = deepCopyCost(priceData.get(description));
-	    Integer i = optionQuantities.get(index);
-	    optionQuantities.set(index, i + 1);
-	}else{
-	    description = "Ceiling fan, right angle, extra quiet, 25 pa, grouped";
-	    fittingFlowRate();
-	}
+	optionLists.clear();
+	optionQuantities.clear();
+	Double[] cost = new Double[numOfCostElement];
+	Double[] factor = new Double[numOfCostElement];
+	String operation = null;
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/hvac?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
 
-	if (speedControl) {
-	    addAdditions(speedControlAddition);
-	}
+	    int numberOfFan = 1;
 
-	if (mountMethod.equals("For wall or roof cap")) {
-	    addAdditions(wallcap);
-	} else if (mountMethod.equals("For straight thru fan")) {
-	    multiplyMaterial(straightfan);
-	}
-    }
-    
-    private void fittingFlowRate(){
-	setToZero();
-	//shows the best fit capacity
-	Double fittedFlowRate=0.0;
-	//shows the total capacity added
-	Double totalFlowRate=0.0;
-	costVector=deepCopyCost(Default_Cost_Vector);
-	
-	while(totalFlowRate<flowRate){
-	    fittedFlowRate = findFittedFlowRate(totalFlowRate);
-	    totalFlowRate+=fittedFlowRate;
-	}
-    }
-    
-    private Double findFittedFlowRate(Double total){
-	//the difference between capacity and total capacity
-	Double temp = flowRate;
-	//index shows the current best fit capacity
-	int criticalIndex = 0;
-	
-	for(int i=0; i<flowRateList.length; i++){
-	    Double residual = Math.abs(flowRate-total-flowRateList[i]);
-	    if(residual<temp){
-		temp = residual;
-		criticalIndex = i;
+	    resultSet = statement
+		    .executeQuery("select * from hvacfan.blowerceilingfan where flowrate>='"
+			    + flowRate + "'");
+
+	    if (!resultSet.next()) {
+		// this means there is no such blower ceiling fan can satisfy the
+		// flow rate, we need to modularize the fan
+		double fanFlowRate = flowRate;
+		while (!resultSet.next()) {
+		    numberOfFan *= 2;
+
+		    fanFlowRate = fanFlowRate / 2;
+		    resultSet = statement
+			    .executeQuery("select * from hvacfan.blowerceilingfan where flowrate>='"
+				    + fanFlowRate + "'");
+		}
 	    }
+
+	    cost[materialIndex] = resultSet.getDouble("materialcost")
+		    * numberOfFan;
+	    cost[laborIndex] = resultSet.getDouble("laborcost") * numberOfFan;
+	    cost[equipIndex] = resultSet.getDouble("equipmentcost")
+		    * numberOfFan;
+	    cost[totalIndex] = resultSet.getDouble("totalCost") * numberOfFan;
+	    cost[totalOPIndex] = resultSet.getDouble("totalInclop")
+		    * numberOfFan;
+	    description = resultSet.getString("description");
+	    
+	    // gets the special character for this fan
+	    if (character != null) {
+		resultSet = statement
+			.executeQuery("select * from hvacfan.specialcharacter where fantype = '"
+				+ fanType
+				+ "' and function = '"
+				+ fanFunction
+				+ "' and description = '" + character + "'");
+		resultSet.next();
+		factor[materialIndex] = resultSet.getDouble("material");
+		factor[laborIndex] = resultSet.getDouble("labor");
+		factor[equipIndex] = resultSet.getDouble("equipment");
+		factor[totalIndex] = resultSet.getDouble("total");
+		factor[totalOPIndex] = resultSet.getDouble("totalinclop");
+		operation = resultSet.getString("operation");
+		if (operation != null) {
+		    if (operation.equals("ADD")) {
+			cost = addOperation(cost, factor);
+		    } else if (operation.equals("MULT")) {
+			cost = multiOperation(cost, factor);
+		    }
+		}
+	    }
+	    costVector = cost;
+	    optionLists.add(description);
+	    optionQuantities.add(numberOfFan);
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
 	}
-	//add to the cost vector
-	Double[] itemCost = priceData.get(optionLists.get(criticalIndex));
-	for(int j=0; j<costVector.length; j++){
-	    costVector[j]+=itemCost[j];
-	}
-	Integer q = optionQuantities.get(criticalIndex)+1;
-	optionQuantities.set(criticalIndex, q);
-	
-	return flowRateList[criticalIndex];
-    }
-    
-    private void setToZero(){
-	for(int i=0; i<optionQuantities.size(); i++){
-	    optionQuantities.set(i, 0);
-	}
-    }
-
-
-    private void addAdditions(Double[] additions) {
-	for (int i = 0; i < costVector.length; i++) {
-	    costVector[i] = costVector[i] + additions[i];
-	}
-    }
-
-    private void multiplyMaterial(Double percent) {
-	costVector[totalIndex] = costVector[totalIndex]
-		- costVector[materialIndex];
-	costVector[totalOPIndex] = costVector[totalOPIndex]
-		- costVector[materialIndex];
-
-	costVector[materialIndex] = costVector[materialIndex] * percent;
-
-	costVector[totalIndex] = costVector[totalIndex]
-		+ costVector[materialIndex];
-	costVector[totalOPIndex] = costVector[totalOPIndex]
-		+ costVector[materialIndex];
-
-    }
-    
-    private Double[] deepCopyCost(Double[] costVector){
-	Double[] temp = new Double[costVector.length];
-	for(int i=0; i<costVector.length; i++){
-	    temp[i]= costVector[i];
-	}
-	return temp;
     }
 }

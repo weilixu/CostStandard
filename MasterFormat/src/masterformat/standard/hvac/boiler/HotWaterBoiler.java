@@ -61,6 +61,8 @@ public class HotWaterBoiler extends AbstractBoiler {
 
     @Override
     public void selectCostVector() {
+	optionLists.clear();
+	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	Double[] factor = new Double[numOfCostElement];
 	try {
@@ -82,7 +84,7 @@ public class HotWaterBoiler extends AbstractBoiler {
 		// capacity. We need to modularize the boiler
 		double boilerCapacity = power;
 		while (!resultSet.next()) {
-		    numberOfBoiler += 1;
+		    numberOfBoiler *=2;
 		    
 		    boilerCapacity = boilerCapacity / 2;
 		    resultSet = statement
