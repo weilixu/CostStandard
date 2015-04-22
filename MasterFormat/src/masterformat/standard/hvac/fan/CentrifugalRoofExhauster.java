@@ -58,11 +58,17 @@ public class CentrifugalRoofExhauster extends AbstractFan {
 
 	    // add special character
 	    resultSet = statement
-		    .executeQuery("select * from hvacfan.specialcharacter where fantype>='"
+		    .executeQuery("select * from hvacfan.specialcharacter where fantype='"
 			    + fanType
 			    + "' and function = '"
 			    + fanFunction
 			    + "'");
+	    
+	    // initialize the default character
+	    resultSet.next();
+	    character = resultSet.getString("description");
+	    userInputs.add("OPTION:CHARACTER:" + character);
+	    
 	    while (resultSet.next()) {
 		userInputs.add("OPTION:CHARACTER:"
 			+ resultSet.getString("description"));

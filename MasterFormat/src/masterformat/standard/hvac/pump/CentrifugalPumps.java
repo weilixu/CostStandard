@@ -61,6 +61,12 @@ public class CentrifugalPumps extends AbstractPump {
 	    if (pumpType == null) {
 		resultSet = statement
 			.executeQuery("select pumptype from hvac.pump");
+
+		// initialize the default pump type
+		resultSet.next();
+		pumpType = resultSet.getString("pumptype");
+		userInputs.add("OPTION:PUMPTYPE:" + pumpType);
+
 		while (resultSet.next()) {
 		    userInputs.add("OPTION:PUMPTYPE:"
 			    + resultSet.getString("pumptype"));
@@ -69,6 +75,12 @@ public class CentrifugalPumps extends AbstractPump {
 		resultSet = statement
 			.executeQuery("select pumpsize from hvac.pump where pumptype = '"
 				+ pumpType + "'");
+
+		// initialize the default pump size
+		resultSet.next();
+		size = resultSet.getDouble("pumpsize");
+		userInputs.add("OPTION:SIZE:" + size);
+		
 		while (resultSet.next()) {
 		    userInputs.add("OPTION:SIZE:"
 			    + resultSet.getDouble("pumpsize"));
@@ -114,9 +126,9 @@ public class CentrifugalPumps extends AbstractPump {
 			// we need to modularize the pump based on power
 			double tempPower = power;
 			while (!resultSet.next()) {
-			    numberOfPump *=2;
+			    numberOfPump *= 2;
 			    tempPower = tempPower / 2;
-			    
+
 			    resultSet = statement
 				    .executeQuery("select * from hvac.pump where pumpType = '"
 					    + pumpType
@@ -140,8 +152,7 @@ public class CentrifugalPumps extends AbstractPump {
 
 		    description = resultSet.getString("description");
 		    costVector = cost;
-		    
-		    
+
 		    optionLists.add(description);
 		    optionQuantities.add(numberOfPump);
 		}

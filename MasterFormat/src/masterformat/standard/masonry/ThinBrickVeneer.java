@@ -101,6 +101,12 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	    resultSet = statement
 		    .executeQuery("select type from masonry.brickmasonry where MASONRYNAME= '"
 			    + TAG + "'");
+	    
+	    // initialize the default bricktype
+	    resultSet.next();
+	    brickType = resultSet.getString("type");
+	    userInputs.add("OPTION:BrickType:"+brickType);
+	    
 	    while (resultSet.next()) {
 		userInputs.add("OPTION:BrickType:"
 			+ resultSet.getString("type"));
@@ -110,6 +116,12 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	    resultSet = statement
 		    .executeQuery("select description from masonry.specialcharacter where MASONRYNAME= '"
 			    + TAG + "'");
+	    
+	    // initialize the default special character
+	    resultSet.next();
+	    specialCharacter = resultSet.getString("description");
+	    userInputs.add("OPTION:SpecialCharacter:"+specialCharacter);
+	    
 	    while (resultSet.next()) {
 		userInputs.add("OPTION:SpecialCharacter:"
 			+ resultSet.getString("description"));

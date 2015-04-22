@@ -42,6 +42,12 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 		// get the options for the type of constructions
 		resultSet = statement
 			.executeQuery("select * from insulation.thermalinsulation");
+
+		// initialize the default insulation type
+		resultSet.next();
+		insulationType = resultSet.getString("insulationtype");
+		userInputs.add("OPTION:TYPE:" + insulationType);
+
 		while (resultSet.next()) {
 		    userInputs.add("OPTION:TYPE:"
 			    + resultSet.getString("insulationtype"));
@@ -54,6 +60,12 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 		    resultSet = statement
 			    .executeQuery("select * from insulation.thermalinsulation where insulationtype = '"
 				    + insulationType + "'");
+		    
+		    // initialize the default insulation product
+		    resultSet.next();
+		    insulationProduct = resultSet.getString("product");
+		    userInputs.add("OPTION:PRODUCT:"+insulationProduct);
+		    
 		    while (resultSet.next()) {
 			userInputs.add("OPTION:PRODUCT:"
 				+ resultSet.getString("product"));
@@ -65,6 +77,12 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 		    resultSet = statement
 			    .executeQuery("select * from insulation.thermalinsulation where insulationtype = '"
 				    + insulationType + "'");
+		    
+		    // initialize the default special character
+		    resultSet.next();
+		    insulationConstruction = resultSet.getString("construction");
+		    userInputs.add("OPTION:CONSTRUCTION:"+insulationConstruction);
+		    
 		    while (resultSet.next()) {
 			userInputs.add("OPTION:CONSTRUCTION:"
 				+ resultSet.getString("construction"));
@@ -75,6 +93,12 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 		    resultSet = statement
 			    .executeQuery("select * from insulation.thermalinsulation where insulationtype = '"
 				    + insulationType + "'");
+		    
+		    // initialize the default insulation material
+		    resultSet.next();
+		    material = resultSet.getString("material");
+		    userInputs.add("OPTION:MATERIAL:"+material);
+		    
 		    while (resultSet.next()) {
 			userInputs.add("OPTION:MATERIAL:"
 				+ resultSet.getString("material"));
@@ -85,6 +109,11 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 				    + insulationType
 				    + "' and material = '"
 				    + material + "'");
+		    // initialize the default faced option
+		    resultSet.next();
+		    faced = resultSet.getString("faced");
+		    userInputs.add("OPTION:FACED:"+faced);
+		    
 		    while (resultSet.next()) {
 			userInputs.add("OPTION:FACED:"
 				+ resultSet.getString("faced"));
@@ -143,7 +172,7 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 
 		if (insulationProduct == null || insulationConstruction == null
 			|| material == null) {
-	
+
 		    initializeData();
 		} else if (material.equals("Fiberglass") && faced == null) {
 		    initializeData();
@@ -161,9 +190,9 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 			// we need to modularize the insulation based on r-value
 			double tempRvalue = rvalue;
 			while (!resultSet.next()) {
-			    numberOfLayer *=2;
+			    numberOfLayer *= 2;
 			    tempRvalue = tempRvalue / 2;
-	
+
 			    resultSet = statement.executeQuery(selectQuery
 				    + "' and rvalue>='" + tempRvalue
 				    + "' order by totalcost");
