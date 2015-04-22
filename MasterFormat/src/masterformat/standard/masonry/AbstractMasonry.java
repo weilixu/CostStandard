@@ -16,6 +16,8 @@ abstract class AbstractMasonry extends AbstractMasterFormatComponent implements 
     protected final int resistanceIndex=7;
     
     public AbstractMasonry(){
+	optionLists = new ArrayList<String>();
+	optionQuantities = new ArrayList<Integer>();
 	userInputs = new ArrayList<String>();
 	unit = "m2";
 	hierarchy = "040000 Masonry";

@@ -21,6 +21,8 @@ public class ThinBrickVeneer extends AbstractMasonry {
 
     @Override
     public void selectCostVector() {
+	optionLists.clear();
+	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	Double[] factor = new Double[numOfCostElement];
 	String operation = null;
@@ -43,7 +45,7 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	    }
 
 	    resultSet = statement
-		    .executeQuery("select * from masonry.specialcharacter where description = '"
+		    .executeQuery("select * from masonry.specialcharacter where masonryname = '" + brickType+"' and description = '"
 			    + specialCharacter + "'");
 	    while (resultSet.next()) {
 		factor[materialIndex] = resultSet.getDouble("materialfactor");

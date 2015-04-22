@@ -55,7 +55,7 @@ public class CastInPlaceWall extends AbstractConcrete {
     @Override
     public void selectCostVector() {
 	Double[] cost = new Double[numOfCostElement];
-
+	Double num = 1.0;
 	try {
 	    connect = DriverManager
 		    .getConnection("jdbc:mysql://localhost/concrete?"
@@ -78,12 +78,13 @@ public class CastInPlaceWall extends AbstractConcrete {
 				+ "' and totalcost = (select max(totalcost) from concrete.castinplace where construction = '"
 				+ TAG + "');");
 		resultSet.next();
+		num = Math.ceil(thickness/resultSet.getDouble("thickness"));
 	    }
-	    cost[materialIndex] = resultSet.getDouble("materialcost");
-	    cost[laborIndex] = resultSet.getDouble("laborcost");
-	    cost[equipIndex] = resultSet.getDouble("equipmentcost");
-	    cost[totalIndex] = resultSet.getDouble("totalCost");
-	    cost[totalOPIndex] = resultSet.getDouble("totalInclop");
+	    cost[materialIndex] = resultSet.getDouble("materialcost") * resultSet.getDouble("thickness") * num;
+	    cost[laborIndex] = resultSet.getDouble("laborcost")* resultSet.getDouble("thickness")*num;
+	    cost[equipIndex] = resultSet.getDouble("equipmentcost")* resultSet.getDouble("thickness")* num;
+	    cost[totalIndex] = resultSet.getDouble("totalCost")* resultSet.getDouble("thickness")* num;
+	    cost[totalOPIndex] = resultSet.getDouble("totalInclop")* resultSet.getDouble("thickness")* num;
 
 	    description = TAG + " " + resultSet.getString("type");
 	    costVector = cost;

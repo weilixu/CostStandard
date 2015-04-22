@@ -2,6 +2,7 @@ package masterformat.standard.masonry;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -45,7 +46,7 @@ public class BrickVennerMasonry extends AbstractMasonry {
 	    }
 
 	    resultSet = statement
-		    .executeQuery("select * from masonry.specialcharacter where description = '"
+		    .executeQuery("select * from masonry.specialcharacter where masonryname = '"+brickType+"' and description = '"
 			    + specialCharacter + "'");
 	    while (resultSet.next()) {
 		factor[materialIndex] = resultSet.getDouble("materialfactor");
@@ -63,6 +64,7 @@ public class BrickVennerMasonry extends AbstractMasonry {
 		    cost = multiOperation(cost, factor);
 		}
 	    }
+	    
 	    description = TAG + " "+brickType;
 	    costVector = cost;
 	} catch (SQLException e) {

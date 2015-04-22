@@ -46,11 +46,11 @@ public class CastInPlaceSlabOnGrade extends AbstractConcrete{
 		resultSet.next();
 		num = Math.ceil(thickness/resultSet.getDouble("thickness"));
 	    }
-	    cost[materialIndex] = resultSet.getDouble("materialcost")*num;
-	    cost[laborIndex] = resultSet.getDouble("laborcost")*num;
-	    cost[equipIndex] = resultSet.getDouble("equipmentcost")*num;
-	    cost[totalIndex] = resultSet.getDouble("totalCost")*num;
-	    cost[totalOPIndex] = resultSet.getDouble("totalInclop")*num;
+	    cost[materialIndex] = resultSet.getDouble("materialcost")*num* resultSet.getDouble("thickness");
+	    cost[laborIndex] = resultSet.getDouble("laborcost")*num* resultSet.getDouble("thickness");
+	    cost[equipIndex] = resultSet.getDouble("equipmentcost")*num* resultSet.getDouble("thickness");
+	    cost[totalIndex] = resultSet.getDouble("totalCost")*num* resultSet.getDouble("thickness");
+	    cost[totalOPIndex] = resultSet.getDouble("totalInclop")*num* resultSet.getDouble("thickness");
 
 	    description = TAG + " " + resultSet.getString("type");
 	    costVector = cost;
