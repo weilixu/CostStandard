@@ -28,8 +28,8 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 
     @Override
     protected void initializeData() {
-	optionLists = new ArrayList<String>();
-	optionQuantities = new ArrayList<Integer>();
+	userInputs.clear();
+
 	try {
 	    connect = DriverManager
 		    .getConnection("jdbc:mysql://localhost/masonry?"
@@ -38,87 +38,67 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 	    statement = connect.createStatement();
 
 	    // first, select the insulation type
-	    if (insulationType == null) {
-		// get the options for the type of constructions
-		resultSet = statement
-			.executeQuery("select * from insulation.thermalinsulation");
 
-		// initialize the default insulation type
-		resultSet.next();
-		insulationType = resultSet.getString("insulationtype");
-		userInputs.add("OPTION:TYPE:" + insulationType);
+	    // get the options for the type of constructions
+	    resultSet = statement
+		    .executeQuery("select * from insulation.thermalinsulation");
 
-		while (resultSet.next()) {
-		    userInputs.add("OPTION:TYPE:"
-			    + resultSet.getString("insulationtype"));
+	    // initialize the default insulation type
+	    resultSet.next();
+	    insulationType = resultSet.getString("insulationtype");
+	    userInputs.add("OPTION:TYPE:" + insulationType);
 
-		}
-	    } else {
-		userInputs.clear();
-		// set the product of insulation
-		if (insulationProduct == null) {
-		    resultSet = statement
-			    .executeQuery("select * from insulation.thermalinsulation where insulationtype = '"
-				    + insulationType + "'");
-		    
-		    // initialize the default insulation product
-		    resultSet.next();
-		    insulationProduct = resultSet.getString("product");
-		    userInputs.add("OPTION:PRODUCT:"+insulationProduct);
-		    
-		    while (resultSet.next()) {
-			userInputs.add("OPTION:PRODUCT:"
-				+ resultSet.getString("product"));
-		    }
+	    while (resultSet.next()) {
+		userInputs.add("OPTION:TYPE:"
+			+ resultSet.getString("insulationtype"));
 
-		}
-		// set the insulation constructions
-		if (insulationConstruction == "") {
-		    resultSet = statement
-			    .executeQuery("select * from insulation.thermalinsulation where insulationtype = '"
-				    + insulationType + "'");
-		    
-		    // initialize the default special character
-		    resultSet.next();
-		    insulationConstruction = resultSet.getString("construction");
-		    userInputs.add("OPTION:CONSTRUCTION:"+insulationConstruction);
-		    
-		    while (resultSet.next()) {
-			userInputs.add("OPTION:CONSTRUCTION:"
-				+ resultSet.getString("construction"));
-		    }
-		}
-		// Set the material of insulation
-		if (material == null) {
-		    resultSet = statement
-			    .executeQuery("select * from insulation.thermalinsulation where insulationtype = '"
-				    + insulationType + "'");
-		    
-		    // initialize the default insulation material
-		    resultSet.next();
-		    material = resultSet.getString("material");
-		    userInputs.add("OPTION:MATERIAL:"+material);
-		    
-		    while (resultSet.next()) {
-			userInputs.add("OPTION:MATERIAL:"
-				+ resultSet.getString("material"));
-		    }
-		} else if (material.equals("Fiberglass")) {
-		    resultSet = statement
-			    .executeQuery("select * from insulation.thermalinsulation where insulationtype = '"
-				    + insulationType
-				    + "' and material = '"
-				    + material + "'");
-		    // initialize the default faced option
-		    resultSet.next();
-		    faced = resultSet.getString("faced");
-		    userInputs.add("OPTION:FACED:"+faced);
-		    
-		    while (resultSet.next()) {
-			userInputs.add("OPTION:FACED:"
-				+ resultSet.getString("faced"));
-		    }
-		}
+	    }
+
+	    // set the product of insulation
+
+	    resultSet = statement
+		    .executeQuery("select * from insulation.thermalinsulation where insulationtype = '"
+			    + insulationType + "'");
+
+	    // initialize the default insulation product
+	    resultSet.next();
+	    insulationProduct = resultSet.getString("product");
+	    userInputs.add("OPTION:PRODUCT:" + insulationProduct);
+
+	    while (resultSet.next()) {
+		userInputs.add("OPTION:PRODUCT:"
+			+ resultSet.getString("product"));
+	    }
+
+	    // set the insulation constructions
+	    resultSet = statement
+		    .executeQuery("select * from insulation.thermalinsulation where insulationtype = '"
+			    + insulationType + "'");
+
+	    // initialize the default special character
+	    resultSet.next();
+	    insulationConstruction = resultSet.getString("construction");
+	    userInputs.add("OPTION:CONSTRUCTION:" + insulationConstruction);
+
+	    while (resultSet.next()) {
+		userInputs.add("OPTION:CONSTRUCTION:"
+			+ resultSet.getString("construction"));
+	    }
+
+	    // Set the material of insulation
+
+	    resultSet = statement
+		    .executeQuery("select * from insulation.thermalinsulation where insulationtype = '"
+			    + insulationType + "'");
+
+	    // initialize the default insulation material
+	    resultSet.next();
+	    material = resultSet.getString("material");
+	    userInputs.add("OPTION:MATERIAL:" + material);
+
+	    while (resultSet.next()) {
+		userInputs.add("OPTION:MATERIAL:"
+			+ resultSet.getString("material"));
 	    }
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -170,52 +150,43 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 		    selectQuery.append(faced);
 		}
 
-		if (insulationProduct == null || insulationConstruction == null
-			|| material == null) {
+		resultSet = statement.executeQuery(selectQuery.toString()
+			+ "' and thickness>='" + thickness + "' and rvalue>='"
+			+ rvalue + "' order by totalcost");
 
-		    initializeData();
-		} else if (material.equals("Fiberglass") && faced == null) {
-		    initializeData();
-		} else {
+		if (!resultSet.next()) {
+		    // this means the selected insulation can not satisfy
+		    // the
+		    // condition
+		    // we need to modularize the insulation based on r-value
+		    double tempRvalue = rvalue;
+		    while (!resultSet.next()) {
+			numberOfLayer *= 2;
+			tempRvalue = tempRvalue / 2;
 
-		    resultSet = statement.executeQuery(selectQuery.toString()
-			    + "' and thickness>='" + thickness
-			    + "' and rvalue>='" + rvalue
-			    + "' order by totalcost");
-
-		    if (!resultSet.next()) {
-			// this means the selected insulation can not satisfy
-			// the
-			// condition
-			// we need to modularize the insulation based on r-value
-			double tempRvalue = rvalue;
-			while (!resultSet.next()) {
-			    numberOfLayer *= 2;
-			    tempRvalue = tempRvalue / 2;
-
-			    resultSet = statement.executeQuery(selectQuery
-				    + "' and rvalue>='" + tempRvalue
-				    + "' order by totalcost");
-			}
+			resultSet = statement.executeQuery(selectQuery
+				+ "' and rvalue>='" + tempRvalue
+				+ "' order by totalcost");
 		    }
-
-		    cost[materialIndex] = resultSet.getDouble("materialcost")
-			    * numberOfLayer;
-		    cost[laborIndex] = resultSet.getDouble("laborcost")
-			    * numberOfLayer;
-		    cost[equipIndex] = resultSet.getDouble("equipmentcost")
-			    * numberOfLayer;
-		    cost[totalIndex] = resultSet.getDouble("totalCost")
-			    * numberOfLayer;
-		    cost[totalOPIndex] = resultSet.getDouble("totalInclop")
-			    * numberOfLayer;
-
-		    description = resultSet.getString("description");
-		    costVector = cost;
-
-		    optionLists.add(description);
-		    optionQuantities.add(numberOfLayer);
 		}
+
+		cost[materialIndex] = resultSet.getDouble("materialcost")
+			* numberOfLayer;
+		cost[laborIndex] = resultSet.getDouble("laborcost")
+			* numberOfLayer;
+		cost[equipIndex] = resultSet.getDouble("equipmentcost")
+			* numberOfLayer;
+		cost[totalIndex] = resultSet.getDouble("totalCost")
+			* numberOfLayer;
+		cost[totalOPIndex] = resultSet.getDouble("totalInclop")
+			* numberOfLayer;
+
+		description = resultSet.getString("description");
+		costVector = cost;
+
+		optionLists.add(description);
+		optionQuantities.add(numberOfLayer);
+
 	    } catch (SQLException e) {
 		e.printStackTrace();
 	    } finally {
@@ -238,8 +209,13 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 		insulationConstruction = userInputsMap.get(temp);
 	    } else if (temp.equalsIgnoreCase("MATERIAL")) {
 		material = userInputsMap.get(temp);
+		if (material.equals("Fiberglass")) {
+		    addFacedValue();
+		}
 	    } else if (temp.equalsIgnoreCase("FACED")) {
 		faced = userInputsMap.get(temp);
+		// no need to initialize because we already know
+		// most of the needed inputs at this step
 	    }
 	}
     }
@@ -259,4 +235,32 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 	insulationConstruction = surfaceProperties[surfaceTypeIndex];
     }
 
+    private void addFacedValue() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/masonry?"
+			    + "user=root&password=911383");
+
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from insulation.thermalinsulation where insulationtype = '"
+			    + insulationType
+			    + "' and material = '"
+			    + material
+			    + "'");
+	    // initialize the default faced option
+	    resultSet.next();
+	    faced = resultSet.getString("faced");
+	    userInputs.add("OPTION:FACED:" + faced);
+
+	    while (resultSet.next()) {
+		userInputs.add("OPTION:FACED:" + resultSet.getString("faced"));
+	    }
+
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+    }
 }
