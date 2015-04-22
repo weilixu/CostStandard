@@ -2,7 +2,6 @@ package masterformat.standard.hvac.pump;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
