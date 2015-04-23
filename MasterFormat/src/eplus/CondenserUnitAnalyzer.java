@@ -40,6 +40,25 @@ public class CondenserUnitAnalyzer {
 	processCondenserUnitData();
     }
     
+    /**
+     * get the random total cost for the construction
+     * 
+     * @param cons
+     * @return
+     */
+    protected double getTotalCostForCU() {
+	Double totalCUCost = 0.0;
+	Set<String> cuList = condenserUnitMap.keySet();
+	Iterator<String> cuIterator = cuList.iterator();
+	while (cuIterator.hasNext()) {
+	    String cu = cuIterator.next();
+	    double totalcost = condenserUnitMap.get(cu).getRandomTotalCost();
+	    totalCUCost+=totalcost;
+	    System.out.println("This "+cu+" unit cost of "+ totalcost+" and the cumulative total is: "+totalCUCost);
+	}
+	return totalCUCost;
+    }
+    
     protected String[][] getCostListForCondenserUnit(String condenserName){
 	CondenserUnit cu = condenserUnitMap.get(condenserName);
 	String[][] costList = new String[1][rowElement];
@@ -337,6 +356,10 @@ public class CondenserUnitAnalyzer {
 	    }
 	    
 	    return condenserUnit.getCostVector();
+	}
+	
+	public double getRandomTotalCost() {
+	    return condenserUnit.randomDrawTotalCost();
 	}
 	
 	public CondenserUnit clone(){

@@ -9,7 +9,7 @@ import java.util.Set;
 public class PackagedCU extends AbstractCondenserUnits {
 
     private Double capacity;
-    
+
     public PackagedCU() {
 	unit = "$/Ea";
 	hierarchy = "236200 Packaged Compressor and Condenser Units:236213 Packaged Air-Cooled Refrigerant Compressor and Condenser Units";
@@ -35,11 +35,62 @@ public class PackagedCU extends AbstractCondenserUnits {
 	    userInputs.add("INPUT:Capacity:Watt");
 	}
 
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/hvac?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    resultSet = statement
+		    .executeQuery("select * from hvac.packagedcompressor where capacity<='"
+			    + capacity + "'");
+	    while (resultSet.next()) {
+		descriptionList.add(resultSet.getString("description"));
+	    }
+
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+
+    }
+
+    @Override
+    public double randomDrawTotalCost() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    if (!descriptionList.isEmpty()) {
+		int index = randGenerator.nextInt(descriptionList.size());
+		resultSet = statement
+			.executeQuery("select * from hvac.packagedcompressor where description = '"
+				+ descriptionList.get(index) + "'");
+		resultSet.next();
+		double unitPower = resultSet.getDouble("capacity");
+		return resultSet.getDouble("totalcost")
+			* Math.ceil(capacity / unitPower);
+	    } else {
+		resultSet = statement.executeQuery("select * from hvac.packagedcompressor where capacity >= '"
+				+"' order by totalcost");
+		resultSet.next();
+		return resultSet.getDouble("totalcost");
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	// hopefully we won't reach here
+	return 0.0;
     }
 
     @Override
     protected void initializeData() {
-	// no  need to initize data
+	// no need to initize data
     }
 
     @Override
@@ -81,12 +132,12 @@ public class PackagedCU extends AbstractCondenserUnits {
 	    cost[totalIndex] = resultSet.getDouble("totalCost") * numberOfCU;
 	    cost[totalOPIndex] = resultSet.getDouble("totalInclop")
 		    * numberOfCU;
-	    
-	    //set the description
+
+	    // set the description
 	    description = resultSet.getString("description");
 
 	    costVector = cost;
-	    
+
 	    optionLists.add(description);
 	    optionQuantities.add(numberOfCU);
 	} catch (SQLException e) {

@@ -20,6 +20,7 @@ public abstract class AbstractCondenserUnits extends AbstractMasterFormatCompone
 	userInputs = new ArrayList<String>();
 	optionLists = new ArrayList<String>();
 	optionQuantities = new ArrayList<Integer>();
+	descriptionList = new ArrayList<String>();
 	unit = "Ea.";
 	hierarchy = "236200 Packaged Compressor and Condenser Units";
 	initializeData();
