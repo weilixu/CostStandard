@@ -8,6 +8,7 @@ import java.util.Set;
 
 import masterformat.api.MasterFormat;
 import eplus.IdfReader.ValueNode;
+import eplus.MaterialAnalyzer.Material;
 import eplus.htmlparser.EnergyPlusHTMLParser;
 
 public class ElectricalAnalyzer {
@@ -38,6 +39,25 @@ public class ElectricalAnalyzer {
 	parser = p;
 	electricMap = new HashMap<String,Electric>();
 	processElectricalEquipment();
+    }
+    
+    /**
+     * get the random total cost for the construction
+     * 
+     * @param cons
+     * @return
+     */
+    protected double getTotalCostForLighting() {
+	Double totalElectricCost = 0.0;
+	Set<String> electricList = electricMap.keySet();
+	Iterator<String> electricIterator = electricList.iterator();
+	while (electricIterator.hasNext()) {
+	    String electric = electricIterator.next();
+	    double totalcost = electricMap.get(electric).getRandomTotalCost();
+	    totalElectricCost+=totalcost;
+	    System.out.println("This "+electric+" unit cost of "+ totalcost+" and the cumulative total is: "+totalElectricCost);
+	}
+	return totalElectricCost;
     }
     
     protected String[][] getCostListForElectric(String electric){
@@ -231,6 +251,10 @@ public class ElectricalAnalyzer {
 	    }
 
 	    return electric.getCostVector();
+	}
+	
+	public double getRandomTotalCost() {
+	    return electric.randomDrawTotalCost();
 	}
 	
 	public Electric clone(){

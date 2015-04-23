@@ -1,6 +1,7 @@
 package masterformat.standard.electrical;
 
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -43,6 +44,48 @@ public class InteriorLighting extends AbstractElectrical{
 	} catch (NumberFormatException e) {
 	    userInputs.add("INPUT:Power:Watt");
 	}
+	
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from lighting.interiorlighting");
+
+	    while (resultSet.next()) {
+		descriptionList.add(resultSet.getString("description"));
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+    }
+    
+    @Override
+    public double randomDrawTotalCost() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    int index = randGenerator.nextInt(descriptionList.size());
+	    resultSet = statement
+		    .executeQuery("select * from lighting.interiorlighting where description = '"
+			    + descriptionList.get(index)+ "'");
+	    resultSet.next();
+	    double unitPower = resultSet.getDouble("power");
+	    return resultSet.getDouble("totalcost")
+		    *Math.ceil(power/unitPower);
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	// hopefully we won't reach here
+	return 0.0;
     }
     
 

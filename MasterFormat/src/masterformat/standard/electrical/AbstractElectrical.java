@@ -16,6 +16,7 @@ public abstract class AbstractElectrical extends AbstractMasterFormatComponent i
 	optionQuantities = new ArrayList<Integer>();
 	optionLists = new ArrayList<String>();
 	userInputs = new ArrayList<String>();
+	descriptionList = new ArrayList<String>();
 	unit = "Ea.";
 	hierarchy = "260000 Electrical";
 	initializeData();
