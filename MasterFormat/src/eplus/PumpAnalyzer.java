@@ -44,6 +44,25 @@ public class PumpAnalyzer {
 	processPumpRawDatafromPumps();
     }
     
+    /**
+     * get the random total cost for the construction
+     * 
+     * @param cons
+     * @return
+     */
+    protected double getTotalCostForPump() {
+	Double totalPumpCost = 0.0;
+	Set<String> pumpList = pumpMap.keySet();
+	Iterator<String> pumpIterator = pumpList.iterator();
+	while (pumpIterator.hasNext()) {
+	    String pump = pumpIterator.next();
+	    double totalcost = pumpMap.get(pump).getRandomTotalCost();
+	    totalPumpCost+=totalcost;
+	    System.out.println("This "+pump+" unit cost of "+ totalcost+" and the cumulative total is: "+totalPumpCost);
+	}
+	return totalPumpCost;
+    }
+    
     protected String[][] getCostListForPump(String fan){
 	Pump p = pumpMap.get(fan);	
 	String[][] costList = new String[1][rowElement];
@@ -338,6 +357,10 @@ public class PumpAnalyzer {
 	    }
 
 	    return pump.getCostVector();
+	}
+	
+	public double getRandomTotalCost() {
+	    return pump.randomDrawTotalCost();
 	}
 	
 	public Pump clone() {

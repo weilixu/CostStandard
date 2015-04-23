@@ -16,6 +16,7 @@ public abstract class AbstractPump extends AbstractMasterFormatComponent impleme
 	userInputs = new ArrayList<String>();
 	optionLists = new ArrayList<String>();
 	optionQuantities = new ArrayList<Integer>();
+	descriptionList = new ArrayList<String>();	
 	unit = "Ea.";
 	hierarchy = "232100 Hydronic Piping and Pumps";
 	initializeData();

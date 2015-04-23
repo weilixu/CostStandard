@@ -27,7 +27,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import masterformat.gui.BoilerPanel;
 import eplus.EnergyPlusModel;
 import eplus.MaterialAnalyzer.Material;
 
@@ -43,6 +42,7 @@ public class UncertaintyPanel extends JPanel{
     private final JPanel lightsPanel;
     private final JPanel fanPanel;
     private final JPanel boilerPanel;
+    private final JPanel pumpPanel;
 
     private final JPanel controllPanel;
     
@@ -59,6 +59,9 @@ public class UncertaintyPanel extends JPanel{
     private JList<String> boilerList;
     private JScrollPane boilerListScrollPane;
     private DefaultListModel<String> boilerListModel;
+    private DefaultListModel<String> pumpListModel;
+    private JList<String> pumpList;
+    private JScrollPane pumpListScrollPane;
     
     private final JButton budgetButton;
     private final String BUDGET="Calculate Budget";
@@ -92,6 +95,10 @@ public class UncertaintyPanel extends JPanel{
 	boilerPanel = new JPanel(new CardLayout());
 	boilerPanel.setBackground(Color.WHITE);
 	updateBoilers();
+	
+	pumpPanel = new JPanel(new CardLayout());
+	pumpPanel.setBackground(Color.WHITE);
+	updatePump();
 	
 	// initialize the selection combo list
 	objectSelectionCombo = new JComboBox<String>(model.getDomainList());
@@ -154,6 +161,21 @@ public class UncertaintyPanel extends JPanel{
 
 		    itemPanel.add(boilerPanel, BorderLayout.CENTER);
 		    EnergyPlusObjectPanel.add(boilerListScrollPane,
+			    BorderLayout.CENTER);
+
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
+		}else if (category.equalsIgnoreCase("PUMP")) {
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+
+		    itemPanel.add(pumpPanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(pumpListScrollPane,
 			    BorderLayout.CENTER);
 
 		    itemPanel.revalidate();
@@ -281,6 +303,35 @@ public class UncertaintyPanel extends JPanel{
 
 	boilerListScrollPane = new JScrollPane(boilerList);
     }
+    
+    private void updatePump() {
+ 	pumpListModel = new DefaultListModel<String>();
+ 	pumpList = new JList<String>(pumpListModel);
+ 	pumpList.setFont(new Font("Helvetica", Font.BOLD, 20));
+
+ 	String[] pumps = model.getPumpList();
+ 	pumpListModel.clear();
+ 	for (String p : pumps) {
+ 	    // model.setFanMasterFormat(f);
+ 	    JPanel pump = new UncertaintyPumpPanel(model, p);// need to change this
+
+ 	    pumpPanel.add(pump,p);
+ 	    pumpListModel.addElement(p);
+ 	    pumpList.addListSelectionListener(new ListSelectionListener() {
+
+ 		@Override
+ 		public void valueChanged(ListSelectionEvent e) {
+ 		    CardLayout cardLayout = (CardLayout) (pumpPanel.getLayout());
+ 		    String selection = pumpList.getSelectedValue().toString();
+ 		    if (selection.equals(p)) {
+ 			cardLayout.show(pumpPanel, selection);
+ 		    }
+ 		    model.getPumpCostVector(selection);
+ 		}
+ 	    });
+ 	}
+ 	pumpListScrollPane = new JScrollPane(pumpList);
+     }
     
     
     public void updateLightsPanel(){

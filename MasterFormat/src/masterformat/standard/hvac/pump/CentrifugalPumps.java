@@ -49,6 +49,48 @@ public class CentrifugalPumps extends AbstractPump {
 	} catch (NumberFormatException e) {
 	    userInputs.add("INPUT:Power:Watt");
 	}
+	
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from hvac.pump");
+
+	    while (resultSet.next()) {
+		descriptionList.add(resultSet.getString("description"));
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+    }
+
+    @Override
+    public double randomDrawTotalCost() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    int index = randGenerator.nextInt(descriptionList.size());
+	    resultSet = statement
+		    .executeQuery("select * from hvac.pump where description = '"
+			    + descriptionList.get(index)+ "'");
+	    resultSet.next();
+	    double unitPower = resultSet.getDouble("pumppower");
+	    return resultSet.getDouble("totalcost")
+		    *Math.ceil(power/unitPower);
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	// hopefully we won't reach here
+	return 0.0;
     }
 
     @Override
