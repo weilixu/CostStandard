@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public abstract class AbstractMasterFormatComponent implements MasterFormat{
     
@@ -34,6 +35,9 @@ public abstract class AbstractMasterFormatComponent implements MasterFormat{
     
     protected ArrayList<String> optionLists;
     protected ArrayList<Integer> optionQuantities;
+    protected ArrayList<String> descriptionList;
+    
+    protected Random randGenerator = new Random();
 
     @Override
     public Double getMaterialPrice() {
@@ -107,6 +111,11 @@ public abstract class AbstractMasterFormatComponent implements MasterFormat{
     @Override
     public ArrayList<Integer> getQuantitiesFromObjects(){
 	return optionQuantities;
+    }
+    
+    @Override
+    public double randomDrawTotalCost(){
+	return 0.0;
     }
     
     // this method allows the last two elements in the double array to be added

@@ -2,7 +2,6 @@ package masterformat.standard.masonry;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -10,12 +9,12 @@ import java.util.Set;
 public class BrickVennerMasonry extends AbstractMasonry {
     private static String TAG = "Brick Veneer Masonry";
 
-    //shows the tyep of the brick that selected
+    // shows the tyep of the brick that selected
     private String brickType;
-    //shows any special charactor the type of brick might have
+    // shows any special charactor the type of brick might have
     private String specialCharacter;
-    
-    public BrickVennerMasonry(){
+
+    public BrickVennerMasonry() {
 	unit = "$/m2";
 	hierarchy = "042100 Clay Unit Masonry:042113 Brick Masonry:042113.13 Brick Veneer Masonry";
     }
@@ -33,7 +32,7 @@ public class BrickVennerMasonry extends AbstractMasonry {
 			    + "user=root&password=911383");
 
 	    statement = connect.createStatement();
-	    
+
 	    resultSet = statement
 		    .executeQuery("select * from masonry.brickmasonry where type='"
 			    + brickType + "'");
@@ -46,7 +45,9 @@ public class BrickVennerMasonry extends AbstractMasonry {
 	    }
 
 	    resultSet = statement
-		    .executeQuery("select * from masonry.specialcharacter where masonryname = '"+brickType+"' and description = '"
+		    .executeQuery("select * from masonry.specialcharacter where masonryname = '"
+			    + brickType
+			    + "' and description = '"
 			    + specialCharacter + "'");
 	    while (resultSet.next()) {
 		factor[materialIndex] = resultSet.getDouble("materialfactor");
@@ -64,12 +65,12 @@ public class BrickVennerMasonry extends AbstractMasonry {
 		    cost = multiOperation(cost, factor);
 		}
 	    }
-	    
-	    description = TAG + " "+brickType;
+
+	    description = TAG + " " + brickType;
 	    costVector = cost;
 	} catch (SQLException e) {
 	    e.printStackTrace();
-	}finally{
+	} finally {
 	    close();
 	}
     }
@@ -78,11 +79,11 @@ public class BrickVennerMasonry extends AbstractMasonry {
     public void setUserInputs(HashMap<String, String> userInputsMap) {
 	Set<String> inputs = userInputsMap.keySet();
 	Iterator<String> iterator = inputs.iterator();
-	while(iterator.hasNext()){
+	while (iterator.hasNext()) {
 	    String temp = iterator.next();
-	    if(temp.equals("BrickType")){
+	    if (temp.equals("BrickType")) {
 		brickType = userInputsMap.get(temp);
-	    }else if(temp.equals("SpecialCharacter")){
+	    } else if (temp.equals("SpecialCharacter")) {
 		specialCharacter = userInputsMap.get(temp);
 	    }
 	}
@@ -90,7 +91,41 @@ public class BrickVennerMasonry extends AbstractMasonry {
 
     @Override
     public void setVariable(String[] surfaceProperties) {
-	//there is nothing can be mapped from energyplus to this module
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from masonry.brickmasonry where masonryname='"
+			    + TAG + "'");
+	    while (resultSet.next()) {
+		descriptionList.add(resultSet.getString("type"));
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+    }
+    
+    @Override
+    public double randomDrawTotalCost(){
+	try{
+	    connect = DriverManager.getConnection("jdbc:mysql://localhost/concrete?"
+		    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    int index = randGenerator.nextInt(descriptionList.size());
+	    resultSet = statement.executeQuery("select * from masonry.brickmasonry where MASONRYNAME= '"
+			    + TAG + "' and type = '"+descriptionList.get(index)+"'");
+	    resultSet.next();
+	    return resultSet.getDouble("totalCost");
+	}catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	return 0.0;
     }
 
     /**
@@ -111,12 +146,12 @@ public class BrickVennerMasonry extends AbstractMasonry {
 	    resultSet = statement
 		    .executeQuery("select type from masonry.brickmasonry where MASONRYNAME= '"
 			    + TAG + "'");
-	    
+
 	    // initialize the default bricktype
 	    resultSet.next();
 	    brickType = resultSet.getString("type");
-	    userInputs.add("OPTION:BrickType:"+brickType);
-	    
+	    userInputs.add("OPTION:BrickType:" + brickType);
+
 	    while (resultSet.next()) {
 		userInputs.add("OPTION:BrickType:"
 			+ resultSet.getString("type"));
@@ -126,12 +161,12 @@ public class BrickVennerMasonry extends AbstractMasonry {
 	    resultSet = statement
 		    .executeQuery("select description from masonry.specialcharacter where MASONRYNAME= '"
 			    + TAG + "'");
-	    
+
 	    // initialize the default special character
 	    resultSet.next();
 	    specialCharacter = resultSet.getString("description");
-	    userInputs.add("OPTION:SpecialCharacter:"+specialCharacter);
-	    
+	    userInputs.add("OPTION:SpecialCharacter:" + specialCharacter);
+
 	    while (resultSet.next()) {
 		userInputs.add("OPTION:SpecialCharacter:"
 			+ resultSet.getString("description"));
@@ -139,8 +174,8 @@ public class BrickVennerMasonry extends AbstractMasonry {
 
 	} catch (Exception e) {
 	    e.printStackTrace();
-	} finally{
-	    //we need to close the connection
+	} finally {
+	    // we need to close the connection
 	    close();
 	}
     }

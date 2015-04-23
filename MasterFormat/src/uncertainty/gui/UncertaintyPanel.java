@@ -3,7 +3,10 @@ package uncertainty.gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
@@ -11,9 +14,11 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -34,11 +39,15 @@ public class UncertaintyPanel extends JPanel{
     private final JPanel EnergyPlusObjectPanel;
     private final JPanel itemPanel;
     private final JPanel constructionPanel;
+    private final JPanel controllPanel;
     
     private final JComboBox<String> objectSelectionCombo;
     private JList<String> constructionList;
     private JScrollPane constructionListScrollPane;
     private DefaultListModel<String> constructionListModel;
+    
+    private final JButton budgetButton;
+    private final String BUDGET="Calculate Budget";
     
     private final EnergyPlusModel model;
     
@@ -90,10 +99,24 @@ public class UncertaintyPanel extends JPanel{
 		.add(objectSelectionCombo, BorderLayout.PAGE_START);
 	EnergyPlusObjectPanel.add(constructionListScrollPane,
 		BorderLayout.CENTER);
+	
+	controllPanel = new JPanel();
+	budgetButton = new JButton(BUDGET);
+	budgetButton.addActionListener(new ActionListener(){
+	    @Override
+	    public void actionPerformed(ActionEvent e){
+		try{
+		    model.calculateBudget();
+		}catch(NullPointerException ne){
+		    showErrorDialog(new JFrame(),"Warning","There is objects that are not categorized!");
+		}
+	    }
+	});
+	controllPanel.add(budgetButton);
 
 	add(EnergyPlusObjectPanel, BorderLayout.WEST);
-	
 	add(itemPanel, BorderLayout.CENTER);
+	add(controllPanel,BorderLayout.PAGE_END);
     }
     
     private void updateConstructions() {
@@ -178,4 +201,10 @@ public class UncertaintyPanel extends JPanel{
 	    }
 	});
     }
+    
+    // for error info
+    private static void showErrorDialog(Component c, String title, String msg) {
+	JOptionPane.showMessageDialog(c, msg, title, JOptionPane.ERROR_MESSAGE);
+    }
+
 }

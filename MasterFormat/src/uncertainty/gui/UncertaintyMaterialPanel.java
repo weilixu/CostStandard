@@ -68,6 +68,7 @@ public class UncertaintyMaterialPanel extends JPanel implements TreeSelectionLis
 	    } catch (Exception e) {
 		e.printStackTrace();
 	    }
+	    tree.setEnabled(false);
 	    //model.getConstructionCostVector(constructionName);
 	}
     }

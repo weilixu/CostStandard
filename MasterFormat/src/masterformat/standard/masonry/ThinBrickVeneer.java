@@ -13,7 +13,6 @@ public class ThinBrickVeneer extends AbstractMasonry {
     // shows any special charactor the type of brick might have
     private String specialCharacter;
 
-
     public ThinBrickVeneer() throws Exception {
 	unit = "$/m2";
 	hierarchy = "042100 Clay Unit Masonry:042113 Brick Masonry:042113.14 Thin Brick Veneer";
@@ -32,7 +31,7 @@ public class ThinBrickVeneer extends AbstractMasonry {
 			    + "user=root&password=911383");
 
 	    statement = connect.createStatement();
-	    
+
 	    resultSet = statement
 		    .executeQuery("select * from masonry.brickmasonry where type='"
 			    + brickType + "'");
@@ -45,7 +44,9 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	    }
 
 	    resultSet = statement
-		    .executeQuery("select * from masonry.specialcharacter where masonryname = '" + brickType+"' and description = '"
+		    .executeQuery("select * from masonry.specialcharacter where masonryname = '"
+			    + brickType
+			    + "' and description = '"
 			    + specialCharacter + "'");
 	    while (resultSet.next()) {
 		factor[materialIndex] = resultSet.getDouble("materialfactor");
@@ -63,11 +64,11 @@ public class ThinBrickVeneer extends AbstractMasonry {
 		    cost = multiOperation(cost, factor);
 		}
 	    }
-	    description = TAG + " "+brickType;
+	    description = TAG + " " + brickType;
 	    costVector = cost;
 	} catch (SQLException e) {
 	    e.printStackTrace();
-	}finally{
+	} finally {
 	    close();
 	}
     }
@@ -88,7 +89,41 @@ public class ThinBrickVeneer extends AbstractMasonry {
 
     @Override
     public void setVariable(String[] surfaceProperties) {
-	// there is nothing to map it from EnergyPlus to this class
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from masonry.brickmasonry where masonryname='"
+			    + TAG + "'");
+	    while (resultSet.next()) {
+		descriptionList.add(resultSet.getString("type"));
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+    }
+    
+    @Override
+    public double randomDrawTotalCost(){
+	try{
+	    connect = DriverManager.getConnection("jdbc:mysql://localhost/concrete?"
+		    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    int index = randGenerator.nextInt(descriptionList.size());
+	    resultSet = statement.executeQuery("select * from masonry.brickmasonry where MASONRYNAME= '"
+			    + TAG + "' and type = '"+descriptionList.get(index)+"'");
+	    resultSet.next();
+	    return resultSet.getDouble("totalCost");
+	}catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	return 0.0;
     }
 
     protected void initializeData() {
@@ -103,12 +138,12 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	    resultSet = statement
 		    .executeQuery("select type from masonry.brickmasonry where MASONRYNAME= '"
 			    + TAG + "'");
-	    
+
 	    // initialize the default bricktype
 	    resultSet.next();
 	    brickType = resultSet.getString("type");
-	    userInputs.add("OPTION:BrickType:"+brickType);
-	    
+	    userInputs.add("OPTION:BrickType:" + brickType);
+
 	    while (resultSet.next()) {
 		userInputs.add("OPTION:BrickType:"
 			+ resultSet.getString("type"));
@@ -118,12 +153,12 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	    resultSet = statement
 		    .executeQuery("select description from masonry.specialcharacter where MASONRYNAME= '"
 			    + TAG + "'");
-	    
+
 	    // initialize the default special character
 	    resultSet.next();
 	    specialCharacter = resultSet.getString("description");
-	    userInputs.add("OPTION:SpecialCharacter:"+specialCharacter);
-	    
+	    userInputs.add("OPTION:SpecialCharacter:" + specialCharacter);
+
 	    while (resultSet.next()) {
 		userInputs.add("OPTION:SpecialCharacter:"
 			+ resultSet.getString("description"));
@@ -131,8 +166,8 @@ public class ThinBrickVeneer extends AbstractMasonry {
 
 	} catch (Exception e) {
 	    e.printStackTrace();
-	} finally{
-	    //we need to close the connection
+	} finally {
+	    // we need to close the connection
 	    close();
 	}
     }

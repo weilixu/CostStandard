@@ -36,6 +36,63 @@ public class CastInPlaceWall extends AbstractConcrete {
 	} catch (NumberFormatException e) {
 	    userInputs.add("INPUT:Thickness:m");
 	}
+	
+	try{
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from concrete.castinplace where construction = '"
+			    + TAG
+			    + "' and height >= '"
+			    + height
+			    + "' and thickness >= '"
+			    + thickness+"'");
+	    
+	    while(resultSet.next()){
+		descriptionList.add(resultSet.getString("type"));
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+    }
+    
+    @Override
+    public double randomDrawTotalCost(){
+	double numMaterial = 1.0;
+	try{
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    
+	    if(!descriptionList.isEmpty()){
+		int index = randGenerator.nextInt(descriptionList.size());
+		    resultSet = statement
+			    .executeQuery("select * from concrete.castinplace where construction = '"
+				    + TAG
+				    + "' and type = '"+descriptionList.get(index)+"'");
+		    resultSet.next();
+	    }else{
+		resultSet = statement
+			.executeQuery("select * from concrete.castinplace where construction = '"
+				+ TAG
+				+ "' and totalcost = (select max(totalcost) from concrete.castinplace where construction = '"
+				+ TAG + "');");
+		    resultSet.next();
+		numMaterial = Math.ceil(thickness/resultSet.getDouble("thickness"));
+	    }
+	    return resultSet.getDouble("totalcost") * resultSet.getDouble("thickness")*numMaterial;
+	}catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	//hopefully we won't reach here
+	return 0.0;
     }
 
     @Override

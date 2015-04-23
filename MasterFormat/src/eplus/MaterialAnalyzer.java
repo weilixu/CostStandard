@@ -9,6 +9,7 @@ import java.util.Set;
 
 import masterformat.api.MasterFormat;
 import eplus.IdfReader.ValueNode;
+import eplus.htmlparser.EnergyPlusHTMLParser;
 
 /**
  * Currently material Analyzer could extract the following information: Floor
@@ -22,12 +23,15 @@ import eplus.IdfReader.ValueNode;
  */
 public class MaterialAnalyzer {
     private final IdfReader reader;
+    private final EnergyPlusHTMLParser parser;
+
     private HashMap<String, ArrayList<Material>> constructionMap;
+    private HashMap<String, Double> constructionAreaMap;
     private static final Set<String> surfaceTypeList = new HashSet<String>();
     private static final Set<String> ceilingHeightList = new HashSet<String>();
-    private static String surfaceType=null;
+    private static String surfaceType = null;
     private static String floorArea = null;
-    private static String ceilingHeight=null;
+    private static String ceilingHeight = null;
 
     private final int stringArraySize = 8;
     private final DecimalFormat df = new DecimalFormat("###.##");
@@ -48,16 +52,19 @@ public class MaterialAnalyzer {
     protected final int specificHeatIndex = 6;
     protected final int resistanceIndex = 7;
 
-    private static final String[] defaultCostData = { "Unknown", "","0", "0", "0",
-	    "0", "0" };
+    private static final String[] defaultCostData = { "Unknown", "", "0", "0",
+	    "0", "0", "0" };
     // the size of cost items (for the table display purpose)
     private final Integer rowElement = 7;
 
-    public MaterialAnalyzer(IdfReader reader) {
+    public MaterialAnalyzer(IdfReader reader, EnergyPlusHTMLParser p) {
 	this.reader = reader;
+	parser = p;
 	constructionMap = new HashMap<String, ArrayList<Material>>();
+	constructionAreaMap = new HashMap<String, Double>();
 	processMaterialRawDatafromMaterials();
 	processMaterialRawDatafromSurface();
+	processConstructionAreaMap();
     }
 
     /**
@@ -80,6 +87,30 @@ public class MaterialAnalyzer {
     }
 
     /**
+     * get the random total cost for the construction
+     * 
+     * @param cons
+     * @return
+     */
+    protected double getTotalCostForConstruction() {
+	Double totalConstructionCost = 0.0;
+	Set<String> constructionList = constructionMap.keySet();
+	Iterator<String> constructionIterator = constructionList.iterator();
+	while (constructionIterator.hasNext()) {
+	    String cons = constructionIterator.next();
+	    Double area = constructionAreaMap.get(cons);
+	    ArrayList<Material> materialList = constructionMap.get(cons);
+	    double totalCost = 0.0;
+	    for (Material m : materialList) {
+		totalCost += m.getRandomTotalCost();
+	    }
+	    totalConstructionCost += totalCost * area;
+	    System.out.println("This "+cons+" has area of "+area+" with unit cost of "+ totalCost+" and the cumulative total is: "+totalConstructionCost);
+	}
+	return totalConstructionCost;
+    }
+
+    /**
      * get the cost list for a specific construction
      * 
      * @param cons
@@ -93,9 +124,9 @@ public class MaterialAnalyzer {
 	Double totalEquipment = 0.0;
 	Double totalTotal = 0.0;
 	Double totalTotalOP = 0.0;
-	
-	String generalUnit =materialList.get(0).getMaterialUnit();
-	
+
+	String generalUnit = materialList.get(0).getMaterialUnit();
+
 	for (int i = 0; i < materialList.size(); i++) {
 	    Material m = materialList.get(i);
 	    String[] costVector = new String[rowElement];
@@ -117,9 +148,10 @@ public class MaterialAnalyzer {
 		costList[i] = defaultCostData;
 	    }
 	}
-	String[] totalVector = { "Total", generalUnit,df.format(totalMaterial),
-		df.format(totalLabor), df.format(totalEquipment),
-		df.format(totalTotal), df.format(totalTotalOP) };
+	String[] totalVector = { "Total", generalUnit,
+		df.format(totalMaterial), df.format(totalLabor),
+		df.format(totalEquipment), df.format(totalTotal),
+		df.format(totalTotalOP) };
 	costList[costList.length - 1] = totalVector;
 	return costList;
     }
@@ -181,6 +213,19 @@ public class MaterialAnalyzer {
 		fillInMaterialData(newMaterial);
 		constructionMap.get(name).add(newMaterial);
 	    }
+	}
+    }
+
+    /**
+     * process the construction list
+     */
+    private void processConstructionAreaMap() {
+	Set<String> constructionList = constructionMap.keySet();
+	Iterator<String> constructionIterator = constructionList.iterator();
+	while (constructionIterator.hasNext()) {
+	    String cons = constructionIterator.next();
+	    Double area = parser.getConstrucitonArea(cons);
+	    constructionAreaMap.put(cons, area);
 	}
     }
 
@@ -288,7 +333,7 @@ public class MaterialAnalyzer {
 		if (nodes.get(i).getDescription().equals("Construction Name")
 			&& nodes.get(i).getAttribute().equals(cons)) {
 		    // the surface type is the previous node
-		    String tempSurfaceType = nodes.get(i-1).getAttribute();
+		    String tempSurfaceType = nodes.get(i - 1).getAttribute();
 		    // get the data from zone object
 		    String[] zoneRelatedData = findZoneRelatedData(nodes.get(
 			    i + 1).getAttribute());
@@ -307,37 +352,42 @@ public class MaterialAnalyzer {
 		    if (ceilingHeight == null) {
 			ceilingHeight = tempCeilingHeight;
 		    }
-		    
-		    if(surfaceTypeList.contains(tempSurfaceType)){
-			//condition when there is a copied surface type created
-			//it only requires to change the construction name field in the surface
-			String copiedName = cons+"_"+tempSurfaceType;
+
+		    if (surfaceTypeList.contains(tempSurfaceType)) {
+			// condition when there is a copied surface type created
+			// it only requires to change the construction name
+			// field in the surface
+			String copiedName = cons + "_" + tempSurfaceType;
 			reader.editExistObjectsOnOneElement(surface,
 				surfaceCount, "Construction Name", copiedName);
-			
+
 			ArrayList<Material> temp = constructionMap.get(cons);
 			setForAll(temp, tempFloorArea, tempCeilingHeight,
 				tempSurfaceType);
-			
-		    }else if(ceilingHeightList.contains(tempCeilingHeight)){
-			//condition when there is a copied surface type created
-			//it only rquires to change the construction name field in the surface
-			String copiedName = cons+" "+tempCeilingHeight;
+
+		    } else if (ceilingHeightList.contains(tempCeilingHeight)) {
+			// condition when there is a copied surface type created
+			// it only rquires to change the construction name field
+			// in the surface
+			String copiedName = cons + " " + tempCeilingHeight;
 			reader.editExistObjectsOnOneElement(surface,
 				surfaceCount, "Construction Name", copiedName);
-			
+
 			ArrayList<Material> temp = constructionMap.get(cons);
 			setForAll(temp, tempFloorArea, tempCeilingHeight,
 				tempSurfaceType);
-			
-		    }else if (!tempSurfaceType.equals(surfaceType)){
-			// condition when there is difference between surfacetype and tempsurfacetype
-			//it will create a new copy in the domain model
-			//and then change the construction name field in the surface
+
+		    } else if (!tempSurfaceType.equals(surfaceType)) {
+			// condition when there is difference between
+			// surfacetype and tempsurfacetype
+			// it will create a new copy in the domain model
+			// and then change the construction name field in the
+			// surface
 			String tempCount = reader.copyExistingEplusObject(
 				construction, constructionCount);
-			String copiedName = cons+"_"+tempSurfaceType;
-			reader.editExistObjectsOnOneElementFromCount(construction, tempCount, "Name",copiedName);
+			String copiedName = cons + "_" + tempSurfaceType;
+			reader.editExistObjectsOnOneElementFromCount(
+				construction, tempCount, "Name", copiedName);
 			reader.editExistObjectsOnOneElementFromCount(surface,
 				surfaceCount, "Construction Name", copiedName);
 			surfaceTypeList.add(tempSurfaceType);
@@ -347,18 +397,20 @@ public class MaterialAnalyzer {
 			setForAll(temp, tempFloorArea, tempCeilingHeight,
 				tempSurfaceType);
 			constructionMap.put(copiedName, temp);
-			
-		    }else if(!tempCeilingHeight.equals(ceilingHeight)) {
-			// condition when there is difference between ceiling height and ceiling height
+
+		    } else if (!tempCeilingHeight.equals(ceilingHeight)) {
+			// condition when there is difference between ceiling
+			// height and ceiling height
 			// it will create a new copy in the domain model
-			// and then change the construction name field in the surface
+			// and then change the construction name field in the
+			// surface
 			// copy the existing construction
 			String tempCount = reader.copyExistingEplusObject(
 				construction, constructionCount);
-			String copiedName = cons + "_"+ceilingHeight;
+			String copiedName = cons + "_" + ceilingHeight;
 			// change the copied construction name
-			reader.editExistObjectsOnOneElementFromCount(construction,
-				tempCount, "Name", copiedName);
+			reader.editExistObjectsOnOneElementFromCount(
+				construction, tempCount, "Name", copiedName);
 
 			// change the current surface element's construction
 			// name
@@ -421,15 +473,15 @@ public class MaterialAnalyzer {
 	if (data[1] == "" || data[1].equals("autocalculate")) {
 	    data[1] = "";
 	}
-	
-	try{
+
+	try {
 	    Double v = Double.parseDouble(volume);
 	    Double f = Double.parseDouble(data[0]);
 	    Double c = v / f;
 	    String ceiling = df.format(c);
-	    data[1] = ceiling; 
-	}catch(NumberFormatException e){
-	    //do nothing
+	    data[1] = ceiling;
+	} catch (NumberFormatException e) {
+	    // do nothing
 	}
 	return data;
     }
@@ -504,9 +556,9 @@ public class MaterialAnalyzer {
 	    }
 	    return material.getDescription();
 	}
-	
-	public String getMaterialUnit(){
-	    if(material==null){
+
+	public String getMaterialUnit() {
+	    if (material == null) {
 		return "";
 	    }
 	    return material.getUnit();
@@ -552,6 +604,10 @@ public class MaterialAnalyzer {
 
 	public void setUserInputs(HashMap<String, String> map) {
 	    material.setUserInputs(map);
+	}
+
+	public double getRandomTotalCost() {
+	    return material.randomDrawTotalCost();
 	}
 
 	/**

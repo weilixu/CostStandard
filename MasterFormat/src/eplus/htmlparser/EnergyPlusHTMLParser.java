@@ -19,6 +19,7 @@ public class EnergyPlusHTMLParser {
     private CentralPlantSummary plantSummary;
     private InteriorLightingSummary lightSummary;
     private LineItemCostSummary itemCostSummary;
+    private EnvelopeSummary envelopeSummary;
 
     public EnergyPlusHTMLParser(File f) {
 	htmlFile = f;
@@ -32,6 +33,7 @@ public class EnergyPlusHTMLParser {
 	    plantSummary = new CentralPlantSummary(doc);
 	    lightSummary = new InteriorLightingSummary(doc);
 	    itemCostSummary = new LineItemCostSummary(doc);
+	    envelopeSummary = new EnvelopeSummary(doc);
 	} catch (IOException e) {
 	    // do nothing
 	}
@@ -152,5 +154,9 @@ public class EnergyPlusHTMLParser {
     
     public LineItemCostSummary getCostSummary(){
 	return itemCostSummary;
+    }
+    
+    public Double getConstrucitonArea(String cons){
+	return envelopeSummary.getConstructionArea(cons);
     }
 }

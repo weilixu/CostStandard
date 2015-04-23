@@ -17,6 +17,7 @@ abstract class AbstractConcrete extends AbstractMasterFormatComponent implements
     
     public AbstractConcrete(){
 	userInputs = new ArrayList<String>();
+	descriptionList = new ArrayList<String>();
 	unit = "m2";
 	hierarchy = "030000 Concrete";
 	initializeData();

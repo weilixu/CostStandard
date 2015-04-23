@@ -75,4 +75,10 @@ public interface MasterFormat {
      */
     public ArrayList<Integer> getQuantitiesFromObjects();
     
+    /**
+     * random draw a total cost from database
+     * @return
+     */
+    public double randomDrawTotalCost();
+    
 }

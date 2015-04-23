@@ -2,7 +2,6 @@ package masterformat.standard.thermalmoistureprotection;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -233,6 +232,25 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 	    userInputs.add("INPUT:Rvalue:m2K/W");
 	}
 	insulationConstruction = surfaceProperties[surfaceTypeIndex];
+	
+	try{
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from insulation.thermalinsulation where rvalue <= '"
+			    + rvalue +"'");
+	    
+	    while(resultSet.next()){
+		descriptionList.add(resultSet.getString("description"));
+	    }
+	    
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
     }
 
     private void addFacedValue() {
@@ -262,5 +280,37 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 	} finally {
 	    close();
 	}
+    }
+    
+    @Override
+    public double randomDrawTotalCost(){
+	double numMaterial = 1.0;
+	try{
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    
+	    if(!descriptionList.isEmpty()){
+		int index = randGenerator.nextInt(descriptionList.size());
+		    resultSet = statement
+			    .executeQuery("select * from insulation.thermalinsulation where description = '"
+				    +descriptionList.get(index)+"'");
+		    resultSet.next();
+		numMaterial = Math.round(rvalue/resultSet.getDouble("rvalue"));
+	    }else{
+		resultSet = statement
+			.executeQuery("select * from insulation.thermalinsulation where totalcost = (select min(totalcost) from insulation.thermalinsulation)");
+		    resultSet.next();
+		numMaterial = Math.ceil(thickness/resultSet.getDouble("thickness"));
+	    }
+	    return resultSet.getDouble("totalcost") * numMaterial;
+	}catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	//hopefully we won't reach here
+	return 0.0;
     }
 }

@@ -32,6 +32,7 @@ abstract class AbstractThermalMoistureProtection extends AbstractMasterFormatCom
 	userInputs = new ArrayList<String>();
 	optionLists = new ArrayList<String>();
 	optionQuantities = new ArrayList<Integer>();
+	descriptionList = new ArrayList<String>();
 	unit = "m2";
 	hierarchy = "070000 Thermal & Moisture Protection";
 	initializeData();

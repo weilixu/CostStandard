@@ -18,6 +18,7 @@ abstract class AbstractMasonry extends AbstractMasterFormatComponent implements 
     public AbstractMasonry(){
 	optionLists = new ArrayList<String>();
 	optionQuantities = new ArrayList<Integer>();
+	descriptionList = new ArrayList<String>();
 	userInputs = new ArrayList<String>();
 	unit = "m2";
 	hierarchy = "040000 Masonry";

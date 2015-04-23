@@ -70,7 +70,6 @@ public class EnergyPlusModel {
 	try {
 	    masterformat = new MasterFormatModel();
 	} catch (Exception e1) {
-	    // TODO Auto-generated catch block
 	    e1.printStackTrace();
 	}
 
@@ -95,6 +94,11 @@ public class EnergyPlusModel {
 	setUpUnitaryAnalyzer();
 	setUpConvectionUnitAnalyzer();
 	setUpElectricalAnalyzer();
+    }
+    
+    public void calculateBudget(){
+	double construction = materialModule.getTotalCostForConstruction();
+	System.out.println("construction cost = "+ construction);
     }
 
     /**
@@ -193,7 +197,7 @@ public class EnergyPlusModel {
      */
     public String[][] getMaterialTableData(String cons) {
 	return materialModule.getCostListForConstruction(cons);
-    }
+    }    
 
     // All the methods to Map the masterformat to EnergyPlus domain
 
@@ -405,7 +409,6 @@ public class EnergyPlusModel {
     
     // All the methods to get the options under one category and quantities
     public void getFanOptionList(String fanName) {
-	System.out.println(fanName);
 	ArrayList<String> list = fanModule.getFan(fanName).getOptionList();
 	String[] temp = new String[list.size()];
 	for (int i = 0; i < list.size(); i++) {
@@ -766,7 +769,7 @@ public class EnergyPlusModel {
     }
 
     private void setUpMaterialAnalyzer() {
-	materialModule = new MaterialAnalyzer(idfDomain);
+	materialModule = new MaterialAnalyzer(idfDomain, htmlParser);
     }
 
     private void setUpBoilerAnalyzer() {
