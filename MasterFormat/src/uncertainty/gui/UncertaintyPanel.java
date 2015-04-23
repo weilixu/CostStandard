@@ -27,7 +27,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import masterformat.gui.LightsPanel;
 import eplus.EnergyPlusModel;
 import eplus.MaterialAnalyzer.Material;
 
@@ -41,6 +40,8 @@ public class UncertaintyPanel extends JPanel{
     private final JPanel itemPanel;
     private final JPanel constructionPanel;
     private final JPanel lightsPanel;
+    private final JPanel fanPanel;
+
     private final JPanel controllPanel;
     
     private final JComboBox<String> objectSelectionCombo;
@@ -50,6 +51,9 @@ public class UncertaintyPanel extends JPanel{
     private DefaultListModel<String> lightsListModel;
     private JList<String> lightsList;
     private JScrollPane lightsScrollPane;
+    private JList<String> fanList;
+    private JScrollPane fanListScrollPane;
+    private DefaultListModel<String> fanListModel;
     
     private final JButton budgetButton;
     private final String BUDGET="Calculate Budget";
@@ -71,6 +75,10 @@ public class UncertaintyPanel extends JPanel{
 	constructionPanel = new JPanel(new CardLayout());
 	constructionPanel.setBackground(Color.WHITE);
 	updateConstructions();
+	
+	fanPanel = new JPanel(new CardLayout());
+	fanPanel.setBackground(Color.WHITE);
+	updateFans();
 	
 	lightsPanel = new JPanel(new CardLayout());
 	lightsPanel.setBackground(Color.WHITE);
@@ -108,6 +116,21 @@ public class UncertaintyPanel extends JPanel{
 
 		    itemPanel.add(lightsPanel, BorderLayout.CENTER);
 		    EnergyPlusObjectPanel.add(lightsScrollPane,
+			    BorderLayout.CENTER);
+
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
+		}else if (category.equals("Fan")) {
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+
+		    itemPanel.add(fanPanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(fanListScrollPane,
 			    BorderLayout.CENTER);
 
 		    itemPanel.revalidate();
@@ -173,6 +196,35 @@ public class UncertaintyPanel extends JPanel{
  	}
  	constructionListScrollPane = new JScrollPane(constructionList);
      }
+    
+    private void updateFans() {
+	fanListModel = new DefaultListModel<String>();
+	fanList = new JList<String>(fanListModel);
+	fanList.setFont(new Font("Helvetica", Font.BOLD, 20));
+
+	String[] fans = model.getFanList();
+	fanListModel.clear();
+	for (String f : fans) {
+	    // model.setFanMasterFormat(f);
+	    JPanel fan = new UncertaintyFanPanel(model, f);// need to change this
+
+	    fanPanel.add(fan,f);
+	    fanListModel.addElement(f);
+	    fanList.addListSelectionListener(new ListSelectionListener() {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    CardLayout cardLayout = (CardLayout) (fanPanel.getLayout());
+		    String selection = fanList.getSelectedValue().toString();
+		    if (selection.equals(f)) {
+			cardLayout.show(fanPanel, selection);
+		    }
+		    model.getFanCostVector(selection);
+		}
+	    });
+	}
+	fanListScrollPane = new JScrollPane(fanList);
+    }
     
     
     public void updateLightsPanel(){

@@ -45,6 +45,25 @@ public class FanAnalyzer {
 	processFanRawDatafromFans();
     }
     
+    /**
+     * get the random total cost for the fans
+     * 
+     * @param cons
+     * @return
+     */
+    protected double getTotalCostForFan() {
+	Double totalFanCosts = 0.0;
+	Set<String> fanList = fanMap.keySet();
+	Iterator<String> fanIterator = fanList.iterator();
+	while (fanIterator.hasNext()) {
+	    String fan = fanIterator.next();
+	    double totalcost = fanMap.get(fan).getRandomTotalCost();
+	    totalFanCosts+=totalcost;
+	    System.out.println("This "+fan+" unit cost of "+ totalcost+" and the cumulative total is: "+totalFanCosts);
+	}
+	return totalFanCosts;
+    }
+    
     protected String[][] getCostListForFan(String fan){
 	Fan f = fanMap.get(fan);	
 	String[][] costList = new String[1][rowElement];
@@ -305,6 +324,10 @@ public class FanAnalyzer {
 	    }
 
 	    return fan.getCostVector();
+	}
+	
+	public double getRandomTotalCost() {
+	    return fan.randomDrawTotalCost();
 	}
 	
 	public Fan clone() {

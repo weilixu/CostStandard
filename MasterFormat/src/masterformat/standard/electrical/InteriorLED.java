@@ -190,9 +190,6 @@ public class InteriorLED extends AbstractElectrical {
 	    resultSet = statement
 		    .executeQuery("select * from lighting.interiorled where type = '"
 			    + type + "'  and mount = '" + mount + "'");
-	    System.out
-		    .println("select * from lighting.interiorled where type = '"
-			    + type + "'  and mount = '" + mount + "'");
 	    // initialize the default pump type
 	    resultSet.next();
 	    dimension = resultSet.getString("dimension");

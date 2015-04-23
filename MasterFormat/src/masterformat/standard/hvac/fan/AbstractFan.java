@@ -15,6 +15,7 @@ public abstract class AbstractFan extends AbstractMasterFormatComponent implemen
 	userInputs = new ArrayList<String>();
 	optionLists = new ArrayList<String>();
 	optionQuantities = new ArrayList<Integer>();
+	descriptionList = new ArrayList<String>();
 	unit = "Ea.";
 	hierarchy = "233400 HVAC Fans";
 	initializeData();

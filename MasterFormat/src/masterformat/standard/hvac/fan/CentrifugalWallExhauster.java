@@ -39,6 +39,24 @@ public class CentrifugalWallExhauster extends AbstractFan {
 	} catch (NumberFormatException e) {
 	    userInputs.add("INPUT:Flow Rate:m3/s");
 	}
+	
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/hvac?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    resultSet = statement
+		    .executeQuery("select * from hvacfan.centrifugalwallexhauster");
+
+	    while (resultSet.next()) {
+		descriptionList.add(resultSet.getString("description"));
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
     }
 
     @Override
@@ -65,6 +83,35 @@ public class CentrifugalWallExhauster extends AbstractFan {
 	} finally {
 	    close();
 	}
+    }
+    
+    @Override
+    public double randomDrawTotalCost() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    int index = randGenerator.nextInt(descriptionList.size());
+	    resultSet = statement
+		    .executeQuery("select * from hvacfan.centrifugalwallexhauster where description = '"
+			    + descriptionList.get(index) + "'");
+	    resultSet.next();
+	    double unitFlowRate = resultSet.getDouble("flowrate");
+	    if (unitFlowRate > flowRate) {
+		return resultSet.getDouble("totalcost");
+	    } else {
+		return resultSet.getDouble("totalcost")
+			* Math.ceil(flowRate / unitFlowRate);
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	// hopefully we won't reach here
+	return 0.0;
     }
 
     @Override

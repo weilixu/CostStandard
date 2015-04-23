@@ -98,8 +98,9 @@ public class EnergyPlusModel {
     
     public void calculateBudget(){
 	//double construction = materialModule.getTotalCostForConstruction();
-	double electric = electricalModule.getTotalCostForLighting();
-	System.out.println("electrical cost = "+ electric);
+	//double electric = electricalModule.getTotalCostForLighting();
+	double fan = fanModule.getTotalCostForFan();
+	System.out.println("fan cost = "+ fan);
     }
 
     /**
