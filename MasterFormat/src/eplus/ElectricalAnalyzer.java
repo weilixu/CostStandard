@@ -8,7 +8,6 @@ import java.util.Set;
 
 import masterformat.api.MasterFormat;
 import eplus.IdfReader.ValueNode;
-import eplus.MaterialAnalyzer.Material;
 import eplus.htmlparser.EnergyPlusHTMLParser;
 
 public class ElectricalAnalyzer {

@@ -16,7 +16,7 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
     private String insulationConstruction;
     // see the insulation material
     private String material;
-    // see if the insulaiton is faced or unfaced
+    // see if the insulation is faced or unfaced
     private String faced;
     // the R-value of the insulation
     private double rvalue;
@@ -240,7 +240,7 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from insulation.thermalinsulation where rvalue <= '"
-			    + rvalue +"'");
+			    + rvalue +"' and construction = '" + insulationConstruction+"'");
 	    
 	    while(resultSet.next()){
 		descriptionList.add(resultSet.getString("description"));
