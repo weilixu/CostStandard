@@ -25,6 +25,11 @@ import masterformat.listener.BoilerListener;
 import eplus.EnergyPlusModel;
 
 public class BoilerPanel extends JPanel implements BoilerListener{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private final static String TAG = "Boiler";
     
     private final JPanel editorPanel;

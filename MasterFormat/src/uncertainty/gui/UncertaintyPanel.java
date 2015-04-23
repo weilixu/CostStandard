@@ -27,6 +27,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import masterformat.gui.BoilerPanel;
 import eplus.EnergyPlusModel;
 import eplus.MaterialAnalyzer.Material;
 
@@ -41,6 +42,7 @@ public class UncertaintyPanel extends JPanel{
     private final JPanel constructionPanel;
     private final JPanel lightsPanel;
     private final JPanel fanPanel;
+    private final JPanel boilerPanel;
 
     private final JPanel controllPanel;
     
@@ -54,13 +56,16 @@ public class UncertaintyPanel extends JPanel{
     private JList<String> fanList;
     private JScrollPane fanListScrollPane;
     private DefaultListModel<String> fanListModel;
+    private JList<String> boilerList;
+    private JScrollPane boilerListScrollPane;
+    private DefaultListModel<String> boilerListModel;
     
     private final JButton budgetButton;
     private final String BUDGET="Calculate Budget";
     
     private final EnergyPlusModel model;
     
-    public UncertaintyPanel(EnergyPlusModel m){
+    public UncertaintyPanel(EnergyPlusModel m) throws Exception{
 	model = m;
 	setLayout(new BorderLayout());
 
@@ -84,6 +89,9 @@ public class UncertaintyPanel extends JPanel{
 	lightsPanel.setBackground(Color.WHITE);
 	updateLightsPanel();
 	
+	boilerPanel = new JPanel(new CardLayout());
+	boilerPanel.setBackground(Color.WHITE);
+	updateBoilers();
 	
 	// initialize the selection combo list
 	objectSelectionCombo = new JComboBox<String>(model.getDomainList());
@@ -131,6 +139,21 @@ public class UncertaintyPanel extends JPanel{
 
 		    itemPanel.add(fanPanel, BorderLayout.CENTER);
 		    EnergyPlusObjectPanel.add(fanListScrollPane,
+			    BorderLayout.CENTER);
+
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
+		} else if (category.equals("Boiler")) {
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+
+		    itemPanel.add(boilerPanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(boilerListScrollPane,
 			    BorderLayout.CENTER);
 
 		    itemPanel.revalidate();
@@ -224,6 +247,39 @@ public class UncertaintyPanel extends JPanel{
 	    });
 	}
 	fanListScrollPane = new JScrollPane(fanList);
+    }
+    
+    private void updateBoilers() throws Exception {
+	boilerListModel = new DefaultListModel<String>();
+	boilerList = new JList<String>(boilerListModel);
+	boilerList.setFont(new Font("Helvetica", Font.BOLD, 20));
+
+	String[] boilers = model.getBoilerList();
+	boilerListModel.clear();
+	for (String s : boilers) {
+
+	    model.setBoilerMasterFormat(s);
+	    JPanel boiler = new UncertaintyBoilerPanel(model, s);// need to change this
+	    boilerPanel.add(boiler, s);
+
+	    boilerListModel.addElement(s);
+	    boilerList.addListSelectionListener(new ListSelectionListener() {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    CardLayout cardLayout = (CardLayout) (boilerPanel
+			    .getLayout());
+		    String selection = boilerList.getSelectedValue().toString();
+		    if (selection.equals(s)&& e.getValueIsAdjusting()==true) {
+			cardLayout.show(boilerPanel, selection);
+			model.getBoilerCostVector(selection);
+		    }
+		}
+	    });
+
+	}
+
+	boilerListScrollPane = new JScrollPane(boilerList);
     }
     
     

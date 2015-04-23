@@ -37,11 +37,13 @@ public class HotWaterBoiler extends AbstractBoiler {
 	    sourceType = surfaceProperties[sourceTypeIndex];
 	    if (sourceType.equals("Electricity")) {
 		sourceType = "Electric";
-	    } else if (sourceType.equals("NaturalGas")||sourceType.equals("PropaneGas")){
+	    } else if (sourceType.equals("NaturalGas")
+		    || sourceType.equals("PropaneGas")) {
 		sourceType = "Gas";
-	    }else if(sourceType.equals("Diesel")||sourceType.equals("Gasoline")){
+	    } else if (sourceType.equals("Diesel")
+		    || sourceType.equals("Gasoline")) {
 		sourceType = "Oil";
-	    }else{
+	    } else {
 		sourceType = "Gas//Oil";
 	    }
 	}
@@ -51,6 +53,57 @@ public class HotWaterBoiler extends AbstractBoiler {
 	} catch (NumberFormatException e) {
 	    userInputs.add("INPUT:Power:Watt");
 	}
+
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    resultSet = statement
+		    .executeQuery("select * from hvac.heatingboilers where media ='hot water' and source = '"
+			    + sourceType + "' and capacity <= '" + power + "'");
+	    while (resultSet.next()) {
+		descriptionList.add(resultSet.getString("description"));
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+    }
+
+    @Override
+    public double randomDrawTotalCost() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    if (!descriptionList.isEmpty()) {
+		int index = randGenerator.nextInt(descriptionList.size());
+		resultSet = statement
+			.executeQuery("select * from hvac.heatingboilers where description = '"
+				+ descriptionList.get(index) + "'");
+		resultSet.next();
+		double unitPower = resultSet.getDouble("capacity");
+		return resultSet.getDouble("totalcost")
+			* Math.ceil(power / unitPower);
+	    } else {
+		resultSet = statement
+			.executeQuery("select * from hvac.heatingboilers where media ='hot water' and source = '"
+				+ sourceType + "' order by totalcost");
+		resultSet.next();
+		return resultSet.getDouble("totalCost");
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	// hopefully we won't reach here
+	return 0.0;
     }
 
     @Override
@@ -64,7 +117,7 @@ public class HotWaterBoiler extends AbstractBoiler {
 	optionLists.clear();
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
-	//Double[] factor = new Double[numOfCostElement];
+	// Double[] factor = new Double[numOfCostElement];
 	try {
 	    connect = DriverManager
 		    .getConnection("jdbc:mysql://localhost/hvac?"
@@ -72,7 +125,7 @@ public class HotWaterBoiler extends AbstractBoiler {
 	    statement = connect.createStatement();
 
 	    int numberOfBoiler = 1;
-	    
+
 	    resultSet = statement
 		    .executeQuery("select * from hvac.heatingboilers where media ='hot water' and source = '"
 			    + sourceType
@@ -84,8 +137,8 @@ public class HotWaterBoiler extends AbstractBoiler {
 		// capacity. We need to modularize the boiler
 		double boilerCapacity = power;
 		while (!resultSet.next()) {
-		    numberOfBoiler *=2;
-		    
+		    numberOfBoiler *= 2;
+
 		    boilerCapacity = boilerCapacity / 2;
 		    resultSet = statement
 			    .executeQuery("select * from hvac.heatingboilers where media = 'hot water' and source = '"
@@ -107,7 +160,7 @@ public class HotWaterBoiler extends AbstractBoiler {
 
 	    description = resultSet.getString("description");
 	    costVector = cost;
-	    
+
 	    optionLists.add(description);
 	    optionQuantities.add(numberOfBoiler);
 

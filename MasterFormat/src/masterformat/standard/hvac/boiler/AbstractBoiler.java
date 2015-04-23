@@ -15,6 +15,7 @@ public abstract class AbstractBoiler extends AbstractMasterFormatComponent imple
 	userInputs = new ArrayList<String>();
 	optionLists = new ArrayList<String>();
 	userInputs = new ArrayList<String>();
+	descriptionList = new ArrayList<String>();
 	unit = "Ea.";
 	hierarchy = "235200 Heating Boiler";
 	initializeData();

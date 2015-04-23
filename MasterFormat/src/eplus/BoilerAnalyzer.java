@@ -46,6 +46,25 @@ public class BoilerAnalyzer {
 	processBoilerData();
     }
     
+    /**
+     * get the random total cost for the construction
+     * 
+     * @param cons
+     * @return
+     */
+    protected double getTotalCostForBoiler() {
+	Double totalBoilerCost = 0.0;
+	Set<String> boilerList = boilerMap.keySet();
+	Iterator<String> boilerIterator = boilerList.iterator();
+	while (boilerIterator.hasNext()) {
+	    String boiler = boilerIterator.next();
+	    double totalcost = boilerMap.get(boiler).getRandomTotalCost();
+	    totalBoilerCost+=totalcost;
+	    System.out.println("This "+boiler+" unit cost of "+ totalcost+" and the cumulative total is: "+totalBoilerCost);
+	}
+	return totalBoilerCost;
+    }
+    
     protected String[][] getCostListForBoiler(String boiler){
 	BoilerObject boilerObject = boilerMap.get(boiler);
 	String[][] costList = new String[1][rowElement];
@@ -264,6 +283,10 @@ public class BoilerAnalyzer {
 	    }
 	    
 	    return boiler.getCostVector();
+	}
+	
+	public double getRandomTotalCost() {
+	    return boiler.randomDrawTotalCost();
 	}
 	
 	public BoilerObject clone(){

@@ -50,12 +50,64 @@ public class SteamBoiler extends AbstractBoiler {
 	} catch (NumberFormatException e) {
 	    userInputs.add("INPUT:Power:Watt");
 	}
+	
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    resultSet = statement
+		    .executeQuery("select * from hvac.heatingboilers where media =steam and source = '"
+			    + sourceType + "' and capacity <= '" + power + "'");
+	    while (resultSet.next()) {
+		descriptionList.add(resultSet.getString("description"));
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
     }
 
     @Override
     protected void initializeData() {
 	// there is no need to initialize data because all
 	// the data can be mapped from EnergyPlus
+    }
+    
+
+    @Override
+    public double randomDrawTotalCost() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    if (!descriptionList.isEmpty()) {
+		int index = randGenerator.nextInt(descriptionList.size());
+		resultSet = statement
+			.executeQuery("select * from hvac.heatingboilers where description = '"
+				+ descriptionList.get(index) + "'");
+		resultSet.next();
+		double unitPower = resultSet.getDouble("capacity");
+		return resultSet.getDouble("totalcost")
+			* Math.ceil(power / unitPower);
+	    } else {
+		resultSet = statement
+			.executeQuery("select * from hvac.heatingboilers where media ='steam' and source = '"
+				+ sourceType + "' order by totalcost");
+		resultSet.next();
+		return resultSet.getDouble("totalCost");
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	// hopefully we won't reach here
+	return 0.0;
     }
 
     @Override
