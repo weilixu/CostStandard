@@ -9,8 +9,8 @@ import java.util.Set;
 public class ElectricFurnaces extends AbstractFurnace {
 
     private Double power;
-        
-    public ElectricFurnaces(){
+
+    public ElectricFurnaces() {
 	unit = "$/Ea.";
 	hierarchy = "235400 Furnaces:235413 Electric-Resistance Furnaces:235413.10 Electric Furnaces";
     }
@@ -29,18 +29,64 @@ public class ElectricFurnaces extends AbstractFurnace {
 
     @Override
     public void setVariable(String[] surfaceProperties) {
-	try{
+	try {
 	    power = Double.parseDouble(surfaceProperties[powerIndex]);
-	}catch(NumberFormatException e){
+	} catch (NumberFormatException e) {
 	    userInputs.add("INPUT:Power:Watt");
+	}
+
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from hvac.furnaces where source = 'Electric'");
+
+	    while (resultSet.next()) {
+		descriptionList.add(resultSet.getString("description"));
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
 	}
     }
 
     @Override
-    protected void initializeData() {
-	//nothing to initialize
+    public double randomDrawTotalCost() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    int index = randGenerator.nextInt(descriptionList.size());
+	    resultSet = statement
+		    .executeQuery("select * from hvac.furnaces where source = 'Electric' and description = '"
+			    + descriptionList.get(index) + "'");
+	    resultSet.next();
+	    double unitPower = resultSet.getDouble("power");
+	    if (unitPower > power) {
+		return resultSet.getDouble("totalcost");
+	    } else {
+		return resultSet.getDouble("totalcost")
+			* Math.ceil(power / unitPower);
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	// hopefully we won't reach here
+	return 0.0;
     }
-    
+
+    @Override
+    protected void initializeData() {
+	// nothing to initialize
+    }
+
     @Override
     public void selectCostVector() {
 	optionLists.clear();
@@ -55,7 +101,7 @@ public class ElectricFurnaces extends AbstractFurnace {
 	    int numberOfFurnace = 1;
 
 	    resultSet = statement
-		    .executeQuery("select * from hvac.furnaces where source = electric and power>='"
+		    .executeQuery("select * from hvac.furnaces where source = 'Electric' and power>='"
 			    + power + "'");
 
 	    if (!resultSet.next()) {
@@ -66,7 +112,7 @@ public class ElectricFurnaces extends AbstractFurnace {
 		    numberOfFurnace *= 2;
 		    furnaceCapacity = furnaceCapacity / 2;
 		    resultSet = statement
-			    .executeQuery("select * from hvac.furnaces where source = electric and power>='"
+			    .executeQuery("select * from hvac.furnaces where source = 'Electric' and power>='"
 				    + furnaceCapacity + "'");
 		}
 		cost[materialIndex] = resultSet.getDouble("materialcost")

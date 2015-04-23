@@ -35,6 +35,53 @@ public class FuelFiredFurnaces extends AbstractFurnace {
 	} catch (NumberFormatException e) {
 	    userInputs.add("INPUT:Power:Watt");
 	}
+	
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from hvac.furnaces where source = 'Gas'");
+
+	    while (resultSet.next()) {
+		descriptionList.add(resultSet.getString("description"));
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+    }
+    
+
+    @Override
+    public double randomDrawTotalCost() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    int index = randGenerator.nextInt(descriptionList.size());
+	    resultSet = statement
+		    .executeQuery("select * from hvac.furnaces where source = 'Gas' and description = '"
+			    + descriptionList.get(index) + "'");
+	    resultSet.next();
+	    double unitPower = resultSet.getDouble("power");
+	    if (unitPower > power) {
+		return resultSet.getDouble("totalcost");
+	    } else {
+		return resultSet.getDouble("totalcost")
+			* Math.ceil(power / unitPower);
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	// hopefully we won't reach here
+	return 0.0;
     }
 
     @Override
@@ -56,7 +103,7 @@ public class FuelFiredFurnaces extends AbstractFurnace {
 	    int numberOfFurnace = 1;
 
 	    resultSet = statement
-		    .executeQuery("select * from hvac.furnaces where source = gas and power>='"
+		    .executeQuery("select * from hvac.furnaces where source = 'Gas' and power>='"
 			    + power + "'");
 
 	    if (!resultSet.next()) {
@@ -67,7 +114,7 @@ public class FuelFiredFurnaces extends AbstractFurnace {
 		    numberOfFurnace *=2;
 		    furnaceCapacity = furnaceCapacity / 2;
 		    resultSet = statement
-			    .executeQuery("select * from hvac.furnaces where source = gas and power>='"
+			    .executeQuery("select * from hvac.furnaces where source = 'Gas' and power>='"
 				    + furnaceCapacity + "'");
 		}
 		cost[materialIndex] = resultSet.getDouble("materialcost")

@@ -58,7 +58,7 @@ public class SteamBoiler extends AbstractBoiler {
 	    statement = connect.createStatement();
 
 	    resultSet = statement
-		    .executeQuery("select * from hvac.heatingboilers where media =steam and source = '"
+		    .executeQuery("select * from hvac.heatingboilers where media = 'steam' and source = '"
 			    + sourceType + "' and capacity <= '" + power + "'");
 	    while (resultSet.next()) {
 		descriptionList.add(resultSet.getString("description"));
@@ -125,7 +125,7 @@ public class SteamBoiler extends AbstractBoiler {
 	    int numberOfBoiler = 1;
 	    // select a qualified boiler and cheapest boiler
 	    resultSet = statement
-		    .executeQuery("select * from hvac.heatingboilers where media = steam and source ='"
+		    .executeQuery("select * from hvac.heatingboilers where media = 'steam' and source ='"
 			    + sourceType
 			    + "' and capacity >= '"
 			    + power
@@ -139,7 +139,7 @@ public class SteamBoiler extends AbstractBoiler {
 		    boilerCapacity = boilerCapacity / 2; // modularze the
 							 // capacity.
 		    resultSet = statement
-			    .executeQuery("select * from hvac.heatingboilers where media = steam and source = '"
+			    .executeQuery("select * from hvac.heatingboilers where media = 'steam' and source = '"
 				    + sourceType
 				    + "' and capacity >= '"
 				    + boilerCapacity + "' order by totalcost");

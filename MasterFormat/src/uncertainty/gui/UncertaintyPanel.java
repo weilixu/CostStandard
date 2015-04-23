@@ -27,6 +27,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import masterformat.gui.FurnacePanel;
 import eplus.EnergyPlusModel;
 import eplus.MaterialAnalyzer.Material;
 
@@ -43,6 +44,7 @@ public class UncertaintyPanel extends JPanel{
     private final JPanel fanPanel;
     private final JPanel boilerPanel;
     private final JPanel pumpPanel;
+    private final JPanel furnacePanel;
 
     private final JPanel controllPanel;
     
@@ -62,6 +64,9 @@ public class UncertaintyPanel extends JPanel{
     private DefaultListModel<String> pumpListModel;
     private JList<String> pumpList;
     private JScrollPane pumpListScrollPane;
+    private DefaultListModel<String> furnaceModel;
+    private JList<String> furnaceList;
+    private JScrollPane furnaceScrollPane;
     
     private final JButton budgetButton;
     private final String BUDGET="Calculate Budget";
@@ -99,6 +104,10 @@ public class UncertaintyPanel extends JPanel{
 	pumpPanel = new JPanel(new CardLayout());
 	pumpPanel.setBackground(Color.WHITE);
 	updatePump();
+	
+	furnacePanel = new JPanel(new CardLayout());
+	furnacePanel.setBackground(Color.WHITE);
+	updateFurnace();
 	
 	// initialize the selection combo list
 	objectSelectionCombo = new JComboBox<String>(model.getDomainList());
@@ -176,6 +185,21 @@ public class UncertaintyPanel extends JPanel{
 
 		    itemPanel.add(pumpPanel, BorderLayout.CENTER);
 		    EnergyPlusObjectPanel.add(pumpListScrollPane,
+			    BorderLayout.CENTER);
+
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
+		} else if (category.equalsIgnoreCase("Furnace")) {
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+
+		    itemPanel.add(furnacePanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(furnaceScrollPane,
 			    BorderLayout.CENTER);
 
 		    itemPanel.revalidate();
@@ -332,6 +356,41 @@ public class UncertaintyPanel extends JPanel{
  	}
  	pumpListScrollPane = new JScrollPane(pumpList);
      }
+    
+    private void updateFurnace() throws Exception {
+	furnaceModel = new DefaultListModel<String>();
+	furnaceList = new JList<String>(furnaceModel);
+	furnaceList.setFont(new Font("Helvetica", Font.BOLD, 20));
+
+	String[] furnaces = model.getFurnaceList();
+	furnaceModel.clear();
+
+	for (String f : furnaces) {
+
+	    model.setFurnaceMasterFormat(f);
+	    JPanel furnace = new UncertaintyFurnacePanel(model, f);// need to change this
+	    furnacePanel.add(furnace, f);
+
+	    furnaceModel.addElement(f);
+	    furnaceList.addListSelectionListener(new ListSelectionListener() {
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    CardLayout cardLayout = (CardLayout) (furnacePanel
+			    .getLayout());
+		    String selection = furnaceList.getSelectedValue()
+			    .toString();
+		    if (selection.equals(f)) {
+			cardLayout.show(furnacePanel, selection);
+			model.getFurnaceCostVector(selection);
+		    }
+		}
+	    });
+
+	}
+
+	furnaceScrollPane = new JScrollPane(furnaceList);
+
+    }
     
     
     public void updateLightsPanel(){

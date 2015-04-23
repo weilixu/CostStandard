@@ -15,6 +15,7 @@ public abstract class AbstractFurnace extends AbstractMasterFormatComponent impl
     public AbstractFurnace(){
 	optionLists = new ArrayList<String>();
 	optionQuantities = new ArrayList<Integer>();
+	descriptionList = new ArrayList<String>();	
 	unit = "Ea.";
 	hierarchy = "235400 Furnaces";
 	userInputs = new ArrayList<String>();

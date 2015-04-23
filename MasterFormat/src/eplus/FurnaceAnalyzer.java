@@ -43,6 +43,25 @@ public class FurnaceAnalyzer {
 	processFurnaceData();
     }
     
+    /**
+     * get the random total cost for the furnaces
+     * 
+     * @param cons
+     * @return
+     */
+    protected double getTotalCostForFurnace() {
+	Double totalFurnaceCost = 0.0;
+	Set<String> furnaceList = furnaceMap.keySet();
+	Iterator<String> furnaceIterator = furnaceList.iterator();
+	while (furnaceIterator.hasNext()) {
+	    String furnace = furnaceIterator.next();
+	    double totalcost = furnaceMap.get(furnace).getRandomTotalCost();
+	    totalFurnaceCost+=totalcost;
+	    System.out.println("This "+electric+" unit cost of "+ totalcost+" and the cumulative total is: "+totalFurnaceCost);
+	}
+	return totalFurnaceCost;
+    }
+    
     protected String[][] getCostListForFurnace(String furnace){
 	Furnace f = furnaceMap.get(furnace);
 	String[][] costList = new String[1][rowElement];
@@ -251,6 +270,10 @@ public class FurnaceAnalyzer {
 	    }
 	    
 	    return furnace.getCostVector();
+	}
+	
+	public double getRandomTotalCost() {
+	    return furnace.randomDrawTotalCost();
 	}
 	
 	public Furnace clone(){
