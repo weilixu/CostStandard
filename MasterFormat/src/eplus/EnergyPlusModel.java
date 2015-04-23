@@ -104,6 +104,7 @@ public class EnergyPlusModel {
 	//double pump = pumpModule.getTotalCostForPump();
 	//double furnace = furnaceModule.getTotalCostForFurnace();
 	double cu = condenserUnitModule.getTotalCostForCU();
+	//double convecunit = unitModule.getTotalCostForConvectionUnit();
 	System.out.println("cu cost = "+ cu);
     }
 

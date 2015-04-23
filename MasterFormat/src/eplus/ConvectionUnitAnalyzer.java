@@ -38,6 +38,25 @@ public class ConvectionUnitAnalyzer {
 	convectionUnitMap = new HashMap<String, ConvectionUnit>();
 	processConvectionUnitRawData();
     }
+    
+    /**
+     * get the random total cost for the construction
+     * 
+     * @param cons
+     * @return
+     */
+    protected double getTotalCostForConvectionUnit() {
+	Double totalCUCost = 0.0;
+	Set<String> cuList = convectionUnitMap.keySet();
+	Iterator<String> cuIterator = cuList.iterator();
+	while (cuIterator.hasNext()) {
+	    String cu = cuIterator.next();
+	    double totalcost = convectionUnitMap.get(cu).getRandomTotalCost();
+	    totalCUCost+=totalcost;
+	    System.out.println("This "+cu+" unit cost of "+ totalcost+" and the cumulative total is: "+totalCUCost);
+	}
+	return totalCUCost;
+    }
 
     protected String[][] getCostListForConvectionUnit(String unit) {
 	ConvectionUnit c = convectionUnitMap.get(unit);
@@ -229,6 +248,10 @@ public class ConvectionUnitAnalyzer {
 		return null;
 	    }
 	    return convectionUnit.getCostVector();
+	}
+	
+	public double getRandomTotalCost() {
+	    return convectionUnit.randomDrawTotalCost();
 	}
 
 	public ConvectionUnit clone() {

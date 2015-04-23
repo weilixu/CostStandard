@@ -15,6 +15,7 @@ public abstract class AbstractConvectionUnits extends AbstractMasterFormatCompon
 	userInputs = new ArrayList<String>();
 	optionLists = new ArrayList<String>();
 	optionQuantities = new ArrayList<Integer>();
+	descriptionList = new ArrayList<String>();
 	unit = "Ea.";
 	hierarchy = "238200 Convection Heating and Cooling Units";
 	initializeData();

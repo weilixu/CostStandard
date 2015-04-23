@@ -12,7 +12,7 @@ public class FanCoilAC extends AbstractConvectionUnits {
     private Double coolingCapacity;
     private boolean hotWaterCoil;
 
-    private final Double[] heatCoilFactor = { 1.4,1.1,1.0,1.0,1.0};
+    private final Double[] heatCoilFactor = { 1.4, 1.1, 1.0, 1.0, 1.0 };
 
     public FanCoilAC() {
 	unit = "$/Ea";
@@ -43,13 +43,75 @@ public class FanCoilAC extends AbstractConvectionUnits {
 	} catch (NumberFormatException e) {
 	    userInputs.add("INPUT:coolPower:Watt");
 	}
-	
+
 	String heatingCapacity = properties[heatingCapacityIndex];
-	if(heatingCapacity!=null){
+	if (heatingCapacity != null) {
 	    hotWaterCoil = true;
-	}else{
+	} else {
 	    hotWaterCoil = false;
 	}
+
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from hvac.fancoil where capacity<= '"
+			    + coolingCapacity + "'");
+
+	    while (resultSet.next()) {
+		descriptionList.add(resultSet.getString("description"));
+	    }
+	    resultSet = statement
+		    .executeQuery("select * from hvac.fancoil where capacity>= '"
+			    + coolingCapacity + "' order by capacity");
+	    if (resultSet.next()) {
+		descriptionList.add(resultSet.getString("description"));
+	    }
+
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+    }
+
+    @Override
+    public double randomDrawTotalCost() {
+	try {
+	    connect = DriverManager
+		    .getConnection("jdbc:mysql://localhost/concrete?"
+			    + "user=root&password=911383");
+	    statement = connect.createStatement();
+
+	    int index = randGenerator.nextInt(descriptionList.size());
+
+	    resultSet = statement
+		    .executeQuery("select * from hvac.fancoil where description = '"
+			    + descriptionList.get(index) + "'");
+	    resultSet.next();
+	    double unitPower = resultSet.getDouble("capacity");
+	    double numOfEquip = Math.ceil(coolingCapacity / unitPower);
+	    double cost = 0.0;
+	    if (hotWaterCoil) {
+		cost = numOfEquip
+			* (resultSet.getDouble("materialcost") * 1.4
+				+ resultSet.getDouble("laborcost") * 1.1 + resultSet
+				    .getDouble("equipmentcost"));
+	    } else {
+		cost = resultSet.getDouble("totalcost")*numOfEquip;
+	    }
+
+	    return cost;
+
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
+	// hopefully we won't reach here
+	return 0.0;
     }
 
     @Override
@@ -72,7 +134,9 @@ public class FanCoilAC extends AbstractConvectionUnits {
 
 	    resultSet = statement
 		    .executeQuery("select * from hvac.fancoil where capacity>='"
-			    + coolingCapacity + "' and coolsource = '" + coolCoilType + "'");
+			    + coolingCapacity
+			    + "' and coolsource = '"
+			    + coolCoilType + "'");
 
 	    if (!resultSet.next()) {
 		// this means there is no such fcu that can satisfy the
@@ -84,7 +148,9 @@ public class FanCoilAC extends AbstractConvectionUnits {
 		    tempCapacity = tempCapacity / 2;
 		    resultSet = statement
 			    .executeQuery("select * from hvac.fancoil where capacity>='"
-				    + tempCapacity + "' and coolsource = '" + coolCoilType + "'");
+				    + tempCapacity
+				    + "' and coolsource = '"
+				    + coolCoilType + "'");
 		}
 	    }
 
@@ -96,16 +162,16 @@ public class FanCoilAC extends AbstractConvectionUnits {
 	    cost[totalIndex] = resultSet.getDouble("totalCost") * numberOfFCU;
 	    cost[totalOPIndex] = resultSet.getDouble("totalInclop")
 		    * numberOfFCU;
-	    
-	    //set the description
+
+	    // set the description
 	    description = resultSet.getString("description");
-	    
-	    if(hotWaterCoil){
-		cost = multiOperation(cost,heatCoilFactor);
+
+	    if (hotWaterCoil) {
+		cost = multiOperation(cost, heatCoilFactor);
 	    }
-	    
+
 	    costVector = cost;
-	    
+
 	    optionLists.add(description);
 	    optionQuantities.add(numberOfFCU);
 	} catch (SQLException e) {
