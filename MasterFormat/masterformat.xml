@@ -19,6 +19,9 @@
 		<thermal_moisture tag = "070000" description = "Thermal Moisture Protection" type = "thermal moisture protection">
 			<thermal_insulation tag = "072100" description = "Thermal Insulation" type = "thermal moisture protection"/>
 		</thermal_moisture>
+		<finishes tag = "090000" description = "Finishes" type = "finishes">
+			<carpeting tag = "096800" description = "Carpeting" type = "finishes"/>
+		</finishes>
 	</material>
 	<fan>
 		<axial tag="233413" description = "Axial HVAC Fans" type = "Fan">
