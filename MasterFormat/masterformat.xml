@@ -18,6 +18,12 @@
 		</masonry>
 		<thermal_moisture tag = "070000" description = "Thermal Moisture Protection" type = "thermal moisture protection">
 			<thermal_insulation tag = "072100" description = "Thermal Insulation" type = "thermal moisture protection"/>
+			<shingles tag="073100" description = "Shingles and Shakes" type = "thermal moisture protection">
+				<asphaltshingles tag="073113" description = "Asphalt Shingles" type = "thermal moisture protection"/>
+			</shingles>
+			<rooftile tag = "073200" description = "Roof Tiles" type = "thermal moisture protection">
+				<claytile tag="073213" description = "Clay Tiles" type = "thermal moisture protection"/>
+			</rooftile>	
 		</thermal_moisture>
 		<finishes tag = "090000" description = "Finishes" type = "finishes">
 			<plaster tag="092100" description = "Plaster and Gypsum Board Assemblies" type = "finishes">

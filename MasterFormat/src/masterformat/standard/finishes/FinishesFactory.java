@@ -10,10 +10,9 @@ public class FinishesFactory extends ComponentFactory{
 	    return new Carpeting();
 	}else if(finish.equalsIgnoreCase("GYPSUM BOARD ASSEMBLIES")){
 	    return new Gypsumboard();
-	}else if(finish.equalsIgnoreCase("Wood Flooring")){
+	}else if(finish.equalsIgnoreCase("WOOD FLOORING")){
 	    return new WoodFlooring();
 	}
 	return null;
     }
-
 }
