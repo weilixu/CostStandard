@@ -21,6 +21,7 @@ public class ElectricalAnalyzer {
 
     // energyplus objects
     private final static String lights = "Lights";
+    private final static String exteriorlights = "Exterior:Lights";
 
     // the standard data format for mapping EnergyPlus model and masterformat
     protected final int totalPowerIndex = 0;
@@ -114,9 +115,31 @@ public class ElectricalAnalyzer {
     
     private void processElectricalEquipment(){
 	HashMap<String, HashMap<String, ArrayList<ValueNode>>> interiorLight = reader.getObjectList(lights);
+	HashMap<String, HashMap<String, ArrayList<ValueNode>>> exteriorLight = reader.getObjectList(exteriorlights);
 	
 	if(interiorLight!=null){
 	    processInteriorLight(interiorLight);
+	}
+	
+	if(exteriorLight!=null){
+	    processExteriorLight(exteriorLight);
+	}
+    }
+    
+    private void processExteriorLight(HashMap<String, HashMap<String, ArrayList<ValueNode>>> list){
+	Set<String> lightCount = list.get(exteriorlights).keySet();
+	Iterator<String> lightIterator = lightCount.iterator();
+	while(lightIterator.hasNext()){
+	    String count = lightIterator.next();
+	    ArrayList<ValueNode> tempNodeList = list.get(exteriorlights).get(count);
+	    String name = tempNodeList.get(0).getAttribute();
+	    Electric e = new Electric(exteriorlights,name);
+	    for(ValueNode vn:tempNodeList){
+		if(vn.getDescription().equalsIgnoreCase("DESIGN LEVEL")){
+		    e.setPower(vn.getAttribute());
+		}
+	    }
+	    electricMap.put(name, e);
 	}
     }
     

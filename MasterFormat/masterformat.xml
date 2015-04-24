@@ -79,6 +79,11 @@
 			<fluorescent tag="265113.500100" description="Interior Lighting Fixture" type="Electrical"/>
 			<led tag="265113.55" description="LED" type = "Electrical"/>
 		</interiorlighting>
+		<exteriorlighting tag ="265600" description = "Exterior Lighting" type = "Electrical">
+			<arealight tag="265623" description = "Area Lighting" type = "Electrical">
+				<exteriorfixture tag="265623.10" description = "Exterior Fixture" type="Electrical"/>
+			</arealight>
+		</exteriorlighting>
 	</lights>
 </masterformat>
 

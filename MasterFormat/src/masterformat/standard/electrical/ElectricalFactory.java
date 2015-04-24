@@ -10,8 +10,9 @@ public class ElectricalFactory extends ComponentFactory{
 	    return new InteriorLighting();
 	}else if(electrical.equalsIgnoreCase("LED")){
 	    return new InteriorLED();
+	}else if(electrical.equalsIgnoreCase("EXTERIOR FIXTURE")){
+	    return new ExteriorFixture();
 	}
 	return null;
     }
-
 }
