@@ -147,6 +147,7 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent evt) {
+		    userInputMap.clear();
 		    String input = (String)tempCombo.getSelectedItem();
 		    userInputMap.put(option, input);
 		    model.setConstructionUserInput(userInputMap, constructionName, index);
