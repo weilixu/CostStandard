@@ -11,6 +11,7 @@ import masterformat.standard.hvac.furnaces.Furnace;
 import masterformat.standard.hvac.pump.Pump;
 import masterformat.standard.hvac.unitary.UnitarySystem;
 import masterformat.standard.masonry.Masonry;
+import masterformat.standard.openings.Openings;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
 
 public abstract class ComponentFactory {
@@ -61,6 +62,10 @@ public abstract class ComponentFactory {
     }
     
     public Finishes getFinishes(String finish){
+	return null;
+    }
+    
+    public Openings getOpenings(String opening){
 	return null;
     }
 }

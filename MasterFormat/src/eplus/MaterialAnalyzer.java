@@ -105,7 +105,9 @@ public class MaterialAnalyzer {
 		totalCost += m.getRandomTotalCost();
 	    }
 	    totalConstructionCost += totalCost * area;
-	    System.out.println("This "+cons+" has area of "+area+" with unit cost of "+ totalCost+" and the cumulative total is: "+totalConstructionCost);
+	    System.out.println("This " + cons + " has area of " + area
+		    + " with unit cost of " + totalCost
+		    + " and the cumulative total is: " + totalConstructionCost);
 	}
 	return totalConstructionCost;
     }
@@ -209,9 +211,26 @@ public class MaterialAnalyzer {
 
 	    for (int i = 1; i < materialList.size(); i++) {
 		String materialName = materialList.get(i).getAttribute();
-		Material newMaterial = new Material(materialName);
-		fillInMaterialData(newMaterial);
-		constructionMap.get(name).add(newMaterial);
+		if (isOpaqueMaterial(materialName)) {
+		    Material newMaterial = new Material(materialName);
+		    fillInMaterialData(newMaterial);
+		    constructionMap.get(name).add(newMaterial);
+		}
+	    }
+	}
+	removeGlazingConstruction();
+    }
+    
+    /**
+     * Remove the glazing part from the opaque materials
+     */
+    private void removeGlazingConstruction(){
+	Set<String> constructionList = constructionMap.keySet();
+	Iterator<String> constructionIterator = constructionList.iterator();
+	while(constructionIterator.hasNext()){
+	    String cons = constructionIterator.next();
+	    if(constructionMap.get(cons).isEmpty()){
+		constructionIterator.remove();
 	    }
 	}
     }
@@ -227,6 +246,15 @@ public class MaterialAnalyzer {
 	    Double area = parser.getConstrucitonArea(cons);
 	    constructionAreaMap.put(cons, area);
 	}
+    }
+
+    private boolean isOpaqueMaterial(String materialName) {
+	String test_a = reader.getValue(material, materialName, "Name");
+	String test_b = reader.getValue(materialnomass, materialName, "Name");
+	if (test_a == null && test_b == null) {
+	    return false;
+	}
+	return true;
     }
 
     /**

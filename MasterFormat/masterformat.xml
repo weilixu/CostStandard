@@ -25,6 +25,9 @@
 				<claytile tag="073213" description = "Clay Tiles" type = "thermal moisture protection"/>
 			</rooftile>	
 		</thermal_moisture>
+		<openings tag="080000" description = "Openings" type = "openings">
+			<insulatingglass tag="088130" description="Insulating Glass" type = "openings"/>
+		</openings>
 		<finishes tag = "090000" description = "Finishes" type = "finishes">
 			<plaster tag="092100" description = "Plaster and Gypsum Board Assemblies" type = "finishes">
 				<gypsumboard tag = "092116" description = "Gypsum Board Assemblies" type = "finishes"/>
