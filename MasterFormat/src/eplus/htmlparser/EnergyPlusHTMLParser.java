@@ -20,6 +20,7 @@ public class EnergyPlusHTMLParser {
     private InteriorLightingSummary lightSummary;
     private LineItemCostSummary itemCostSummary;
     private EnvelopeSummary envelopeSummary;
+    private TransparentEnvelopeSummary transparentEnvelopeSummary;
 
     public EnergyPlusHTMLParser(File f) {
 	htmlFile = f;
@@ -34,6 +35,7 @@ public class EnergyPlusHTMLParser {
 	    lightSummary = new InteriorLightingSummary(doc);
 	    itemCostSummary = new LineItemCostSummary(doc);
 	    envelopeSummary = new EnvelopeSummary(doc);
+	    transparentEnvelopeSummary = new TransparentEnvelopeSummary(doc);
 	} catch (IOException e) {
 	    // do nothing
 	}
@@ -159,4 +161,19 @@ public class EnergyPlusHTMLParser {
     public Double getConstrucitonArea(String cons){
 	return envelopeSummary.getConstructionArea(cons);
     }
+    
+    /**
+     * includes area, uvalue, shgc, vt
+     * @param cons
+     * @return
+     */
+    public String[] getTransparentMaterialSummary(String cons){
+	String[] material = new String[4];
+	material[0] = transparentEnvelopeSummary.getContructionArea(cons);
+	material[1] = transparentEnvelopeSummary.getConstructionUValue(cons);
+	material[2] = transparentEnvelopeSummary.getConstructionSHGC(cons);
+	material[3] = transparentEnvelopeSummary.getConstructionVisibleTransmittance(cons);
+	return material;
+    }
+    
 }

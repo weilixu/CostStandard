@@ -67,7 +67,8 @@ public class IdfReader {
     // indexes for variableKeySets
     private final int ObjectNameIndex = 0;
     private final int ObjectElementCountIndex = 1;
-    //private final int ObjectInputDescriptionIndex = 2;
+
+    // private final int ObjectInputDescriptionIndex = 2;
 
     /**
      * constructor
@@ -233,13 +234,15 @@ public class IdfReader {
      */
     public String getValue(String objectName, String description) {
 	HashMap<String, ArrayList<ValueNode>> temp = eplusMap.get(objectName);
-	Set<String> elementSet = temp.keySet();
-	Iterator<String> iterator = elementSet.iterator();
-	String element = iterator.next();
-	// search the first element's inputs
-	for (ValueNode vn : temp.get(element)) {
-	    if (vn.getDescription().equals(description)) {
-		return vn.getAttribute();
+	if (temp != null) {
+	    Set<String> elementSet = temp.keySet();
+	    Iterator<String> iterator = elementSet.iterator();
+	    String element = iterator.next();
+	    // search the first element's inputs
+	    for (ValueNode vn : temp.get(element)) {
+		if (vn.getDescription().equals(description)) {
+		    return vn.getAttribute();
+		}
 	    }
 	}
 	// if we cannot find it.
@@ -300,26 +303,28 @@ public class IdfReader {
      */
     public String getValue(String objectName, String name, String description) {
 	HashMap<String, ArrayList<ValueNode>> temp = eplusMap.get(objectName);
-	Set<String> elementSet = temp.keySet();
-	Iterator<String> iterator = elementSet.iterator();
-	ArrayList<ValueNode> targetList = null;
-	// search for the object that has specific name
-	while (iterator.hasNext() && targetList == null) {
-	    String elementCount = iterator.next();
-	    ArrayList<ValueNode> vnList = temp.get(elementCount);
-	    for (ValueNode vn : vnList) {
-		if (vn.getAttribute().equals(name)) {
-		    targetList = vnList;
-		    break;
+	if (temp != null) {
+	    Set<String> elementSet = temp.keySet();
+	    Iterator<String> iterator = elementSet.iterator();
+	    ArrayList<ValueNode> targetList = null;
+	    // search for the object that has specific name
+	    while (iterator.hasNext() && targetList == null) {
+		String elementCount = iterator.next();
+		ArrayList<ValueNode> vnList = temp.get(elementCount);
+		for (ValueNode vn : vnList) {
+		    if (vn.getAttribute().equals(name)) {
+			targetList = vnList;
+			break;
+		    }
 		}
 	    }
-	}
-	// if found the correct inputs group
-	if (targetList != null) {
-	    for (ValueNode target : targetList) {
-		// search for the specific value
-		if (target.getDescription().equals(description)) {
-		    return target.getAttribute();
+	    // if found the correct inputs group
+	    if (targetList != null) {
+		for (ValueNode target : targetList) {
+		    // search for the specific value
+		    if (target.getDescription().equals(description)) {
+			return target.getAttribute();
+		    }
 		}
 	    }
 	}

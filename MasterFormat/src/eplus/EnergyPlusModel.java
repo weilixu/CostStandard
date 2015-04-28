@@ -38,6 +38,7 @@ public class EnergyPlusModel {
     private ConvectionUnitAnalyzer unitModule;
     private PumpAnalyzer pumpModule;
     private ElectricalAnalyzer electricalModule;
+    private TransparentMaterialAnalyzer transparentModule;
 
     // files locations etc.
     private final File eplusFile;
@@ -94,6 +95,7 @@ public class EnergyPlusModel {
 	setUpUnitaryAnalyzer();
 	setUpConvectionUnitAnalyzer();
 	setUpElectricalAnalyzer();
+	setUpOpeningAnazlyer();
     }
     
     public void calculateBudget(){
@@ -195,6 +197,10 @@ public class EnergyPlusModel {
     public String[] getElectricalList(){
 	return electricalModule.getElectricList();
     }
+    
+    public String[] getTransparentEnvelopeList(){
+	return transparentModule.getTransparentEnvelopeList();
+    }
 
     /**
      * get the material cost data from the material analyzer
@@ -280,6 +286,11 @@ public class EnergyPlusModel {
 	MasterFormat mf = masterformat.getUserInputFromMap("Electrical", description);
 	electricalModule.setElectricMasterFormat(electric, mf);
     }
+    
+    public void setTransparentMaterialMasterFormat(String cons, String description)throws Exception{
+	MasterFormat mf = masterformat.getUserInputFromMap("Openings", description);
+	transparentModule.setOpeningMaterFormat(cons, mf);
+    }
 
     // All the methods to retrieve user inputs from the mapping results
     /**
@@ -325,6 +336,10 @@ public class EnergyPlusModel {
     
     public ArrayList<String> getElectricalUserInputs(String electricName){
 	return electricalModule.getElectric(electricName).getUserInputs();
+    }
+    
+    public ArrayList<String> getOpeningsUserInputs(String openings){
+	return transparentModule.getEnvelope(openings).getUserInputs();
     }
 
     // All the methods to extract the cost vector from the masterformat
@@ -388,6 +403,11 @@ public class EnergyPlusModel {
     
     public void getElectricalCostVector(String item){
 	costData = electricalModule.getCostListForElectric(item);
+	updateCostVectorInformation();
+    }
+    
+    public void getOpeningsCostVector(String item){
+	costData = transparentModule.getCostListForTransparentEnvelope(item);
 	updateCostVectorInformation();
     }
 
@@ -557,6 +577,24 @@ public class EnergyPlusModel {
 	}
 	selectionOptionQuantities = temp;
     }
+    
+    public void getOpeningsOptionList(String openings){
+	ArrayList<String> list = transparentModule.getEnvelope(openings).getOptionList();
+	String[] temp = new String[list.size()];
+	for(int i=0; i<list.size(); i++){
+	    temp[i] = list.get(i);
+	}
+	selectionOptions = temp;
+    }
+    
+    public void getOpeningsOptionQuantities(String openings){
+	ArrayList<Integer> list = transparentModule.getEnvelope(openings).getOptionQuantities();
+	Integer[] temp = new Integer[list.size()];
+	for(int i=0; i<list.size(); i++){
+	    temp[i] = list.get(i);
+	}
+	selectionOptionQuantities = temp;
+    }
 
     // All the methods that feed back user inputs to the masterformat for the
     // cost mapping
@@ -623,6 +661,11 @@ public class EnergyPlusModel {
     public void setElectricalUserInput(HashMap<String, String> map, String electricName){
 	electricalModule.setUserInput(map, electricName);
 	getElectricalCostVector(electricName);
+    }
+    
+    public void setOpeningsUserInput(HashMap<String, String> map, String openings){
+	transparentModule.setUserInput(map, openings);
+	getOpeningsCostVector(openings);
     }
 
     // All the method that retrieve the cost information and put it down to
@@ -809,6 +852,10 @@ public class EnergyPlusModel {
     
     private void setUpElectricalAnalyzer(){
 	electricalModule = new ElectricalAnalyzer(idfDomain,htmlParser);
+    }
+    
+    private void setUpOpeningAnazlyer(){
+	transparentModule = new TransparentMaterialAnalyzer(idfDomain, htmlParser);
     }
 
     private void updateCostVectorInformation() {

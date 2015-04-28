@@ -13,6 +13,7 @@ import masterformat.standard.hvac.furnaces.FurnaceFactory;
 import masterformat.standard.hvac.pump.PumpFactory;
 import masterformat.standard.hvac.unitary.UnitarySystemFactory;
 import masterformat.standard.masonry.MasonryFactory;
+import masterformat.standard.openings.OpeningsFactory;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtectionFactory;
 
 public class MasterFormatModel {
@@ -60,6 +61,9 @@ public class MasterFormatModel {
 	}else if(type.equalsIgnoreCase("Finishes")){
 	    factory = new FinishesFactory();
 	    return factory.getFinishes(description);
+	}else if(type.equalsIgnoreCase("Openings")){
+	    factory = new OpeningsFactory();
+	    return factory.getOpenings(description);
 	}
 	return null;
     }
