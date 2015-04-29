@@ -34,7 +34,15 @@
 		</finishes>
 	</material>
 	<openings>
-		<insulatingglass tag="088130" description="Insulating Glass" type = "openings"/>
+		<metalwindow tag = "085100" description = "Metal Windows" type = "openings">
+			<aluminum tag = "085113" description = "Aluminum Windows" type = "openings"/>
+		</metalwindow>
+		<woodwindow tag = "085200" description = "Wood Windows" type = "openings">
+			<plainwood tag="085210" description = "Plain Wood Windows" type = "openings"/>
+		</woodwindow>
+		<plasticwindow tag="085300" description = "Plastic Windows" type ="openings">
+			<vinylwindows tag="085313" description = "Vinyl Windows" type = "openings"/>
+		</plasticwindow>
 	</openings>
 	<fan>
 		<axial tag="233413" description = "Axial HVAC Fans" type = "Fan">

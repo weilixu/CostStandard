@@ -6,14 +6,15 @@ import masterformat.api.AbstractMasterFormatComponent;
 
 public abstract class AbstractOpenings extends AbstractMasterFormatComponent implements Openings{
     
-    protected final int floorAreaIndex = 0;
-    protected final int heightIndex = 1;
-    protected final int surfaceTypeIndex=2;
-    protected final int thicknessIndex=3;
-    protected final int conductivityIndex=4;
-    protected final int densityIndex=5;
-    protected final int specificHeatIndex=6;
-    protected final int resistanceIndex=7;
+    // the standard data format for mapping Energyplus model and masterformat
+    protected final int glazingSizeIndex = 0;
+    protected final int numLayerIndex = 1;
+    protected final int thicknessIndex = 2;
+    protected final int uvalueIndex = 3;
+    protected final int shgcIndex = 4;
+    protected final int vtIndex = 5;
+    protected final int blindIndex = 6;
+    protected final int screenIndex = 7;
     
     public AbstractOpenings(){
 	userInputs = new ArrayList<String>();

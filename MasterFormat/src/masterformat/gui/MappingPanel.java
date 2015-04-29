@@ -294,8 +294,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 		    itemPanel.repaint();
 		    EnergyPlusObjectPanel.revalidate();
 		    EnergyPlusObjectPanel.repaint();
-		}
-		else if(category.equalsIgnoreCase("Transparent Construction")){
+		}else if(category.equalsIgnoreCase("Transparent Construction")){
 		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
 			    .getLayout();
 		    EnergyPlusObjectPanel.remove(layout

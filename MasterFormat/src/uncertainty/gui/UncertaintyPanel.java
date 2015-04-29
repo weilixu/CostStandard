@@ -27,6 +27,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import masterformat.gui.OpeningsPanel;
 import eplus.EnergyPlusModel;
 import eplus.MaterialAnalyzer.Material;
 
@@ -46,6 +47,7 @@ public class UncertaintyPanel extends JPanel{
     private final JPanel pumpPanel;
     private final JPanel furnacePanel;
     private final JPanel convectionUnitPanel;
+    private final JPanel openingsPanel;
     private final JPanel controllPanel;
     
     private final JComboBox<String> objectSelectionCombo;
@@ -73,6 +75,9 @@ public class UncertaintyPanel extends JPanel{
     private DefaultListModel<String> convectionUnitListModel;
     private JList<String> convectionUnitList;
     private JScrollPane convectionUnitListScrollPane;
+    private DefaultListModel<String> openingsListModel;
+    private JList<String> openingsList;
+    private JScrollPane openingsScrollPane;
     
     private final JButton budgetButton;
     private final String BUDGET="Calculate Budget";
@@ -122,6 +127,10 @@ public class UncertaintyPanel extends JPanel{
 	convectionUnitPanel = new JPanel(new CardLayout());
 	convectionUnitPanel.setBackground(Color.WHITE);
 	updateConvectionUnit();
+	
+	openingsPanel = new JPanel(new CardLayout());
+	openingsPanel.setBackground(Color.WHITE);
+	updateOpeningsPanel();
 	
 	// initialize the selection combo list
 	objectSelectionCombo = new JComboBox<String>(model.getDomainList());
@@ -244,6 +253,21 @@ public class UncertaintyPanel extends JPanel{
 
 		    itemPanel.add(condenserUnitPanel, BorderLayout.CENTER);
 		    EnergyPlusObjectPanel.add(condenserUnitListScrollPane,
+			    BorderLayout.CENTER);
+
+		    itemPanel.revalidate();
+		    itemPanel.repaint();
+		    EnergyPlusObjectPanel.revalidate();
+		    EnergyPlusObjectPanel.repaint();
+		}else if(category.equalsIgnoreCase("Transparent Construction")){
+		    BorderLayout layout = (BorderLayout) EnergyPlusObjectPanel
+			    .getLayout();
+		    EnergyPlusObjectPanel.remove(layout
+			    .getLayoutComponent(BorderLayout.CENTER));
+		    itemPanel.removeAll();
+
+		    itemPanel.add(openingsPanel, BorderLayout.CENTER);
+		    EnergyPlusObjectPanel.add(openingsScrollPane,
 			    BorderLayout.CENTER);
 
 		    itemPanel.revalidate();
@@ -524,6 +548,36 @@ public class UncertaintyPanel extends JPanel{
 	}
 	convectionUnitListScrollPane = new JScrollPane(convectionUnitList);
     }
+    
+    private void updateOpeningsPanel(){
+	openingsListModel = new DefaultListModel<String>();
+	openingsList = new JList<String>(openingsListModel);
+	openingsList.setFont(new Font("Helvetica", Font.BOLD, 20));
+
+	String[] openings = model.getTransparentEnvelopeList();
+	openingsListModel.clear();
+	for (String o : openings) {
+	    // model.setFanMasterFormat(f);
+	    JPanel unit = new UncertaintyOpeningsPanel(model, o);// need to change this
+
+	    openingsPanel.add(unit,o);
+	    openingsListModel.addElement(o);
+	    openingsList.addListSelectionListener(new ListSelectionListener() {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    CardLayout cardLayout = (CardLayout) (openingsPanel.getLayout());
+		    String selection = openingsList.getSelectedValue().toString();
+		    if (selection.equals(o)) {
+			cardLayout.show(openingsPanel, selection);
+		    }
+		    model.getOpeningsCostVector(selection);
+		}
+	    });
+	}
+	openingsScrollPane = new JScrollPane(openingsList);
+    }
+    
     
     private JTabbedPane makeTabbedPanel(String construction) {
 	JTabbedPane tp = new JTabbedPane();
