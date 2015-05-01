@@ -27,7 +27,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import masterformat.gui.OpeningsPanel;
 import eplus.EnergyPlusModel;
 import eplus.MaterialAnalyzer.Material;
 

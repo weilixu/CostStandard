@@ -102,13 +102,13 @@ public class EnergyPlusModel {
 	//double construction = materialModule.getTotalCostForConstruction();
 	//double electric = electricalModule.getTotalCostForLighting();
 	//double fan = fanModule.getTotalCostForFan();
-	//double boiler = boilerModule.getTotalCostForBoiler();
+	double boiler = boilerModule.getTotalCostForBoiler();
 	//double pump = pumpModule.getTotalCostForPump();
 	//double furnace = furnaceModule.getTotalCostForFurnace();
 	//double cu = condenserUnitModule.getTotalCostForCU();
 	//double convecunit = unitModule.getTotalCostForConvectionUnit();
-	double window = transparentModule.getTotalCostForEnvelope();
-	System.out.println("Window cost = "+ window);
+	//double window = transparentModule.getTotalCostForEnvelope();
+	System.out.println("Boiler cost = "+ boiler);
     }
 
     /**

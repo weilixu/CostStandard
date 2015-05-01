@@ -16,8 +16,6 @@ public class UncertaintyFurnacePanel extends JPanel implements FurnaceListener{
      * 
      */
     private static final long serialVersionUID = 1L;
-
-    private final static String TAG = "Furnace";
     
     private final JPanel editorPanel;
     private final JScrollPane editorView;

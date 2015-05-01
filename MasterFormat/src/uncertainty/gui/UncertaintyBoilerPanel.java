@@ -23,12 +23,10 @@ public class UncertaintyBoilerPanel extends JPanel implements BoilerListener{
      */
     private static final long serialVersionUID = 1L;
 
-    private final static String TAG = "Boiler";
 
     private final JPanel editorPanel;
     private final JScrollPane editorView;
     
-
     private final EnergyPlusModel model;
     private final String boilerName;
 
@@ -55,8 +53,7 @@ public class UncertaintyBoilerPanel extends JPanel implements BoilerListener{
 
     @Override
     public void onQuanatitiesUpdates() {
-	// TODO Auto-generated method stub
-	
+	// TODO Auto-generated method stub	
     }
     
 }
