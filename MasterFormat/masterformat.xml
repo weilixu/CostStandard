@@ -16,6 +16,11 @@
 				</brick_masonry>
 			</clay_masonry>
 		</masonry>
+		<wood tag = "060000" description = "Wood" type = "wood">
+			<sheathing tag = "061600" description = "Sheathing" type = "wood">
+				<woodpanel tag = "061636" description = "Wood Panel Product Sheathing" type = "wood"/>
+			</sheathing>
+		</wood>
 		<thermal_moisture tag = "070000" description = "Thermal Moisture Protection" type = "thermal moisture protection">
 			<thermal_insulation tag = "072100" description = "Thermal Insulation" type = "thermal moisture protection"/>
 			<shingles tag="073100" description = "Shingles and Shakes" type = "thermal moisture protection">

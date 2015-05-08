@@ -13,6 +13,7 @@ import masterformat.standard.hvac.unitary.UnitarySystem;
 import masterformat.standard.masonry.Masonry;
 import masterformat.standard.openings.Openings;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
+import masterformat.standard.wood.Wood;
 
 public abstract class ComponentFactory {
     
@@ -66,6 +67,10 @@ public abstract class ComponentFactory {
     }
     
     public Openings getOpenings(String opening){
+	return null;
+    }
+    
+    public Wood getWood(String wood){
 	return null;
     }
 }

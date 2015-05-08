@@ -22,8 +22,6 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
     private double rvalue;
     // the thickness of the insulation
     private double thickness;
-    // the width of the insulaiton
-    private double width;
 
     @Override
     protected void initializeData() {

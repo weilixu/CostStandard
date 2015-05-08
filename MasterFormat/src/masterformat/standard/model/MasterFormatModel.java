@@ -15,6 +15,7 @@ import masterformat.standard.hvac.unitary.UnitarySystemFactory;
 import masterformat.standard.masonry.MasonryFactory;
 import masterformat.standard.openings.OpeningsFactory;
 import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtectionFactory;
+import masterformat.standard.wood.WoodFactory;
 
 public class MasterFormatModel {
     
@@ -64,6 +65,9 @@ public class MasterFormatModel {
 	}else if(type.equalsIgnoreCase("Openings")){
 	    factory = new OpeningsFactory();
 	    return factory.getOpenings(description);
+	}else if(type.equalsIgnoreCase("Wood")){
+	    factory = new WoodFactory();
+	    return factory.getWood(description);
 	}
 	return null;
     }
