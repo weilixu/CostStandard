@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.api.DatabaseUtils;
+
 public class Carpeting extends AbstractFinishes {
 
     private String carpetType;
@@ -21,9 +23,8 @@ public class Carpeting extends AbstractFinishes {
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 
@@ -74,9 +75,8 @@ public class Carpeting extends AbstractFinishes {
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 
@@ -125,9 +125,8 @@ public class Carpeting extends AbstractFinishes {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    int index = randGenerator.nextInt(descriptionList.size());
 	    resultSet = statement
@@ -146,9 +145,8 @@ public class Carpeting extends AbstractFinishes {
     @Override
     public void setVariable(String[] surfaceProperties) {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from finishes.carpeting");
@@ -165,9 +163,8 @@ public class Carpeting extends AbstractFinishes {
     private void addFaceWeight() {
 	userInputs.clear();
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    resultSet = statement

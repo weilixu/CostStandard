@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.api.DatabaseUtils;
+
 public class WoodPanelSheathing extends AbstractWood {
     private double thickness;
     private String material;
@@ -20,9 +22,8 @@ public class WoodPanelSheathing extends AbstractWood {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    int index = randGenerator.nextInt(descriptionList.size());
 	    resultSet = statement
@@ -41,9 +42,8 @@ public class WoodPanelSheathing extends AbstractWood {
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    // get the options for the type of constructions
@@ -74,9 +74,8 @@ public class WoodPanelSheathing extends AbstractWood {
 	int numberOfLayer = 1;
 
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 	    resultSet = statement
@@ -144,9 +143,8 @@ public class WoodPanelSheathing extends AbstractWood {
 	}
 
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from wood.woodpanelsheathing where construction = '"

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.api.DatabaseUtils;
+
 public class FanCoilAC extends AbstractConvectionUnits {
 
     private String coolCoilType;
@@ -52,9 +54,8 @@ public class FanCoilAC extends AbstractConvectionUnits {
 	}
 
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from hvac.fancoil where capacity<= '"
@@ -80,9 +81,8 @@ public class FanCoilAC extends AbstractConvectionUnits {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    int index = randGenerator.nextInt(descriptionList.size());
@@ -125,9 +125,8 @@ public class FanCoilAC extends AbstractConvectionUnits {
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/hvac?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    int numberOfFCU = 1;

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.api.DatabaseUtils;
+
 public class InteriorLighting extends AbstractElectrical{
     private Double power;
     //mount include ceiling mount and surface mount
@@ -46,9 +48,8 @@ public class InteriorLighting extends AbstractElectrical{
 	}
 	
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from lighting.interiorlighting");
@@ -66,9 +67,8 @@ public class InteriorLighting extends AbstractElectrical{
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    int index = randGenerator.nextInt(descriptionList.size());
@@ -92,9 +92,8 @@ public class InteriorLighting extends AbstractElectrical{
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/hvac?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    resultSet = statement
@@ -121,9 +120,8 @@ public class InteriorLighting extends AbstractElectrical{
 	Double[] cost = new Double[numOfCostElement];
 	int numberOfFix = 1;
 	try{
-		connect = DriverManager
-			.getConnection("jdbc:mysql://localhost/hvac?"
-				+ "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 		statement = connect.createStatement();
 		//select all the available lighting fixtures
 		resultSet = statement.executeQuery("select * from lighting.interiorlighting where type = '" + type +"' and mount = '" +mount + "' and dimension = '" + dimension+"'" );
@@ -175,9 +173,8 @@ public class InteriorLighting extends AbstractElectrical{
     private void addDimension(){
 	userInputs.clear();
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/hvac?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    
 	    resultSet = statement

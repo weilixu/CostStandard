@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.api.DatabaseUtils;
+
 public class CentrifugalBooster extends AbstractFan {
 
     private Double flowRate;
@@ -36,9 +38,8 @@ public class CentrifugalBooster extends AbstractFan {
 	}
 	
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/hvac?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    resultSet = statement
@@ -57,9 +58,8 @@ public class CentrifugalBooster extends AbstractFan {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    int index = randGenerator.nextInt(descriptionList.size());
@@ -94,9 +94,8 @@ public class CentrifugalBooster extends AbstractFan {
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/hvac?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    int numberOfFan = 1;

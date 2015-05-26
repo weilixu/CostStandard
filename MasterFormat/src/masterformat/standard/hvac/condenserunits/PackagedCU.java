@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.api.DatabaseUtils;
+
 public class PackagedCU extends AbstractCondenserUnits {
 
     private Double capacity;
@@ -36,9 +38,8 @@ public class PackagedCU extends AbstractCondenserUnits {
 	}
 
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/hvac?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    resultSet = statement
@@ -59,9 +60,8 @@ public class PackagedCU extends AbstractCondenserUnits {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    if (!descriptionList.isEmpty()) {
@@ -99,9 +99,8 @@ public class PackagedCU extends AbstractCondenserUnits {
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/hvac?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    int numberOfCU = 1;

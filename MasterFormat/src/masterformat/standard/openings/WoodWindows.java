@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.api.DatabaseUtils;
+
 public class WoodWindows extends AbstractOpenings{
     private static final String FRAME = "Wood";
     // in energy model, height of the window will not change
@@ -28,9 +30,8 @@ public class WoodWindows extends AbstractOpenings{
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/hvac?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    // add special character
@@ -70,9 +71,8 @@ public class WoodWindows extends AbstractOpenings{
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/hvac?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    int numberOfWindow = 0;
@@ -124,9 +124,8 @@ public class WoodWindows extends AbstractOpenings{
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    int index = randGenerator.nextInt(descriptionList.size());
@@ -186,9 +185,8 @@ public class WoodWindows extends AbstractOpenings{
 	}
 
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/hvac?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 
 	    resultSet = statement

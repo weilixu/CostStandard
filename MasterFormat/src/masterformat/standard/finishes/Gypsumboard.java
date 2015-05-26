@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.api.DatabaseUtils;
+
 public class Gypsumboard extends AbstractFinishes {
     private double thickness;
     private double spacing;
@@ -21,9 +23,8 @@ public class Gypsumboard extends AbstractFinishes {
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 
@@ -77,10 +78,8 @@ public class Gypsumboard extends AbstractFinishes {
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
-
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    if (stud.equals("Wood Studs")) {
 		resultSet = statement
@@ -140,9 +139,8 @@ public class Gypsumboard extends AbstractFinishes {
     private void reGenerateUserInputs() {
 	userInputs.clear();
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 
@@ -205,9 +203,8 @@ public class Gypsumboard extends AbstractFinishes {
 	    e.printStackTrace();
 	}
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 	    resultSet = statement
@@ -235,9 +232,8 @@ public class Gypsumboard extends AbstractFinishes {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    int index = randGenerator.nextInt(descriptionList.size());
 	    resultSet = statement

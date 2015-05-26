@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.api.DatabaseUtils;
+
 public class WoodFlooring extends AbstractFinishes {
     private String material;
     private String character;
@@ -18,9 +20,8 @@ public class WoodFlooring extends AbstractFinishes {
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 
@@ -63,9 +64,8 @@ public class WoodFlooring extends AbstractFinishes {
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 	    resultSet = statement
@@ -74,11 +74,7 @@ public class WoodFlooring extends AbstractFinishes {
 			    + "' and description = '"
 			    + character
 			    + "'");
-	    System.out.println("select * from finishes.woodflooring where material = '"
-		    + material
-		    + "' and description = '"
-		    + character
-		    + "'");
+
 	    resultSet.next();
 	    cost[materialIndex] = resultSet.getDouble("materialcost");
 	    cost[laborIndex] = resultSet.getDouble("laborcost");
@@ -115,9 +111,8 @@ public class WoodFlooring extends AbstractFinishes {
     private void reGenerateUserInputs() {
 	userInputs.clear();
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 
@@ -150,9 +145,8 @@ public class WoodFlooring extends AbstractFinishes {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    int index = randGenerator.nextInt(descriptionList.size());
 	    resultSet = statement
@@ -171,9 +165,8 @@ public class WoodFlooring extends AbstractFinishes {
     @Override
     public void setVariable(String[] surfaceProperties) {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 	    resultSet = statement

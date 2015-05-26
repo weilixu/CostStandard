@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import masterformat.api.DatabaseUtils;
+
 public class ClayRoofTile extends AbstractThermalMoistureProtection{
     private String type;
     private String color;
@@ -18,9 +20,8 @@ public class ClayRoofTile extends AbstractThermalMoistureProtection{
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 	    resultSet = statement.executeQuery("select * from insulation.claytiles");
@@ -48,9 +49,8 @@ public class ClayRoofTile extends AbstractThermalMoistureProtection{
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try{
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/masonry?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 
 	    statement = connect.createStatement();
 	    resultSet = statement
@@ -93,9 +93,8 @@ public class ClayRoofTile extends AbstractThermalMoistureProtection{
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    int index = randGenerator.nextInt(descriptionList.size());
 	    resultSet = statement
@@ -114,9 +113,8 @@ public class ClayRoofTile extends AbstractThermalMoistureProtection{
     @Override
     public void setVariable(String[] surfaceProperties) {
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from insulation.claytiles");
