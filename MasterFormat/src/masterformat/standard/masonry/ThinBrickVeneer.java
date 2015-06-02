@@ -1,12 +1,9 @@
 package masterformat.standard.masonry;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
-import masterformat.api.DatabaseUtils;
 
 public class ThinBrickVeneer extends AbstractMasonry {
     private static String TAG = "Thin Brick Veneer";
@@ -28,8 +25,7 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	Double[] factor = new Double[numOfCostElement];
 	String operation = null;
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
 
 	    statement = connect.createStatement();
 
@@ -91,8 +87,8 @@ public class ThinBrickVeneer extends AbstractMasonry {
     @Override
     public void setVariable(String[] surfaceProperties) {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from masonry.brickmasonry where masonryname='"
@@ -110,8 +106,8 @@ public class ThinBrickVeneer extends AbstractMasonry {
     @Override
     public double randomDrawTotalCost(){
 	try{
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    int index = randGenerator.nextInt(descriptionList.size());
 	    resultSet = statement.executeQuery("select * from masonry.brickmasonry where MASONRYNAME= '"
@@ -128,8 +124,7 @@ public class ThinBrickVeneer extends AbstractMasonry {
 
     protected void initializeData() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
 
 	    statement = connect.createStatement();
 

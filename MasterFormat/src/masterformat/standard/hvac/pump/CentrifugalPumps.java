@@ -1,12 +1,9 @@
 package masterformat.standard.hvac.pump;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
-import masterformat.api.DatabaseUtils;
 
 public class CentrifugalPumps extends AbstractPump {
     /**
@@ -53,8 +50,8 @@ public class CentrifugalPumps extends AbstractPump {
 	}
 	
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from hvac.pump");
@@ -72,8 +69,8 @@ public class CentrifugalPumps extends AbstractPump {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    int index = randGenerator.nextInt(descriptionList.size());
@@ -97,8 +94,8 @@ public class CentrifugalPumps extends AbstractPump {
     protected void initializeData() {
 	userInputs.clear();
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    resultSet = statement
@@ -144,8 +141,8 @@ public class CentrifugalPumps extends AbstractPump {
 	int numberOfPump = 1;
 	if (pumpType != null) {
 	    try {
-		    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-			    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+		    super.testConnect();
+
 		statement = connect.createStatement();
 
 		resultSet = statement
@@ -204,8 +201,8 @@ public class CentrifugalPumps extends AbstractPump {
     private void getAvailableSize() {
 	userInputs.clear();
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    
 	    //Add all the available pump to the input.

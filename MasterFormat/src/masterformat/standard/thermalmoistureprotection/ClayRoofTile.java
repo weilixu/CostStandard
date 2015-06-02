@@ -1,12 +1,9 @@
 package masterformat.standard.thermalmoistureprotection;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
-import masterformat.api.DatabaseUtils;
 
 public class ClayRoofTile extends AbstractThermalMoistureProtection{
     private String type;
@@ -20,8 +17,7 @@ public class ClayRoofTile extends AbstractThermalMoistureProtection{
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
 
 	    statement = connect.createStatement();
 	    resultSet = statement.executeQuery("select * from insulation.claytiles");
@@ -49,8 +45,7 @@ public class ClayRoofTile extends AbstractThermalMoistureProtection{
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try{
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
 
 	    statement = connect.createStatement();
 	    resultSet = statement
@@ -93,8 +88,8 @@ public class ClayRoofTile extends AbstractThermalMoistureProtection{
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    int index = randGenerator.nextInt(descriptionList.size());
 	    resultSet = statement
@@ -113,8 +108,8 @@ public class ClayRoofTile extends AbstractThermalMoistureProtection{
     @Override
     public void setVariable(String[] surfaceProperties) {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from insulation.claytiles");

@@ -1,12 +1,9 @@
 package masterformat.standard.hvac.condenserunits;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
-import masterformat.api.DatabaseUtils;
 
 public class PackagedCU extends AbstractCondenserUnits {
 
@@ -38,8 +35,8 @@ public class PackagedCU extends AbstractCondenserUnits {
 	}
 
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    resultSet = statement
@@ -60,8 +57,8 @@ public class PackagedCU extends AbstractCondenserUnits {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    if (!descriptionList.isEmpty()) {
@@ -99,8 +96,8 @@ public class PackagedCU extends AbstractCondenserUnits {
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    int numberOfCU = 1;

@@ -1,12 +1,9 @@
 package masterformat.standard.openings;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
-import masterformat.api.DatabaseUtils;
 
 public class WoodWindows extends AbstractOpenings{
     private static final String FRAME = "Wood";
@@ -30,8 +27,8 @@ public class WoodWindows extends AbstractOpenings{
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    // add special character
@@ -71,8 +68,8 @@ public class WoodWindows extends AbstractOpenings{
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    int numberOfWindow = 0;
@@ -124,8 +121,8 @@ public class WoodWindows extends AbstractOpenings{
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    int index = randGenerator.nextInt(descriptionList.size());
@@ -185,8 +182,8 @@ public class WoodWindows extends AbstractOpenings{
 	}
 
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    resultSet = statement

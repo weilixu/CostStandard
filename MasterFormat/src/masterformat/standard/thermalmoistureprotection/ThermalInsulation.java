@@ -1,12 +1,9 @@
 package masterformat.standard.thermalmoistureprotection;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
-import masterformat.api.DatabaseUtils;
 
 public class ThermalInsulation extends AbstractThermalMoistureProtection {
 
@@ -30,8 +27,7 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 	userInputs.clear();
 
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
 
 	    statement = connect.createStatement();
 
@@ -114,8 +110,8 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 	if (insulationType != null) {
 	    // insulation type must be specified
 	    try {
-		    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-			    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+		    super.testConnect();
+
 		statement = connect.createStatement();
 
 		// insulation type must be true
@@ -232,8 +228,8 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 	insulationConstruction = surfaceProperties[surfaceTypeIndex];
 	
 	try{
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from insulation.thermalinsulation where rvalue <= '"
@@ -252,8 +248,7 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
 
     private void addFacedValue() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
 
 	    statement = connect.createStatement();
 	    resultSet = statement
@@ -282,8 +277,8 @@ public class ThermalInsulation extends AbstractThermalMoistureProtection {
     public double randomDrawTotalCost(){
 	double numMaterial = 1.0;
 	try{
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    
 	    if(!descriptionList.isEmpty()){

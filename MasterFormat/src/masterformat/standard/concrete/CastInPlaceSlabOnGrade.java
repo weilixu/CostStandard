@@ -1,6 +1,5 @@
 package masterformat.standard.concrete;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,9 +24,8 @@ public class CastInPlaceSlabOnGrade extends AbstractConcrete{
 	Double num = 1.0;
 
 	try {
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    
 	    resultSet = statement
@@ -65,9 +63,8 @@ public class CastInPlaceSlabOnGrade extends AbstractConcrete{
     public double randomDrawTotalCost(){
 	double numMaterial = 1.0;
 	try{
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    
 	    if(!descriptionList.isEmpty()){
@@ -125,9 +122,8 @@ public class CastInPlaceSlabOnGrade extends AbstractConcrete{
 	}
 	
 	try{
-	    connect = DriverManager
-		    .getConnection("jdbc:mysql://localhost/concrete?"
-			    + "user=root&password=911383");
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from concrete.castinplace where construction = '"

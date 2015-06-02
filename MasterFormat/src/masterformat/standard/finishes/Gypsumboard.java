@@ -1,12 +1,9 @@
 package masterformat.standard.finishes;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
-import masterformat.api.DatabaseUtils;
 
 public class Gypsumboard extends AbstractFinishes {
     private double thickness;
@@ -23,8 +20,7 @@ public class Gypsumboard extends AbstractFinishes {
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
 
 	    statement = connect.createStatement();
 
@@ -78,8 +74,8 @@ public class Gypsumboard extends AbstractFinishes {
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    if (stud.equals("Wood Studs")) {
 		resultSet = statement
@@ -139,8 +135,7 @@ public class Gypsumboard extends AbstractFinishes {
     private void reGenerateUserInputs() {
 	userInputs.clear();
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
 
 	    statement = connect.createStatement();
 
@@ -203,8 +198,7 @@ public class Gypsumboard extends AbstractFinishes {
 	    e.printStackTrace();
 	}
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
 
 	    statement = connect.createStatement();
 	    resultSet = statement
@@ -232,8 +226,8 @@ public class Gypsumboard extends AbstractFinishes {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    int index = randGenerator.nextInt(descriptionList.size());
 	    resultSet = statement

@@ -1,12 +1,9 @@
 package masterformat.standard.hvac.condenserunits;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
-import masterformat.api.DatabaseUtils;
 
 public class RefrigerantCondenser extends AbstractCondenserUnits {
     
@@ -44,8 +41,8 @@ public class RefrigerantCondenser extends AbstractCondenserUnits {
 	}
 
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    resultSet = statement
@@ -66,8 +63,8 @@ public class RefrigerantCondenser extends AbstractCondenserUnits {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    if (!descriptionList.isEmpty()) {
@@ -97,8 +94,8 @@ public class RefrigerantCondenser extends AbstractCondenserUnits {
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    resultSet = statement
@@ -125,8 +122,8 @@ public class RefrigerantCondenser extends AbstractCondenserUnits {
 	optionQuantities.clear();
 	Double[] cost = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    int numberOfCondenser = 1;

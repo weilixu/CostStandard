@@ -1,12 +1,9 @@
 package masterformat.standard.electrical;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
-import masterformat.api.DatabaseUtils;
 
 public class InteriorLED extends AbstractElectrical {
 
@@ -23,8 +20,8 @@ public class InteriorLED extends AbstractElectrical {
     @Override
     protected void initializeData() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    resultSet = statement
@@ -51,8 +48,8 @@ public class InteriorLED extends AbstractElectrical {
 	Double[] cost = new Double[numOfCostElement];
 	int numberOfFix = 1;
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    // select all the available lighting fixtures
 	    resultSet = statement
@@ -131,8 +128,8 @@ public class InteriorLED extends AbstractElectrical {
 	}
 
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 	    resultSet = statement
 		    .executeQuery("select * from lighting.interiorled");
@@ -150,8 +147,8 @@ public class InteriorLED extends AbstractElectrical {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    int index = randGenerator.nextInt(descriptionList.size());
@@ -174,8 +171,8 @@ public class InteriorLED extends AbstractElectrical {
     private void addDimension() {
 	userInputs.clear();
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    resultSet = statement

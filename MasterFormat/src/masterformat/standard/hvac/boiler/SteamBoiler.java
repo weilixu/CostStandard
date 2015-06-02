@@ -1,12 +1,9 @@
 package masterformat.standard.hvac.boiler;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-
-import masterformat.api.DatabaseUtils;
 
 public class SteamBoiler extends AbstractBoiler {
 
@@ -54,8 +51,8 @@ public class SteamBoiler extends AbstractBoiler {
 	}
 	
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    resultSet = statement
@@ -81,8 +78,8 @@ public class SteamBoiler extends AbstractBoiler {
     @Override
     public double randomDrawTotalCost() {
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    if (!descriptionList.isEmpty()) {
@@ -117,8 +114,8 @@ public class SteamBoiler extends AbstractBoiler {
 	Double[] cost = new Double[numOfCostElement];
 	//Double[] factor = new Double[numOfCostElement];
 	try {
-	    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
-		    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+	    super.testConnect();
+
 	    statement = connect.createStatement();
 
 	    int numberOfBoiler = 1;

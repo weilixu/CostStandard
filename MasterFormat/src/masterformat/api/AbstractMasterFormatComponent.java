@@ -1,8 +1,10 @@
 package masterformat.api;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import java.util.Random;
 
 public abstract class AbstractMasterFormatComponent implements MasterFormat{
     
-    protected Connection connect = null;
+    protected static Connection connect = null;
     protected Statement statement = null;
     protected PreparedStatement preparedStatement = null;
     protected ResultSet resultSet = null;
@@ -39,6 +41,17 @@ public abstract class AbstractMasterFormatComponent implements MasterFormat{
     
     protected Random randGenerator = new Random();
 
+    protected void testConnect() throws SQLException{
+	if(connect==null){
+	    synchronized(AbstractMasterFormatComponent.class){
+		if(connect==null){
+		    connect = DriverManager.getConnection(DatabaseUtils.getUrl(),
+			    DatabaseUtils.getUser(), DatabaseUtils.getPassword());
+		}
+	    }
+	}
+    }
+    
     @Override
     public Double getMaterialPrice() {
 	return costVector[materialIndex];
@@ -156,8 +169,22 @@ public abstract class AbstractMasterFormatComponent implements MasterFormat{
 		statement.close();
 	    }
 
-	    if (connect != null) {
-		connect.close();
+	    //if (connect != null) {
+	    //	connect.close();
+	    //}
+	} catch (Exception e) {
+
+	}
+    }
+    
+    protected void closeOther(){
+	try {
+	    if (resultSet != null) {
+		resultSet.close();
+	    }
+
+	    if (statement != null) {
+		statement.close();
 	    }
 	} catch (Exception e) {
 

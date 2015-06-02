@@ -98,17 +98,18 @@ public class EnergyPlusModel {
 	setUpOpeningAnazlyer();
     }
     
-    public void calculateBudget(){
+    public synchronized double calculateBudget(){
 	//double construction = materialModule.getTotalCostForConstruction();
-	//double electric = electricalModule.getTotalCostForLighting();
-	//double fan = fanModule.getTotalCostForFan();
-	double boiler = boilerModule.getTotalCostForBoiler();
-	//double pump = pumpModule.getTotalCostForPump();
+	double electric = electricalModule.getTotalCostForLighting();
+	double fan = fanModule.getTotalCostForFan();
+	//double boiler = boilerModule.getTotalCostForBoiler();
+	double pump = pumpModule.getTotalCostForPump();
 	//double furnace = furnaceModule.getTotalCostForFurnace();
 	//double cu = condenserUnitModule.getTotalCostForCU();
 	//double convecunit = unitModule.getTotalCostForConvectionUnit();
 	//double window = transparentModule.getTotalCostForEnvelope();
-	System.out.println("Boiler cost = "+ boiler);
+	//double total = construction+electric+fan+boiler+pump+furnace+cu+convecunit+window;
+	return electric;
     }
 
     /**
