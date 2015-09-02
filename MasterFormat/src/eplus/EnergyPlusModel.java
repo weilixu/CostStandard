@@ -46,7 +46,7 @@ public class EnergyPlusModel {
 
     // useful data
     private final String[] domainList = { "Opaque Construction", "Transparent Construction","Boiler", "Fan",
-	    "Condenser Unit", "Furnace","Pump","Unitary System","Convection Unit","Lights","Equipment" };// comboBox
+	    "Condenser Unit", "Furnace","Pump","Unitary System","Convection Unit","Lights" };// comboBox
 
     private String[][] costData;
     private final String componentCostDescription = "Name:Type:Line Item Type:Item Name:Object End-Use Key:Cost per Each:Cost per Area:"
@@ -98,18 +98,18 @@ public class EnergyPlusModel {
 	setUpOpeningAnazlyer();
     }
     
-    public synchronized double calculateBudget(){
-	//double construction = materialModule.getTotalCostForConstruction();
+    public double calculateBudget(){
+	double construction = materialModule.getTotalCostForConstruction();
 	double electric = electricalModule.getTotalCostForLighting();
 	double fan = fanModule.getTotalCostForFan();
-	//double boiler = boilerModule.getTotalCostForBoiler();
+	double boiler = boilerModule.getTotalCostForBoiler();
 	double pump = pumpModule.getTotalCostForPump();
-	//double furnace = furnaceModule.getTotalCostForFurnace();
-	//double cu = condenserUnitModule.getTotalCostForCU();
-	//double convecunit = unitModule.getTotalCostForConvectionUnit();
-	//double window = transparentModule.getTotalCostForEnvelope();
-	//double total = construction+electric+fan+boiler+pump+furnace+cu+convecunit+window;
-	return electric;
+	double furnace = furnaceModule.getTotalCostForFurnace();
+	double cu = condenserUnitModule.getTotalCostForCU();
+	double convecunit = unitModule.getTotalCostForConvectionUnit();
+	double window = transparentModule.getTotalCostForEnvelope();
+	double total = construction+electric+fan+boiler+pump+furnace+cu+convecunit+window;
+	return total;
     }
 
     /**

@@ -771,7 +771,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	//File file = new File(
 	//	"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\ConstantAC\\SingleZoneCA.idf");
 	File file = new File(
-		"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\SimulationFile\\6.idf");
+		"C:\\Users\\Weili\\Desktop\\New folder (2)\\SingleZoneCA.idf");
 	//File file = new File(
 	//	"C:\\Users\\Weili\\Desktop\\One_Montgomery_Plaza_appTest.idf");
 	EnergyPlusModel model = new EnergyPlusModel(file);

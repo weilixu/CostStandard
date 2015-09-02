@@ -397,6 +397,7 @@ public class IdfReader {
 	    Integer count = eplusMap.get(objectName).size();
 	    elementCount = count.toString();
 	} else {
+	    eplusMap.put(objectName,new HashMap<String, ArrayList<ValueNode>>());
 	    elementCount = "0";
 	}
 	eplusMap.get(objectName).put(elementCount, newObject);
