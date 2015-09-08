@@ -153,27 +153,56 @@ public class EnergyPlusHTMLParser {
 	lights[0] = lightSummary.getLightPower(lightName);
 	return lights;
     }
-    
-    public LineItemCostSummary getCostSummary(){
+
+    public LineItemCostSummary getCostSummary() {
 	return itemCostSummary;
     }
-    
-    public Double getConstrucitonArea(String cons){
+
+    public Double getConstrucitonArea(String cons) {
 	return envelopeSummary.getConstructionArea(cons);
     }
-    
+
     /**
      * includes area, uvalue, shgc, vt
+     * 
      * @param cons
      * @return
      */
-    public String[] getTransparentMaterialSummary(String cons){
+    public String[] getTransparentMaterialSummary(String cons) {
 	String[] material = new String[4];
 	material[0] = transparentEnvelopeSummary.getContructionArea(cons);
 	material[1] = transparentEnvelopeSummary.getConstructionUValue(cons);
 	material[2] = transparentEnvelopeSummary.getConstructionSHGC(cons);
-	material[3] = transparentEnvelopeSummary.getConstructionVisibleTransmittance(cons);
+	material[3] = transparentEnvelopeSummary
+		.getConstructionVisibleTransmittance(cons);
 	return material;
     }
+
+    public double getEUI() {
+	Elements energyTable = doc
+		.getElementsByAttributeValue("tableID",
+			"Annual Building Utility Performance Summary:Site and Source Energy")
+		.get(0).getElementsByTag("td");
+	for (int i = 0; i < energyTable.size(); i++) {
+	    if (energyTable.get(i).text().equalsIgnoreCase("Total Site Energy")) {
+		return Double.parseDouble(energyTable.get(i + 2).text());
+	    }
+	}
+	return 0.0;
+    }
+    
+    public double getBudget() {
+	Elements costTable = doc
+		.getElementsByAttributeValue("tableID",
+			"Component Cost Economics Summary:Construction Cost Estimate Summary")
+		.get(0).getElementsByTag("td");
+	for (int i = 0; i < costTable.size(); i++) {
+	    if (costTable.get(i).text().equalsIgnoreCase("Cost Estimate Total ($)")) {
+		return Double.parseDouble(costTable.get(i + 2).text());
+	    }
+	}
+	return 0.0;
+    }
+    
     
 }
