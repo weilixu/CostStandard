@@ -14,6 +14,7 @@ import java.util.Set;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+
 /**
  * This object represents an data structure of a typical sorted idf file. The
  * file has to read a valid and sorted idf file first. And it can remove an
@@ -95,6 +96,18 @@ public class IdfReader {
 	eplusMap = map;
 	variableList = vl;
 	variableKeySets = vks;
+    }
+    
+    /**
+     * meanly used for clone this object
+     * 
+     * @param map
+     */
+    public IdfReader(String p,
+	    HashMap<String, HashMap<String, ArrayList<ValueNode>>> map) {
+	dataFilled = true;
+	path = p;
+	eplusMap = map;
     }
 
     public void setFilePath(String filePath) {
@@ -550,6 +563,14 @@ public class IdfReader {
 	} catch (IOException e) {
 	    // do something!
 	}
+    }
+    
+    /**
+     * clone the object for baseline generation
+     * @return
+     */
+    public IdfReader cloneIdf(){
+	return new IdfReader(path,deepCopyMap());
     }
 
     private HashMap<String, HashMap<String, ArrayList<ValueNode>>> deepCopyMap() {

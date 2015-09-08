@@ -20,6 +20,13 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
     private final static String materialnomass = "Material:NoMass";
     private final static String zone = "Zone";
     private final static String surface = "BuildingSurface:Detailed";
+    
+    //component cost items
+    private final String componentCostDescription = "Name:Type:Line Item Type:Item Name:Object End-Use Key:Cost per Each:Cost per Area:"
+	    + "Cost per Unit of Output Capacity:Cost per Unit of Output Capacity per COP:Cost per Volume:Cost per Volume Rate:Cost per Energy per Temperature Difference"
+	    + ":Quantity"; // indicates the component cost line item object
+			   // inputs
+    private final String componentCostObject = "ComponentCost:LineItem";
 
     private String[] selectedComponents = null;
 
@@ -71,6 +78,7 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
     public void writeInEnergyPlus(IdfReader eplusFile, String component) {
 	// create constructions and put into eplusFile
 	String walldescription = component.split(":")[1];
+	
 	try {
 	    // 1. setup connections
 	    super.testConnect();
@@ -80,12 +88,16 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 	    resultSet = statement
 		    .executeQuery("select * from energyplusconstruction.wallconstruction where description = '"
 			    + walldescription + "'");
-	    ;
+	    
 	    resultSet.next();
 	    // 2. setup construction object data, and extract the material list
 	    // for this data.
 	    String[] materialList = resultSet.getString("CONSTRUCTIONLIST")
 		    .split(",");
+	    
+	    //initialize material cost related data
+	    String[] materialCostTable = new String[materialList.length];
+	    String[] materialDescription = new String[materialList.length];
 
 	    String constructionName = resultSet.getString("WALLTYPE");
 	    String[] constructionDes = new String[materialList.length + 1];
@@ -140,6 +152,9 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 		    constructionValue[i + 1] = resultSet
 			    .getString("MATERIALNAME");
 		}
+		
+		materialCostTable[i] = resultSet.getString("COSTTABLE");
+		materialDescription[i] = resultSet.getString("DESCRIPTION");
 
 		eplusFile.addNewEnergyPlusObject(construction,
 			constructionValue, constructionDes);// add construction
@@ -181,6 +196,26 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 		    }
 		}
 	    }
+	    
+	    //5. write cost data into energyplus
+	    Double materialCost = 0.0;
+	    for(int c = 0; c<materialCostTable.length; c++){//retrieve the cost data from database
+		if(materialCostTable[c]!=null){
+		    resultSet = statement
+			    .executeQuery("select materialcost from "+materialCostTable[c] + " where description = '"
+				    + materialDescription[c] + "'");
+		    resultSet.next();
+		    materialCost = materialCost + resultSet.getDouble("MATERIALCOST");
+		}
+	    }
+	    //prepare data for the component cost
+	    String[] values = {constructionName.toUpperCase(), "", "Construction",constructionName,"","",
+		    materialCost.toString(), "", "", "", "", "", ""};
+	    String[] description = componentCostDescription.split(":");
+	    //add to eplus
+	    eplusFile.addNewEnergyPlusObject(componentCostObject, values, description);
+	    
+	    //DONE!!!
 	} catch (SQLException e) {
 	    e.printStackTrace();
 	} finally {
@@ -190,7 +225,7 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
     }
 
     @Override
-    public String[] getSelectedComponent() {
+    public String[] getSelectedComponents() {
 	return selectedComponents;
     }
 
@@ -202,7 +237,8 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 
     @Override
     public void setUserInputs(HashMap<String, String> userInputsMap) {
-	// TODO Auto-generated method stub
+	// No Need to implement this method because we are overwriting 
+	// the construction
 
     }
 
@@ -210,5 +246,10 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
     public void setVariable(String[] surfaceProperties) {
 	// TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public String getSelectedComponentName(int Index) {
+	return selectedComponents[Index];
     }
 }

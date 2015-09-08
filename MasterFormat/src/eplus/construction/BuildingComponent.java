@@ -22,7 +22,10 @@ public interface BuildingComponent extends MasterFormat{
      * get the selected component list
      * @return
      */
-    public String[] getSelectedComponent();
+    public String[] getSelectedComponents();
+    
+    
+    public String getSelectedComponentName(int Index);
     
     /**
      * write the component into a copy of energyplus file.
