@@ -14,7 +14,7 @@ import eplus.IdfReader;
 import eplus.htmlparser.EnergyPlusHTMLParser;
 
 public class RunEplusOptimization {
-    private static final String EPLUSBAT = "RunEplus.bat";
+    private static final String EPLUSBAT = "RunEPlus.bat";
 
     private File folder;
     private File eplusFolder;
@@ -138,7 +138,7 @@ public class RunEplusOptimization {
      * Create a batch file in the directory
      */
     private File createBatchFile() throws IOException {
-	String keyWord = "SET maindir=";
+	String keyWord = "set program_path=";
 	String weaWord = "set weather_path=";
 	File file = new File(eplusFolder.getAbsolutePath() + "\\" + EPLUSBAT);
 	file.createNewFile();
@@ -180,7 +180,7 @@ public class RunEplusOptimization {
 	return file;
     }
 
-    class ThreadedInputStream extends Thread {
+    private class ThreadedInputStream extends Thread {
 	protected IOException ioExc;
 	protected InputStream is;
 	protected StringBuffer sb = null;

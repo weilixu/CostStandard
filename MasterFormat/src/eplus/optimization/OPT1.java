@@ -38,7 +38,7 @@ public class OPT1 extends Problem {
 	while (componentIterator.hasNext()) {
 	    BuildingComponent comp = componentIterator.next();
 	    lowerLimit_[index] = 0;
-	    upperLimit_[index] = comp.getSelectedComponents().length;
+	    upperLimit_[index] = comp.getSelectedComponents().length-1;
 	    index++;
 	}
 

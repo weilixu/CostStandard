@@ -602,7 +602,7 @@ public class UncertaintyPanel extends JPanel{
 	//File file = new File(
 	//	"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\ConstantAC\\SingleZoneCA.idf");
 	File file = new File(
-		"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\SimulationFile\\6.idf");
+		"C:\\Users\\Weili\\Dropbox\\BCD-weili\\CostDatabase\\IBPSA-LLC\\EnergyPlus Model\\SimulationFile\\71.idf");
 	//File file = new File(
 	//	"C:\\Users\\Weili\\Desktop\\One_Montgomery_Plaza_appTest.idf");
 	EnergyPlusModel model = new EnergyPlusModel(file);

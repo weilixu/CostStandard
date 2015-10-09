@@ -1,13 +1,29 @@
 package eplus;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import jmetal.core.Algorithm;
+import jmetal.core.Operator;
+import jmetal.core.Problem;
+import jmetal.core.SolutionSet;
+import jmetal.metaheuristics.nsgaII.NSGAII;
+import jmetal.metaheuristics.nsgaII.pNSGAII;
+import jmetal.operators.crossover.CrossoverFactory;
+import jmetal.operators.mutation.MutationFactory;
+import jmetal.operators.selection.SelectionFactory;
+import jmetal.util.JMException;
+import jmetal.util.parallel.IParallelEvaluator;
+import jmetal.util.parallel.MultithreadedEvaluator;
 import eplus.MaterialAnalyzer.Material;
+import eplus.construction.BuildingComponent;
+import eplus.construction.ExteriorWall;
 import eplus.htmlparser.EnergyPlusHTMLParser;
+import eplus.optimization.OPT1;
 import masterformat.api.MasterFormat;
 import masterformat.listener.BoilerListener;
 import masterformat.listener.CostTableListener;
@@ -99,16 +115,73 @@ public class EnergyPlusModel {
     }
     
     public double calculateBudget(){
-	double construction = materialModule.getTotalCostForConstruction();
-	double electric = electricalModule.getTotalCostForLighting();
-	double fan = fanModule.getTotalCostForFan();
-	double boiler = boilerModule.getTotalCostForBoiler();
-	double pump = pumpModule.getTotalCostForPump();
-	double furnace = furnaceModule.getTotalCostForFurnace();
-	double cu = condenserUnitModule.getTotalCostForCU();
-	double convecunit = unitModule.getTotalCostForConvectionUnit();
-	double window = transparentModule.getTotalCostForEnvelope();
-	double total = construction+electric+fan+boiler+pump+furnace+cu+convecunit+window;
+	double total = 0.0;
+	try{
+	    FileWriter writer = new FileWriter("C:\\Users\\Weili\\Desktop\\test.csv");
+	    writer.append("Construction");
+	    writer.append(",");
+	    writer.append("Electric");
+	    writer.append(",");
+	    writer.append("Fan");
+	    writer.append(",");
+	    writer.append("Boiler");
+	    writer.append(",");
+	    writer.append("Pump");
+	    writer.append(",");
+	    writer.append("Furnace");
+	    writer.append(",");
+	    writer.append("CU");
+	    writer.append(",");
+	    writer.append("ConvectionUnit");
+	    writer.append(",");
+	    writer.append("Windows");
+	    writer.append("\n");
+	
+	for(int i=0; i<1000; i++){
+		double construction = materialModule.getTotalCostForConstruction();
+		writer.append(construction+"");
+		    writer.append(",");
+		double electric = electricalModule.getTotalCostForLighting();
+		writer.append(electric+"");
+		    writer.append(",");
+
+		double fan = fanModule.getTotalCostForFan();
+		writer.append(fan+"");
+		    writer.append(",");
+
+		double boiler = boilerModule.getTotalCostForBoiler();
+		writer.append(boiler+"");
+		    writer.append(",");
+
+		double pump = pumpModule.getTotalCostForPump();
+		writer.append(pump+"");
+		    writer.append(",");
+
+		double furnace = furnaceModule.getTotalCostForFurnace();
+		writer.append(furnace+"");
+		    writer.append(",");
+
+		double cu = condenserUnitModule.getTotalCostForCU();
+		writer.append(cu+"");
+		    writer.append(",");
+
+		double convecunit = unitModule.getTotalCostForConvectionUnit();
+		writer.append(convecunit+"");
+		    writer.append(",");
+
+		double window = transparentModule.getTotalCostForEnvelope();
+		writer.append(window+"");
+		    writer.append("\n");
+
+		total = construction+electric+fan+boiler+pump+furnace+cu+convecunit+window;
+		
+
+	}
+	writer.flush();
+	writer.close();
+	}catch(IOException e){
+	    e.printStackTrace();
+	}
 	return total;
     }
 
@@ -805,6 +878,61 @@ public class EnergyPlusModel {
 		generatedCounter.toString());
 	generatedCounter++;
     }
+    
+    /*
+     * Optimization Related Functions
+     */
+   public void BudgetEUIOptimization() throws JMException, ClassNotFoundException{
+       Operator  crossover ; // Crossover operator
+       Operator  mutation  ; // Mutation operator
+       Operator  selection ; // Selection operator
+       HashMap<String, Double>  parameters ; // Operator parameters
+
+       ArrayList<BuildingComponent> componentList = new ArrayList<BuildingComponent>();
+       ExteriorWall ew = new ExteriorWall();
+       componentList.add(ew);
+       Problem problem = new OPT1(componentList,idfDomain,parentFolder);
+       int threads = 4;
+       IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
+       //Algorithm algorithm = new NSGAII(problem);
+       Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
+       
+       /*Algorithm parameters */
+       algorithm.setInputParameter("populationSize", 4);
+       algorithm.setInputParameter("maxEvaluations", 100);
+       
+       // Mutation and Crossover for Real codification 
+       parameters = new HashMap<String, Double>() ;
+       parameters.put("probability", 0.9) ;
+       parameters.put("distributionIndex", 20.0) ;
+       crossover = CrossoverFactory.getCrossoverOperator("SinglePointCrossover", parameters);                   
+
+       parameters = new HashMap<String, Double>() ;
+       parameters.put("probability", 1.0/problem.getNumberOfVariables()) ;
+       parameters.put("distributionIndex", 20.0) ;
+       mutation = MutationFactory.getMutationOperator("BitFlipMutation", parameters);                    
+
+       // Selection Operator 
+       parameters = null ;
+       selection = SelectionFactory.getSelectionOperator("BinaryTournament2", parameters) ;                           
+
+       // Add the operators to the algorithm
+       algorithm.addOperator("crossover",crossover);
+       algorithm.addOperator("mutation",mutation);
+       algorithm.addOperator("selection",selection);
+       
+       // Execute the Algorithm
+       long initTime = System.currentTimeMillis();
+       SolutionSet population = algorithm.execute();
+       long estimatedTime = System.currentTimeMillis() - initTime;
+       System.out.println("Total execution time: " + estimatedTime);
+
+	/* Log messages */
+	System.out.println("Objectives values have been writen to file FUN");
+	population.printObjectivesToFile("FUN");
+	System.out.println("Variables values have been writen to file VAR");
+	population.printVariablesToFile("VAR");
+   }
 
     private void processHTML() {
 	File[] fList = parentFolder.listFiles();

@@ -298,6 +298,13 @@ public class IdfReader {
 	}
 	return deepCopyPartialMap(object);
     }
+    
+    public HashMap<String, ArrayList<ValueNode>> getObjectListCopy(String object){
+	if(eplusMap.get(object) == null){
+	    return null;
+	}
+	return eplusMap.get(object);
+    }
 
     /**
      * get value from the database. This method will extract the value according

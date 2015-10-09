@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import jmetal.util.JMException;
 import masterformat.listener.CostTableListener;
 import eplus.EnergyPlusModel;
 import eplus.MaterialAnalyzer.Material;
@@ -54,6 +55,10 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private final String TOTAL_BUTTON = "Add total Cost to EnergyPlus";
     private final JButton totalOPButton;
     private final String TOTAL_OP_BUTTON = "Add total Incl O&P Cost to EnergyPlus";
+    /*Optimization Related Function*/
+    private final JButton optimization;
+    private final String OPT_BUTTON = "Optimize";
+    
     // temp there
     private final JButton writeButton;
     private final String WRITE = "Export to EnergyPlus";
@@ -340,6 +345,19 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	// scrollPane.setBackground(Color.WHITE);
 	tablePanel.add(scrollPane, BorderLayout.CENTER);
 	// tablePanel.setBackground(Color.WHITE);
+	
+	optimization = new JButton(OPT_BUTTON);
+	optimization.addActionListener(new ActionListener(){
+	    @Override
+	    public void actionPerformed(ActionEvent e){
+		try {
+		    model.BudgetEUIOptimization();
+		} catch (ClassNotFoundException | JMException e1) {
+		    // TODO Auto-generated catch block
+		    e1.printStackTrace();
+		}
+	    }
+	});
 
 	totalButton = new JButton(TOTAL_BUTTON);
 	totalButton.addActionListener(new ActionListener() {
@@ -424,6 +442,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	buttonPanel.add(totalButton);
 	buttonPanel.add(totalOPButton);
 	buttonPanel.add(writeButton);
+	buttonPanel.add(optimization);
 
 	tablePanel.add(buttonPanel, BorderLayout.PAGE_END);
 
