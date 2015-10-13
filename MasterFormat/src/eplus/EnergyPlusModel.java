@@ -22,7 +22,11 @@ import jmetal.util.parallel.MultithreadedEvaluator;
 import eplus.MaterialAnalyzer.Material;
 import eplus.construction.BuildingComponent;
 import eplus.construction.ExteriorWall;
+import eplus.construction.Lighting;
+import eplus.construction.Roof;
+import eplus.construction.Window;
 import eplus.htmlparser.EnergyPlusHTMLParser;
+import eplus.htmlparser.ZoneHTMLParser;
 import eplus.optimization.OPT1;
 import masterformat.api.MasterFormat;
 import masterformat.listener.BoilerListener;
@@ -59,6 +63,7 @@ public class EnergyPlusModel {
     // files locations etc.
     private final File eplusFile;
     private final File parentFolder;
+    private File outputFile;
 
     // useful data
     private final String[] domainList = { "Opaque Construction", "Transparent Construction","Boiler", "Fan",
@@ -890,16 +895,22 @@ public class EnergyPlusModel {
 
        ArrayList<BuildingComponent> componentList = new ArrayList<BuildingComponent>();
        ExteriorWall ew = new ExteriorWall();
+       Roof rf = new Roof();
+       Lighting lt = new Lighting();
+       Window wd = new Window();
        componentList.add(ew);
+       componentList.add(rf);
+       componentList.add(lt);
+       componentList.add(wd);
        Problem problem = new OPT1(componentList,idfDomain,parentFolder);
        int threads = 4;
        IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
-       //Algorithm algorithm = new NSGAII(problem);
        Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
+       //Algorithm algorithm = new NSGAII(problem);       
        
        /*Algorithm parameters */
        algorithm.setInputParameter("populationSize", 4);
-       algorithm.setInputParameter("maxEvaluations", 100);
+       algorithm.setInputParameter("maxEvaluations", 200);
        
        // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;
@@ -914,7 +925,7 @@ public class EnergyPlusModel {
 
        // Selection Operator 
        parameters = null ;
-       selection = SelectionFactory.getSelectionOperator("BinaryTournament2", parameters) ;                           
+       selection = SelectionFactory.getSelectionOperator("BinaryTournament2", parameters);                           
 
        // Add the operators to the algorithm
        algorithm.addOperator("crossover",crossover);
@@ -941,6 +952,8 @@ public class EnergyPlusModel {
 		String fileName = eplusFile.getName().substring(0,eplusFile.getName().indexOf("."))+"Table";
 		String htmlFileName = file.getName().substring(0,file.getName().indexOf("."));
 		if (fileName.equals(htmlFileName) && file.getName().endsWith(".html")) {
+		    outputFile = file;
+		    ZoneHTMLParser.processOutputs(outputFile);
 		    htmlParser = new EnergyPlusHTMLParser(file);
 		    break;
 		}

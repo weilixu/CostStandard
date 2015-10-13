@@ -38,7 +38,7 @@ public class OPT1 extends Problem {
 	while (componentIterator.hasNext()) {
 	    BuildingComponent comp = componentIterator.next();
 	    lowerLimit_[index] = 0;
-	    upperLimit_[index] = comp.getSelectedComponents().length-1;
+	    upperLimit_[index] = comp.getSelectedComponents().length - 1;
 	    index++;
 	}
 
@@ -49,18 +49,22 @@ public class OPT1 extends Problem {
     public void evaluate(Solution solution) throws JMException {
 	Variable[] decisionVariables = solution.getDecisionVariables();
 	IdfReader copiedData = originalData.cloneIdf();
-	// modify the idf according to generated data
-	for (int i = 0; i < decisionVariables.length; i++) {
-	    Double value = (Double) decisionVariables[i].getValue();
-	    BuildingComponent comp = componentList.get(i);
-	    String name = comp.getSelectedComponentName(value.intValue());
-	    comp.writeInEnergyPlus(copiedData, name);
-	}
+
 	// initialize simulation for optimization
-	RunEplusOptimization optimization = new RunEplusOptimization(copiedData);
-	optimization.setFolder(analyzeFolder);
+	// RunEplusOptimization optimization = new
+	// RunEplusOptimization(copiedData);
+	RunEplusOptimization optimization = null;
 	synchronized (this) {
+	    // modify the idf according to generated data
+	    for (int i = 0; i < decisionVariables.length; i++) {
+		Double value = (Double) decisionVariables[i].getValue();
+		BuildingComponent comp = componentList.get(i);
+		String name = comp.getSelectedComponentName(value.intValue());
+		comp.writeInEnergyPlus(copiedData, name);
+	    }
 	    simulationCount++;
+	    optimization = new RunEplusOptimization(copiedData);
+	    optimization.setFolder(analyzeFolder);
 	    optimization.setSimulationTime(simulationCount);
 	}
 	EnergyPlusHTMLParser parser = null;
