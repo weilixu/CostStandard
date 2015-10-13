@@ -14,7 +14,6 @@ import java.util.Set;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-
 /**
  * This object represents an data structure of a typical sorted idf file. The
  * file has to read a valid and sorted idf file first. And it can remove an
@@ -97,7 +96,7 @@ public class IdfReader {
 	variableList = vl;
 	variableKeySets = vks;
     }
-    
+
     /**
      * meanly used for clone this object
      * 
@@ -298,9 +297,9 @@ public class IdfReader {
 	}
 	return deepCopyPartialMap(object);
     }
-    
-    public HashMap<String, ArrayList<ValueNode>> getObjectListCopy(String object){
-	if(eplusMap.get(object) == null){
+
+    public HashMap<String, ArrayList<ValueNode>> getObjectListCopy(String object) {
+	if (eplusMap.get(object) == null) {
 	    return null;
 	}
 	return eplusMap.get(object);
@@ -417,7 +416,8 @@ public class IdfReader {
 	    Integer count = eplusMap.get(objectName).size();
 	    elementCount = count.toString();
 	} else {
-	    eplusMap.put(objectName,new HashMap<String, ArrayList<ValueNode>>());
+	    eplusMap.put(objectName,
+		    new HashMap<String, ArrayList<ValueNode>>());
 	    elementCount = "0";
 	}
 	eplusMap.get(objectName).put(elementCount, newObject);
@@ -551,13 +551,23 @@ public class IdfReader {
 
     public void modifySpecialCharactor(String specialCharactor, String value) {
 	if (dataFilled) {
-	    int index = variableList.indexOf(specialCharactor);
-	    ArrayList<ValueNode> temp = eplusMap.get(
-		    variableKeySets.get(index)[ObjectNameIndex]).get(
-		    variableKeySets.get(index)[ObjectElementCountIndex]);
-	    for (ValueNode v : temp) {
-		if (v.isCritical() && v.getAttribute().equals(specialCharactor)) {
-		    v.setAttribute(value);
+	    // loop through the variable loop
+	    for (int i = 0; i < variableList.size(); i++) {
+		// find the index of the matching variable characters
+		if (variableList.get(i).equals(specialCharactor)) {
+		    // retrieve the value nodes data from the map
+		    ArrayList<ValueNode> temp = eplusMap.get(
+			    variableKeySets.get(i)[ObjectNameIndex]).get(
+			    variableKeySets.get(i)[ObjectElementCountIndex]);
+		    // go through the value nodes to find the special characters
+		    // to replace
+		    for (ValueNode v : temp) {
+			if (v.isCritical()
+				&& v.getAttribute().equals(specialCharactor)) {
+			    //System.out.println(v.getDescription() + " " + v.getAttribute() + " " + value);
+			    v.setAttribute(value);
+			}
+		    }
 		}
 	    }
 	}
@@ -571,13 +581,14 @@ public class IdfReader {
 	    // do something!
 	}
     }
-    
+
     /**
      * clone the object for baseline generation
+     * 
      * @return
      */
-    public IdfReader cloneIdf(){
-	return new IdfReader(path,deepCopyMap());
+    public IdfReader cloneIdf() {
+	return new IdfReader(path, deepCopyMap(),variableList,variableKeySets);
     }
 
     private HashMap<String, HashMap<String, ArrayList<ValueNode>>> deepCopyMap() {
