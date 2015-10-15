@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
 import eplus.IdfReader.ValueNode;
 import eplus.htmlparser.ZoneHTMLParser;
@@ -81,7 +82,7 @@ public class Lighting extends AbstractMasterFormatComponent implements
     }
 
     @Override
-    public void writeInEnergyPlus(IdfReader eplusFile, String component) {
+    public void writeInEnergyPlus(IdfReader eplusFile, String component) {	
 	String lightType = component.split(":")[1];
 
 	try {
@@ -98,8 +99,8 @@ public class Lighting extends AbstractMasterFormatComponent implements
 	    String costTable = resultSet.getString("CostTable");
 	    String power = resultSet.getString("Power");
 	    //re request from the costtable
-	    System.out.println("select * from '" + costTable
-		    + "' where description = '" + lightType + "'");
+//	    System.out.println("select * from '" + costTable
+//		    + "' where description = '" + lightType + "'");
 	    resultSet = statement.executeQuery("select * from " + costTable
 		    + " where description = '" + lightType + "'");
 	    resultSet.next();

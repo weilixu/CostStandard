@@ -7,12 +7,16 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+
+
+
 
 /**
  * This object represents an data structure of a typical sorted idf file. The
@@ -408,6 +412,7 @@ public class IdfReader {
 	// create value node array
 	ArrayList<ValueNode> newObject = new ArrayList<ValueNode>();
 	for (int i = 0; i < objectValues.length; i++) {
+	    //System.out.println(objectName + " " + Arrays.toString(objectValues) + " " + Arrays.toString(objectDes));
 	    newObject.add(new ValueNode(objectValues[i], objectDes[i]));
 	}
 	// create a new map
@@ -420,7 +425,23 @@ public class IdfReader {
 		    new HashMap<String, ArrayList<ValueNode>>());
 	    elementCount = "0";
 	}
+//	if(objectName.equals("Construction")){
+//	    System.out.println("We found a construction! : " + Arrays.toString(objectValues) + elementCount);
+//	    HashMap<String, ArrayList<ValueNode>> constructionList = eplusMap.get("Construction");
+//	    Set<String> constructionSet = constructionList.keySet();
+//	    Iterator<String> consIterator = constructionSet.iterator();
+//	    while(consIterator.hasNext()){
+//		System.out.println(constructionList.get(consIterator.next()).get(0).getAttribute());
+//	    }
+//	}
+	//else if(objectName.equals("Material")){
+//	    System.out.println("We found a material! : " + Arrays.toString(objectValues) + elementCount);
+//	}else{	
+//	    System.out.println("We found something else : "+ Arrays.toString(objectValues) + elementCount);    
+//	}
+//	System.out.println(objectName + eplusMap.get(objectName).size());
 	eplusMap.get(objectName).put(elementCount, newObject);
+//	System.out.println(objectName + eplusMap.get(objectName).size() + eplusMap.get(objectName).get(elementCount).get(0).getAttribute());
     }
 
     public String copyExistingEplusObject(String objectName, String elementCount) {
@@ -588,7 +609,7 @@ public class IdfReader {
      * @return
      */
     public IdfReader cloneIdf() {
-	return new IdfReader(path, deepCopyMap(),variableList,variableKeySets);
+	return new IdfReader(path, deepCopyMap());
     }
 
     private HashMap<String, HashMap<String, ArrayList<ValueNode>>> deepCopyMap() {
@@ -612,7 +633,7 @@ public class IdfReader {
 		objectMap.put(element, list);
 	    }
 	    tempMap.put(object, objectMap);
-	}
+	}	
 	return tempMap;
     }
 

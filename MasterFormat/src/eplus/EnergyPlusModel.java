@@ -22,6 +22,7 @@ import jmetal.util.parallel.MultithreadedEvaluator;
 import eplus.MaterialAnalyzer.Material;
 import eplus.construction.BuildingComponent;
 import eplus.construction.ExteriorWall;
+import eplus.construction.HVACSimple;
 import eplus.construction.Lighting;
 import eplus.construction.Roof;
 import eplus.construction.Window;
@@ -64,6 +65,7 @@ public class EnergyPlusModel {
     private final File eplusFile;
     private final File parentFolder;
     private File outputFile;
+    private final EnergyPlusBuildingForHVACSystems bldg;
 
     // useful data
     private final String[] domainList = { "Opaque Construction", "Transparent Construction","Boiler", "Fan",
@@ -106,6 +108,7 @@ public class EnergyPlusModel {
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
+	bldg = new EnergyPlusBuildingForHVACSystems(idfDomain);
 	processHTML();
 	setUpMaterialAnalyzer();
 	setUpBoilerAnalyzer();
@@ -898,19 +901,21 @@ public class EnergyPlusModel {
        Roof rf = new Roof();
        Lighting lt = new Lighting();
        Window wd = new Window();
+       HVACSimple hvac = new HVACSimple(bldg);
        componentList.add(ew);
+       componentList.add(wd);
        componentList.add(rf);
        componentList.add(lt);
-       componentList.add(wd);
+       componentList.add(hvac);
        Problem problem = new OPT1(componentList,idfDomain,parentFolder);
        int threads = 4;
-       IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
-       Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
-       //Algorithm algorithm = new NSGAII(problem);       
+       //IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
+       //Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
+       Algorithm algorithm = new NSGAII(problem);       
        
        /*Algorithm parameters */
        algorithm.setInputParameter("populationSize", 4);
-       algorithm.setInputParameter("maxEvaluations", 200);
+       algorithm.setInputParameter("maxEvaluations", 10);
        
        // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;
@@ -959,6 +964,7 @@ public class EnergyPlusModel {
 		}
 	    }
 	}
+	bldg.processOutputs(outputFile);
     }
 
     private void setUpMaterialAnalyzer() {

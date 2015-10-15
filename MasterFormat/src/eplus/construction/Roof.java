@@ -2,10 +2,12 @@ package eplus.construction;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
 import eplus.IdfReader.ValueNode;
 import masterformat.api.AbstractMasterFormatComponent;

@@ -2,7 +2,6 @@ package eplus.construction;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -33,7 +32,7 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 
     public ExteriorWall() {
 	selectedComponents = getListAvailableComponent();
-	//System.out.println(selectedComponents.length);
+	// System.out.println(selectedComponents.length);
     }
 
     @Override
@@ -80,7 +79,6 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
     public void writeInEnergyPlus(IdfReader eplusFile, String component) {
 	// create constructions and put into eplusFile
 	String walldescription = component.split(":")[1];
-	synchronized(this){
 	try {
 	    // 1. setup connections
 	    super.testConnect();
@@ -91,12 +89,13 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 		    .executeQuery("select * from energyplusconstruction.wallconstruction where description = '"
 			    + walldescription + "'");
 	    resultSet.next();
-	    // 2. setup construction object data, and extract the material list
+	    // 2. setup construction object data, and extract the material
+	    // list
 	    // for this data.
 	    String[] materialList = resultSet.getString("CONSTRUCTIONLIST")
 		    .split(",");
-	    
-	    //System.out.println(Arrays.toString(materialList));
+
+	    // System.out.println(Arrays.toString(materialList));
 
 	    // initialize material cost related data
 	    String[] materialCostTable = new String[materialList.length];
@@ -108,19 +107,20 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 	    constructionDes[0] = "Name";
 	    constructionValue[0] = constructionName;
 
-	    // 3. loop through material list and create material/material:nomass
+	    // 3. loop through material list and create
+	    // material/material:nomass
 	    // objects in energyplus
 	    for (int i = 0; i < materialList.length; i++) {
 		resultSet = statement
 			.executeQuery("select * from energyplusconstruction.materials where layerid = '"
 				+ materialList[i] + "'");
 		resultSet.next();
-		if(duplicateMaterial(constructionValue, resultSet
-			    .getString("MATERIALNAME"))){
+		if (duplicateMaterial(constructionValue,
+			resultSet.getString("MATERIALNAME"))) {
 		    constructionDes[i + 1] = "Layer";
 		    constructionValue[i + 1] = resultSet
 			    .getString("MATERIALNAME") + "_Wall";
-		}else if (resultSet.getDouble("RESISTANCE") <= 0.0) {
+		} else if (resultSet.getDouble("RESISTANCE") <= 0.0) {
 		    // if detail thermal properties are available
 		    String[] materialDes = { "Name", "Roughness",
 			    "Thickness {m}", "Conductivity {W/m-K}",
@@ -128,18 +128,20 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 			    "Thermal Absorptance", "Solar Absorptance",
 			    "Visible Absorptance" };
 		    String[] materialValue = {
-			    resultSet.getString("MATERIALNAME") + "_Wall", "MediumRough",
-			    resultSet.getString("THICKNESS"),
+			    resultSet.getString("MATERIALNAME") + "_Wall",
+			    "MediumRough", resultSet.getString("THICKNESS"),
 			    resultSet.getString("CONDUCTIVITY"),
 			    resultSet.getString("DENSITY"),
 			    resultSet.getString("SPECIFICHEAT"), "0.9", "0.7",
 			    "0.7" };
 		    eplusFile.addNewEnergyPlusObject(material, materialValue,
-			    materialDes);// add object to eplus
+			    materialDes);// add object to
+					 // eplus
 
 		    // complete the construction object data
 		    constructionDes[i + 1] = "Layer";
-		    constructionValue[i + 1] = resultSet.getString("MATERIALNAME") + "_Wall";
+		    constructionValue[i + 1] = resultSet
+			    .getString("MATERIALNAME") + "_Wall";
 
 		} else {
 		    // if there is only thermal resistance data available
@@ -148,28 +150,32 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 			    "Thermal Absorptance", "Solar Absorptance",
 			    "Visible Absorptance" };
 		    String[] materialValue = {
-			    resultSet.getString("MATERIALNAME") + "_Wall", "MediumRough",
-			    resultSet.getString("RESISTANCE"), "0.9", "0.7",
-			    "0.7" };
-		    //System.out.println(Arrays.toString(materialValue));
+			    resultSet.getString("MATERIALNAME") + "_Wall",
+			    "MediumRough", resultSet.getString("RESISTANCE"),
+			    "0.9", "0.7", "0.7" };
+		    // System.out.println(Arrays.toString(materialValue));
 		    eplusFile.addNewEnergyPlusObject(materialnomass,
-			    materialValue, materialDes);// add object to eplus
+			    materialValue, materialDes);// add object to
+							// eplus
 
 		    // complete the construction object data
 		    constructionDes[i + 1] = "Layer";
-		    constructionValue[i + 1] = resultSet.getString("MATERIALNAME") + "_Wall";
+		    constructionValue[i + 1] = resultSet
+			    .getString("MATERIALNAME") + "_Wall";
 		}
 
 		materialCostTable[i] = resultSet.getString("COSTTABLE");
 		materialDescription[i] = resultSet.getString("DESCRIPTION");
 
 	    }
-		//System.out.println(Arrays.toString(constructionValue) + " " + Arrays.toString(constructionDes));
-		eplusFile.addNewEnergyPlusObject(construction,
-			constructionValue, constructionDes);// add construction
-							    // data
+	    // System.out.println(Arrays.toString(constructionValue) + " " +
+	    // Arrays.toString(constructionDes));
+	    eplusFile.addNewEnergyPlusObject(construction, constructionValue,
+		    constructionDes);// add construction
+				     // data
 
-	    // 4. replace all the exterior wall surfaces with the newly created
+	    // 4. replace all the exterior wall surfaces with the newly
+	    // created
 	    // external wall construction
 	    HashMap<String, ArrayList<ValueNode>> surfaceMap = eplusFile
 		    .getObjectListCopy(surface);
@@ -179,8 +185,7 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 	    while (surfaceIterator.hasNext()) {
 		// get one surface
 		String surfaceCount = surfaceIterator.next();
-		ArrayList<ValueNode> nodes = surfaceMap.get(
-			surfaceCount);
+		ArrayList<ValueNode> nodes = surfaceMap.get(surfaceCount);
 		String surfaceType = null;
 		String boundary = null;
 		for (int i = 0; i < nodes.size(); i++) {
@@ -195,12 +200,13 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 		}
 		if (surfaceType.equals("Wall") && boundary.equals("Outdoors")) {
 		    // if surface is external wall, replace the construction
-		    //System.out.print(nodes.get(0).getAttribute());
-		    for (int i = 0; i < nodes.size(); i++) {			
+		    // System.out.print(nodes.get(0).getAttribute());
+		    for (int i = 0; i < nodes.size(); i++) {
 			if (nodes.get(i).getDescription()
 				.equals("Construction Name")) {
 			    nodes.get(i).setAttribute(constructionName);
-			    //System.out.println(nodes.get(i).getDescription() + " " + nodes.get(i).getAttribute());
+			    // System.out.println(nodes.get(i).getDescription()
+			    // + " " + nodes.get(i).getAttribute());
 			    break;
 			}
 		    }
@@ -209,11 +215,13 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 
 	    // 5. write cost data into energyplus
 	    Double materialCost = 0.0;
-	    for (int c = 0; c < materialCostTable.length; c++) {// retrieve the
+	    for (int c = 0; c < materialCostTable.length; c++) {// retrieve
+								// the
 								// cost data
-								// from database
+								// from
+								// database
 		if (materialCostTable[c] != null) {
-		    //System.out.println(materialCostTable[c]);
+		    // System.out.println(materialCostTable[c]);
 		    resultSet = statement
 			    .executeQuery("select materialcost from "
 				    + materialCostTable[c]
@@ -239,15 +247,15 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 	} finally {
 	    close();
 	}
-	}
     }
-    
-    private boolean duplicateMaterial(String[] constructionLayers, String material){
-	for(int i=0; i<constructionLayers.length; i++){
+
+    private boolean duplicateMaterial(String[] constructionLayers,
+	    String material) {
+	for (int i = 0; i < constructionLayers.length; i++) {
 	    String layer = constructionLayers[i];
 	    String materialName = material + "_Wall";
-	    //System.out.println(layer +" " + material);
-	    if(layer!=null && layer.equalsIgnoreCase(materialName)){
+	    // System.out.println(layer +" " + material);
+	    if (layer != null && layer.equalsIgnoreCase(materialName)) {
 		return true;
 	    }
 	}

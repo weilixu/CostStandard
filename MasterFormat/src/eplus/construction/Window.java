@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
 import eplus.IdfReader.ValueNode;
 import masterformat.api.AbstractMasterFormatComponent;
@@ -87,7 +88,8 @@ public class Window extends AbstractMasterFormatComponent implements
     }
 
     @Override
-    public void writeInEnergyPlus(IdfReader eplusFile, String component) {
+    public void writeInEnergyPlus(IdfReader eplusFile,
+	    String component) {
 	// create constructions and put into eplusFile
 	String windowDescription = component.split(":")[1];
 	try {
@@ -117,9 +119,9 @@ public class Window extends AbstractMasterFormatComponent implements
 	    constructionList[0] = constructionName;
 	    constructionList[1] = name;
 
-	    eplusFile.addNewEnergyPlusObject(simplewindow,windowproperty,
+	    eplusFile.addNewEnergyPlusObject(simplewindow, windowproperty,
 		    simpleWindowDescription.split(":"));
-	    eplusFile.addNewEnergyPlusObject(construction,constructionList,
+	    eplusFile.addNewEnergyPlusObject(construction, constructionList,
 		    constructionDes.split(":"));
 
 	    // 3. replace the fenestration material to created material

@@ -1,5 +1,6 @@
 package eplus.construction;
 
+import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
 import masterformat.api.MasterFormat;
 
@@ -34,6 +35,6 @@ public interface BuildingComponent extends MasterFormat{
      * @param eplusFile
      * @param component
      */
-    public void writeInEnergyPlus(IdfReader eplusFile, String component);
+    public void writeInEnergyPlus(IdfReader reader, String component);
     
 }

@@ -62,9 +62,9 @@ public class MaterialAnalyzer {
 	parser = p;
 	constructionMap = new HashMap<String, ArrayList<Material>>();
 	constructionAreaMap = new HashMap<String, Double>();
-	processMaterialRawDatafromMaterials();
-	processMaterialRawDatafromSurface();
-	processConstructionAreaMap();
+	//processMaterialRawDatafromMaterials();
+	//processMaterialRawDatafromSurface();
+	//processConstructionAreaMap();
     }
 
     /**
