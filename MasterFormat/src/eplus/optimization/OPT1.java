@@ -1,8 +1,6 @@
 package eplus.optimization;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -14,7 +12,6 @@ import jmetal.encodings.solutionType.IntSolutionType;
 import jmetal.util.JMException;
 import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
-import eplus.HVAC.HVACSystem;
 import eplus.construction.BuildingComponent;
 import eplus.construction.ComponentFactory;
 import eplus.htmlparser.EnergyPlusHTMLParser;
