@@ -10,7 +10,7 @@ public class CoolingLoadParser {
     private final Document doc;
     private final Elements coolingLoadSummary;
     
-    private static final String ZONE_COOL_LOAD = "HVAC Sizing Summary:Zone Cooling";
+    private static final String ZONE_COOL_LOAD = "HVAC Sizing Summary%Zone Cooling";
     private static final String TAG = "tableID";
     
     public CoolingLoadParser(Document d){

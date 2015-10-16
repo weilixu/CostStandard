@@ -44,7 +44,7 @@ public class BuildingAreaParser {
 	    }
 	    if (htmlNodes.get(i).hasAttr("cellpadding")) {
 		String tableName = htmlNodes.get(i - 3).text();
-		htmlNodes.get(i).attr("tableID", report + ":" + tableName);
+		htmlNodes.get(i).attr("tableID", report + "%" + tableName);
 	    }
 	}
     }
@@ -78,7 +78,7 @@ public class BuildingAreaParser {
 	Double delta = null;
 	Double flow = null;
 	Elements nodeList = doc.getElementsByAttributeValue("tableID",
-		"Equipment Summary:Fans");
+		"Equipment Summary%Fans");
 	for (int i = 0; i < nodeList.size(); i++) {
 	    Elements fanList = nodeList.get(i).getElementsByTag("td");
 		for(int j=0; j<fanList.size(); j++){

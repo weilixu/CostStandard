@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import eplus.EnergyPlusBuildingForHVACSystems;
 import baseline.generator.EplusObject;
 import baseline.generator.KeyValuePair;
@@ -30,7 +33,10 @@ public class PackageVAV implements HVACSystem {
     private ArrayList<String> boilerList;
 
     // pump selection
-    private String heatingPump;
+    private String heatingPump;    
+    
+    private static final String sizingTable = "Component Sizing Summary%Coil:Cooling:DX:SingleSpeed";
+    private static final String TAG = "tableID";
 
     public PackageVAV(HashMap<String, ArrayList<EplusObject>> objects,
 	    EnergyPlusBuildingForHVACSystems bldg) {
@@ -50,6 +56,19 @@ public class PackageVAV implements HVACSystem {
     @Override
     public HashMap<String, ArrayList<EplusObject>> getSystemData() {
 	return objectLists;
+    }
+    
+    @Override
+    public double getTotalLoad(Document doc){
+	Elements coilList = doc.getElementsByAttributeValue(TAG, sizingTable).get(0).getElementsByTag("td");
+	Double load = 0.0;
+	for(int i=0; i<coilList.size(); i++){
+	    if(coilList.get(i).text().contains("COOLING COIL")){
+		load = load + Double.parseDouble(coilList.get(i+2).text());
+	    }
+	}
+	System.out.println(load);
+	return load;
     }
 
     private void processSystems() {
@@ -224,5 +243,11 @@ public class PackageVAV implements HVACSystem {
 	zoneMixerList.add(zoneMixer);
 	zoneHeatingCoilList.add(reheatCoil);
 	return demandTemp;
+    }
+
+    @Override
+    public String getSystemName() {
+	// TODO Auto-generated method stub
+	return "Package VAV";
     }
 }

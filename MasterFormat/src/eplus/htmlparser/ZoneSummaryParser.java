@@ -14,7 +14,7 @@ public class ZoneSummaryParser {
     private final Document doc;
     private final Elements zoneSummary;
     
-    private static final String ZONE_SUMMARY = "Input Verification and Results Summary:Zone Summary";
+    private static final String ZONE_SUMMARY = "Input Verification and Results Summary%Zone Summary";
     private static final String TAG = "tableID";
     
     public ZoneSummaryParser(Document d){

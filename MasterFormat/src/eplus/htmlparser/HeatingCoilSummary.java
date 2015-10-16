@@ -13,7 +13,7 @@ public class HeatingCoilSummary {
     private final Document doc;
     private final Elements heatingCoilSummaryTable;
     
-    private static final String HEAT_COIL_TABLE_ID = "Equipment Summary:Heating Coils";
+    private static final String HEAT_COIL_TABLE_ID = "Equipment Summary%Heating Coils";
     private static final String TAG = "tableID";
     
     public HeatingCoilSummary(Document d){

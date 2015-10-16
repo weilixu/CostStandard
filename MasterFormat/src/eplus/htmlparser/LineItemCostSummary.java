@@ -17,7 +17,7 @@ public class LineItemCostSummary {
     private final Document doc;
     private final Elements lineItemCostSummaryTable;
 
-    private static final String LINE_ITEM_COST_TABLE_ID = "Component Cost Economics Summary:Cost Line Item Details";
+    private static final String LINE_ITEM_COST_TABLE_ID = "Component Cost Economics Summary%Cost Line Item Details";
     private static final String TAG = "tableID";
 
     private List<LineItem> lineItemList;

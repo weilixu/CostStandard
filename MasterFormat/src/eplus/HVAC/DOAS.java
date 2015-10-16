@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jsoup.nodes.Document;
+
 import eplus.EnergyPlusBuildingForHVACSystems;
 import baseline.generator.EplusObject;
 import baseline.generator.KeyValuePair;
@@ -16,7 +18,7 @@ public class DOAS implements HVACSystem {
 
     // building object contains building information and energyplus data
     private EnergyPlusBuildingForHVACSystems building;
-
+    
     public DOAS(HashMap<String, ArrayList<EplusObject>> objects,
 	    EnergyPlusBuildingForHVACSystems bldg) {
 	objectLists = objects;
@@ -133,4 +135,14 @@ public class DOAS implements HVACSystem {
 	return demandTemp;
     }
 
+    @Override
+    public double getTotalLoad(Document doc) {
+	return 0;
+    }
+
+    @Override
+    public String getSystemName() {
+	// TODO Auto-generated method stub
+	return "DOAS";
+    }
 }

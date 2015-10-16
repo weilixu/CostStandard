@@ -10,7 +10,7 @@ public class InteriorLightingSummary {
     private final Document doc;
     private final Elements lightSummaryTable;
     
-    private static final String LIGHT_TABLE_ID = "Lighting Summary:Interior Lighting";
+    private static final String LIGHT_TABLE_ID = "Lighting Summary%Interior Lighting";
     private static final String TAG = "tableID";
     
     public InteriorLightingSummary(Document d){

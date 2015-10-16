@@ -3,6 +3,9 @@ package eplus.HVAC;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import baseline.generator.EplusObject;
 import baseline.generator.KeyValuePair;
 
@@ -20,7 +23,10 @@ public class SystemMerger implements HVACSystem {
 
     private final int Cooling_Seq_Index = 3;
     private final int Heating_Seq_Index = 4;
-
+    
+    private static final String sizingTable = "Component Sizing Summary%AirConditioner:VariableRefrigerantFlow";
+    private static final String TAG = "tableID";
+    
     public SystemMerger(HVACSystem ventilation, HVACSystem heatcool) {
 	ventSystem = ventilation.getSystemData();
 	heatCoolSystem = heatcool.getSystemData();
@@ -156,5 +162,23 @@ public class SystemMerger implements HVACSystem {
 	if (ventGlobalSystem != null) {
 	    mergedSystem.get("Global").addAll(ventGlobalSystem);
 	}
+    }
+
+    @Override
+    public double getTotalLoad(Document doc) {
+	Elements coilList = doc.getElementsByAttributeValue(TAG, sizingTable).get(0).getElementsByTag("td");
+	Double load = 0.0;
+	for(int i=0; i<coilList.size(); i++){
+	    if(coilList.get(i).text().contains("VRF HEAT PUMP")){
+		load = load + Double.parseDouble(coilList.get(i+1).text());
+	    }
+	}
+	return load;
+    }
+
+    @Override
+    public String getSystemName() {
+	// TODO Auto-generated method stub
+	return "DOAS+VRF";
     }
 }

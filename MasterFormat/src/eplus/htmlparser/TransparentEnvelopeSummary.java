@@ -13,7 +13,7 @@ public class TransparentEnvelopeSummary {
     private final Document doc;
     private final Elements envelopeTable;
     
-    private static final String PLANT_TABLE_ID = "Envelope Summary:Exterior Fenestration";
+    private static final String PLANT_TABLE_ID = "Envelope Summary%Exterior Fenestration";
     private static final String TAG = "tableID";
     
     public TransparentEnvelopeSummary(Document d){

@@ -15,7 +15,7 @@ public class FanSizingSummary {
     private final Document doc;
     private final Elements fanSummaryTable;
     
-    private static final String FAN_TABLE_ID = "Equipment Summary:Fans";
+    private static final String FAN_TABLE_ID = "Equipment Summary%Fans";
     private static final String TAG = "tableID";
     
     public FanSizingSummary(Document d){

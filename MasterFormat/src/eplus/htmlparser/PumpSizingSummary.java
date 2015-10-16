@@ -14,7 +14,7 @@ public class PumpSizingSummary {
     private final Document doc;
     private final Elements pumpSummaryTable;
     
-    private static final String PUMP_TABLE_ID = "Equipment Summary:Pumps";
+    private static final String PUMP_TABLE_ID = "Equipment Summary%Pumps";
     private static final String TAG = "tableID";
     
     public PumpSizingSummary(Document d){

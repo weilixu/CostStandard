@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jsoup.nodes.Document;
+
 import eplus.IdfReader;
 import eplus.IdfReader.ValueNode;
+import eplus.HVAC.HVACSystem;
 import masterformat.api.AbstractMasterFormatComponent;
 
 public class ExteriorWall extends AbstractMasterFormatComponent implements
@@ -289,5 +292,10 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
     @Override
     public String getSelectedComponentName(int Index) {
 	return selectedComponents[Index];
+    }
+
+    @Override
+    public double getComponentCost(Document doc) {
+	return 0.0;
     }
 }

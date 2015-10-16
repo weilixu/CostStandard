@@ -1,7 +1,10 @@
 package eplus.construction;
 
+import org.jsoup.nodes.Document;
+
 import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
+import eplus.HVAC.HVACSystem;
 import masterformat.api.MasterFormat;
 
 public interface BuildingComponent extends MasterFormat{
@@ -37,4 +40,12 @@ public interface BuildingComponent extends MasterFormat{
      */
     public void writeInEnergyPlus(IdfReader reader, String component);
     
+    /**
+     * this method is used for those components whose costs are determined
+     * from simulation results. Such as HVAC.
+     * If this is not applicable for components whose costs can be determined
+     * by quantity, then it will return 0.0
+     * @return
+     */
+    public double getComponentCost(Document doc);
 }

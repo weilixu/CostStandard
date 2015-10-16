@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jsoup.nodes.Document;
+
 import baseline.generator.EplusObject;
 import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
@@ -20,16 +22,20 @@ import eplus.HVAC.VRFSystemFactory;
 import masterformat.api.AbstractMasterFormatComponent;
 
 public class HVACSimple extends AbstractMasterFormatComponent implements
-BuildingComponent{
-    
+	BuildingComponent {
+
     private String[] selectedComponents = null;
-    
+
     private EnergyPlusBuildingForHVACSystems eplusBldg;
-    
+
     private static final String FILE_NAME = "HVACObjects.txt";
     private String[] objectList;
-    
-    public HVACSimple(EnergyPlusBuildingForHVACSystems bldg){
+
+    private HVACSystem system;
+
+    private Double systemUnitCost;
+
+    public HVACSimple(EnergyPlusBuildingForHVACSystems bldg) {
 	selectedComponents = getListAvailableComponent();
 	eplusBldg = bldg;
     }
@@ -80,46 +86,61 @@ BuildingComponent{
 
     @Override
     public String getSelectedComponentName(int Index) {
-	return selectedComponents[Index];
+	return selectedComponents[Index] + ":HVAC";
     }
 
     @Override
     public void writeInEnergyPlus(IdfReader eplusFile, String component) {
-	System.out.println(component);
 	String sysName = component.split(":")[0];
-	HVACSystem system = null;
-//	if(sysName.equals("Packaged VAV")){
-	    PackagedVAVFactory factory = new PackagedVAVFactory(eplusBldg);
-	    system = factory.getSystem();
-//	}else if(sysName.equals("VRF")){
-//	    VRFSystemFactory factory = new VRFSystemFactory(eplusBldg);
-//	    system = factory.getSystem();
-//	}else{
-//		VRFSystemFactory vrfFactory = new VRFSystemFactory(eplusBldg);
-//		DOASFactory doasFactory = new DOASFactory(eplusBldg);
-//		system = new SystemMerger(doasFactory.getSystem(),vrfFactory.getSystem());
-//	}
+
+	try {
+	    super.testConnect();
+
+	    statement = connect.createStatement();
+	    resultSet = statement
+		    .executeQuery("select * from energyplusconstruction.hvacsimple where HVACTYPE = '"
+			    + sysName + "'");
+	    resultSet.next();
+	    systemUnitCost = resultSet.getDouble("Cost");
+
+	    if (sysName.equals("Packaged VAV")) {
+		PackagedVAVFactory factory = new PackagedVAVFactory(eplusBldg);
+		system = factory.getSystem();
+	    } else if (sysName.equals("VRF")) {
+		VRFSystemFactory factory = new VRFSystemFactory(eplusBldg);
+		system = factory.getSystem();
+	    } else {
+		VRFSystemFactory vrfFactory = new VRFSystemFactory(eplusBldg);
+		DOASFactory doasFactory = new DOASFactory(eplusBldg);
+		system = new SystemMerger(doasFactory.getSystem(),
+			vrfFactory.getSystem());
+	    }
+	} catch (SQLException e) {
+	    e.printStackTrace();
+	} finally {
+	    close();
+	}
 	insertSystem(system, eplusFile);
     }
 
     @Override
     public void selectCostVector() {
 	// TODO Auto-generated method stub
-	
+
     }
 
     @Override
     public void setUserInputs(HashMap<String, String> userInputsMap) {
 	// TODO Auto-generated method stub
-	
+
     }
 
     @Override
     public void setVariable(String[] surfaceProperties) {
 	// TODO Auto-generated method stub
-	
+
     }
-    
+
     /**
      * Merge the system with baseline model, this should be called after
      */
@@ -137,7 +158,7 @@ BuildingComponent{
 	    String partSystem = hvacIterator.next();
 	    ArrayList<EplusObject> objectList = hvac.get(partSystem);
 	    for (EplusObject eo : objectList) {
-		//System.out.println(eo.getObjectName());
+		// System.out.println(eo.getObjectName());
 		String[] objectValues = new String[eo.getSize()];
 		String[] objectDes = new String[eo.getSize()];
 		// loop over the key-value pairs
@@ -146,20 +167,20 @@ BuildingComponent{
 		    objectDes[i] = eo.getKeyValuePair(i).getKey();
 		}
 		// add the object to the baseline model
-		
+
 		eplusFile.addNewEnergyPlusObject(eo.getObjectName(),
 			objectValues, objectDes);
 	    }
 	}
     }
-    
+
     public void removeHVAC(IdfReader eplusFile) throws IOException {
 	processObjectLists();
 	for (String s : objectList) {
 	    eplusFile.removeEnergyPlusObject(s);
 	}
     }
-    
+
     // HVAC objects list is read from local list file
     private void processObjectLists() throws IOException {
 	BufferedReader br = new BufferedReader(new FileReader(FILE_NAME));
@@ -177,5 +198,11 @@ BuildingComponent{
 	} finally {
 	    br.close();
 	}
+    }
+
+    @Override
+    public double getComponentCost(Document doc) {
+	Double load = system.getTotalLoad(doc);
+	return load * systemUnitCost / 1000;
     }
 }

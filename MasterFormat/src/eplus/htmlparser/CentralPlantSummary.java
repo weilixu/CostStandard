@@ -10,7 +10,7 @@ public class CentralPlantSummary {
     private final Document doc;
     private final Elements centralPlantTable;
     
-    private static final String PLANT_TABLE_ID = "Equipment Summary:Central Plant";
+    private static final String PLANT_TABLE_ID = "Equipment Summary%Central Plant";
     private static final String TAG = "tableID";
     
     public CentralPlantSummary(Document d){

@@ -41,7 +41,7 @@ public final class ZoneHTMLParser {
 	    }
 	    if (htmlNodes.get(i).hasAttr("cellpadding")) {
 		String tableName = htmlNodes.get(i - 3).text();
-		htmlNodes.get(i).attr("tableID", report + ":" + tableName);
+		htmlNodes.get(i).attr("tableID", report + "%" + tableName);
 	    }
 	}
     }

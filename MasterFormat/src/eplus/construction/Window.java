@@ -6,9 +6,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jsoup.nodes.Document;
+
 import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
 import eplus.IdfReader.ValueNode;
+import eplus.HVAC.HVACSystem;
 import masterformat.api.AbstractMasterFormatComponent;
 
 public class Window extends AbstractMasterFormatComponent implements
@@ -189,4 +192,8 @@ public class Window extends AbstractMasterFormatComponent implements
 
     }
 
+    @Override
+    public double getComponentCost(Document doc) {
+	return 0.0;
+    }
 }

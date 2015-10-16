@@ -26,6 +26,7 @@ public class EnergyPlusHTMLParser {
 	htmlFile = f;
 	try {
 	    doc = Jsoup.parse(htmlFile, "UTF-8");
+	    
 	    preprocessTable();
 	    fanSummary = new FanSizingSummary(doc);
 	    pumpSummary = new PumpSizingSummary(doc);
@@ -41,6 +42,10 @@ public class EnergyPlusHTMLParser {
 	}
 
     }
+    
+    public Document getDoc(){
+	return doc;
+    }
 
     private void preprocessTable() {
 	String report = null;
@@ -51,7 +56,8 @@ public class EnergyPlusHTMLParser {
 	    }
 	    if (htmlNodes.get(i).hasAttr("cellpadding")) {
 		String tableName = htmlNodes.get(i - 3).text();
-		htmlNodes.get(i).attr("tableID", report + ":" + tableName);
+		htmlNodes.get(i).attr("tableID", report + "%" + tableName);
+		//System.out.println(report + "%" + tableName);
 	    }
 	}
     }
@@ -181,7 +187,7 @@ public class EnergyPlusHTMLParser {
     public double getEUI() {
 	Elements energyTable = doc
 		.getElementsByAttributeValue("tableID",
-			"Annual Building Utility Performance Summary:Site and Source Energy")
+			"Annual Building Utility Performance Summary%Site and Source Energy")
 		.get(0).getElementsByTag("td");
 	for (int i = 0; i < energyTable.size(); i++) {
 	    if (energyTable.get(i).text().equalsIgnoreCase("Total Site Energy")) {
@@ -194,7 +200,7 @@ public class EnergyPlusHTMLParser {
     public double getBudget() {
 	Elements costTable = doc
 		.getElementsByAttributeValue("tableID",
-			"Component Cost Economics Summary:Construction Cost Estimate Summary")
+			"Component Cost Economics Summary%Construction Cost Estimate Summary")
 		.get(0).getElementsByTag("td");
 	for (int i = 0; i < costTable.size(); i++) {
 	    if (costTable.get(i).text().equalsIgnoreCase("Cost Estimate Total ($)")) {
@@ -205,4 +211,14 @@ public class EnergyPlusHTMLParser {
     }
     
     
+    public double getCost(Double unitCost, String item, String summary, int index){
+	Elements coilList = doc.getElementsByAttributeValue("tableID", summary).get(0).getElementsByTag("td");
+	Double load = 0.0;
+	for(int i=0; i<coilList.size(); i++){
+	    if(coilList.get(i).text().contains(item)){
+		load = load + Double.parseDouble(coilList.get(i+index).text());
+	    }
+	}
+	return unitCost * load;
+    }
 }

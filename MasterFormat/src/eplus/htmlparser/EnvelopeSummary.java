@@ -9,7 +9,7 @@ public class EnvelopeSummary {
     private final Document doc;
     private final Elements envelopeTable;
     
-    private static final String PLANT_TABLE_ID = "Envelope Summary:Opaque Exterior";
+    private static final String PLANT_TABLE_ID = "Envelope Summary%Opaque Exterior";
     private static final String TAG = "tableID";
     
     

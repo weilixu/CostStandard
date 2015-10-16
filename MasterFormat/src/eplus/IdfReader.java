@@ -609,7 +609,7 @@ public class IdfReader {
      * @return
      */
     public IdfReader cloneIdf() {
-	return new IdfReader(path, deepCopyMap());
+	return new IdfReader(path, deepCopyMap(), variableList, variableKeySets);
     }
 
     private HashMap<String, HashMap<String, ArrayList<ValueNode>>> deepCopyMap() {

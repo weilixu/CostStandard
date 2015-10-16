@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import eplus.EnergyPlusBuildingForHVACSystems;
 import baseline.generator.EplusObject;
 import baseline.generator.KeyValuePair;
@@ -17,6 +20,9 @@ public class VRFSystem implements HVACSystem{
 
     // building object contains building information and energyplus data
     private EnergyPlusBuildingForHVACSystems building;
+        
+    private static final String sizingTable = "Component Sizing Summary%AirConditioner:VariableRefrigerantFlow";
+    private static final String TAG = "tableID";
     
     public VRFSystem(HashMap<String, ArrayList<EplusObject>> objects,
 	    EnergyPlusBuildingForHVACSystems bldg){
@@ -119,5 +125,22 @@ public class VRFSystem implements HVACSystem{
 	    demandTemp.add(temp);
 	}
 	return demandTemp;
+    }
+
+    @Override
+    public double getTotalLoad(Document doc) {
+	Elements coilList = doc.getElementsByAttributeValue(TAG, sizingTable).get(0).getElementsByTag("td");
+	Double load = 0.0;
+	for(int i=0; i<coilList.size(); i++){
+	    if(coilList.get(i).text().contains("VRF HEAT PUMP")){
+		load = load + Double.parseDouble(coilList.get(i+1).text());
+	    }
+	}
+	return load;
+    }
+
+    @Override
+    public String getSystemName() {
+	return "VRF";
     }
 }

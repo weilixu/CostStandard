@@ -17,8 +17,7 @@ public class CoolingCoilSummary {
     private final Document doc;
     private final Elements coolingCoilSummaryTable;
     
-    
-    private static final String COOL_COIL_TABLE_ID = "Equipment Summary:Cooling Coils";
+    private static final String COOL_COIL_TABLE_ID = "Equipment Summary%Cooling Coils";
     private static final String TAG = "tableID";
     
     public CoolingCoilSummary(Document d){
@@ -105,5 +104,4 @@ public class CoolingCoilSummary {
 	}
 	return null;
     }
-
 }

@@ -896,26 +896,26 @@ public class EnergyPlusModel {
        Operator  selection ; // Selection operator
        HashMap<String, Double>  parameters ; // Operator parameters
 
-       ArrayList<BuildingComponent> componentList = new ArrayList<BuildingComponent>();
-       ExteriorWall ew = new ExteriorWall();
-       Roof rf = new Roof();
-       Lighting lt = new Lighting();
-       Window wd = new Window();
-       HVACSimple hvac = new HVACSimple(bldg);
-       componentList.add(ew);
-       componentList.add(wd);
-       componentList.add(rf);
-       componentList.add(lt);
-       componentList.add(hvac);
-       Problem problem = new OPT1(componentList,idfDomain,parentFolder);
-       int threads = 4;
-       //IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
-       //Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
-       Algorithm algorithm = new NSGAII(problem);       
+//       ArrayList<BuildingComponent> componentList = new ArrayList<BuildingComponent>();
+//       ExteriorWall ew = new ExteriorWall();
+//       Roof rf = new Roof();
+//       Lighting lt = new Lighting();
+//       Window wd = new Window();
+//       HVACSimple hvac = new HVACSimple(bldg);
+//       componentList.add(ew);
+//       componentList.add(wd);
+//       componentList.add(rf);
+//       componentList.add(lt);
+//       componentList.add(hvac);
+       Problem problem = new OPT1(bldg,idfDomain,parentFolder);
+       int threads = 6;
+       IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
+       Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
+       //Algorithm algorithm = new NSGAII(problem);       
        
        /*Algorithm parameters */
-       algorithm.setInputParameter("populationSize", 4);
-       algorithm.setInputParameter("maxEvaluations", 10);
+       algorithm.setInputParameter("populationSize", 20);
+       algorithm.setInputParameter("maxEvaluations", 500);
        
        // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;
