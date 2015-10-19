@@ -20,6 +20,7 @@ public final class ComponentFactory {
 	componentList.add(rf);
 	componentList.add(lt);
 	componentList.add(hvac);
+	componentList.add(new DaylightSensor());
 	return componentList;
     }
 }

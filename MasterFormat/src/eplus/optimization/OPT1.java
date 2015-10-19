@@ -8,6 +8,7 @@ import java.util.List;
 import jmetal.core.Problem;
 import jmetal.core.Solution;
 import jmetal.core.Variable;
+import jmetal.encodings.solutionType.BinarySolutionType;
 import jmetal.encodings.solutionType.IntSolutionType;
 import jmetal.util.JMException;
 import eplus.EnergyPlusBuildingForHVACSystems;
@@ -53,16 +54,17 @@ public class OPT1 extends Problem {
 
     @Override
     public void evaluate(Solution solution) throws JMException {
+	
 	List<BuildingComponent> componentList = ComponentFactory.getFullComponentList(bldg);
 	Variable[] decisionVariables = solution.getDecisionVariables();
 	IdfReader copiedData = originalData.cloneIdf();
+	OptResult result = new OptResult();
 
 	// initialize simulation for optimization
 	// RunEplusOptimization optimization = new
 	// RunEplusOptimization(copiedData);
 	RunEplusOptimization optimization = null;
 	Double cost = 0.0;
-	String html_dir = null;
 	//HVACSystem system = null;
 	synchronized (OPT1.lock) {
 	    // modify the idf according to generated data
@@ -70,6 +72,7 @@ public class OPT1 extends Problem {
 		Double value = (Double) decisionVariables[i].getValue();
 		BuildingComponent comp = componentList.get(i);
 		String name = comp.getSelectedComponentName(value.intValue());
+		result.addComponent(name);
 		comp.writeInEnergyPlus(copiedData, name);
 //		if(name.contains("HVAC")){
 //		    name = name.split(":")[0];
@@ -83,7 +86,7 @@ public class OPT1 extends Problem {
 	    optimization = new RunEplusOptimization(copiedData);
 	    optimization.setFolder(analyzeFolder);
 	    optimization.setSimulationTime(simulationCount);
-	    html_dir = analyzeFolder.getAbsolutePath() + "\\" + simulationCount + "\\"+simulationCount+"Table.html";
+	    //html_dir = analyzeFolder.getAbsolutePath() + "\\" + simulationCount + "\\"+simulationCount+"Table.html";
 	}
 	EnergyPlusHTMLParser parser = null;
 	try {
@@ -101,8 +104,17 @@ public class OPT1 extends Problem {
 	    System.out.println("This is hvac cost: "+ cost);
 	    System.out.println("This is total cost: " + cost+ " "
 		    +parser.getBudget());
-	    solution.setObjective(0, parser.getOperationCost());
-	    solution.setObjective(1, parser.getBudget() + cost);
+	    Double operationCost = parser.getOperationCost();
+	    Double totalCost = parser.getBudget() + cost;
+	    result.setFirstCost(totalCost);
+	    result.setOperationCost(operationCost);
+	    bldg.addOptimizationResult(result);
+	    
+	    solution.setObjective(0, operationCost);
+	    solution.setObjective(1, totalCost);
+	    
+	    
+	    
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}

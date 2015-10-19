@@ -3,6 +3,7 @@ package eplus;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,9 @@ import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+
+import eplus.optimization.OptResult;
+import eplus.optimization.OptResultSet;
 import baseline.idfdata.DesignBuilderThermalZone;
 import baseline.idfdata.ThermalZone;
 
@@ -21,7 +25,8 @@ public class EnergyPlusBuildingForHVACSystems {
     private List<ThermalZone> thermalZoneList;
     private HashMap<String, ArrayList<ThermalZone>> ventilationMap;
     private HashMap<String, ArrayList<ThermalZone>> zoneSystemMap;
-    
+
+    private OptResultSet optResults;
     /**
      * EnergyPlus data
      */
@@ -33,14 +38,15 @@ public class EnergyPlusBuildingForHVACSystems {
     private Document doc;
     private static final String FILE_NAME = "HVACObjects.txt";
     private String[] objectList;
-    
-    public EnergyPlusBuildingForHVACSystems(IdfReader energyModel){
+
+    public EnergyPlusBuildingForHVACSystems(IdfReader energyModel) {
 	energyplusModel = energyModel;
 	thermalZoneList = new ArrayList<ThermalZone>();
 	ventilationMap = new HashMap<String, ArrayList<ThermalZone>>();
 	zoneSystemMap = new HashMap<String, ArrayList<ThermalZone>>();
+	optResults = new OptResultSet();
     }
-    
+
     /**
      * This method must be called prior to get floorMap, get total cooling load
      * and get total heating load and then check return fans
@@ -54,7 +60,7 @@ public class EnergyPlusBuildingForHVACSystems {
 	    String hvac = zone.getZoneCoolHeat();
 	    String vent = zone.getZoneVent();
 
-	    if (!vent.equalsIgnoreCase("NONE")&&!vent.equalsIgnoreCase("EXT")) {
+	    if (!vent.equalsIgnoreCase("NONE") && !vent.equalsIgnoreCase("EXT")) {
 		if (!ventilationMap.containsKey(vent)) {
 		    ventilationMap.put(vent, new ArrayList<ThermalZone>());
 		}
@@ -69,7 +75,7 @@ public class EnergyPlusBuildingForHVACSystems {
 	    }
 	}
     }
-    
+
     public HashMap<String, ArrayList<ThermalZone>> getVentilationMap() {
 	return ventilationMap;
     }
@@ -77,6 +83,7 @@ public class EnergyPlusBuildingForHVACSystems {
     public HashMap<String, ArrayList<ThermalZone>> getZoneSystemMap() {
 	return zoneSystemMap;
     }
+
     public int getNumberOfZone() {
 	return thermalZoneList.size();
     }
@@ -84,8 +91,8 @@ public class EnergyPlusBuildingForHVACSystems {
     public String getZoneNamebyIndex(int index) {
 	return thermalZoneList.get(index).getFullName();
     }
-    
-    public IdfReader getIdfData(){
+
+    public IdfReader getIdfData() {
 	return energyplusModel;
     }
 
@@ -99,7 +106,7 @@ public class EnergyPlusBuildingForHVACSystems {
 	    energyplusModel.removeEnergyPlusObject(s);
 	}
     }
-    
+
     public void processOutputs(File htmloutput) {
 	try {
 	    doc = Jsoup.parse(htmloutput, "UTF-8");
@@ -109,7 +116,38 @@ public class EnergyPlusBuildingForHVACSystems {
 	}
 	extractThermalZones();
     }
-    
+
+    public void addOptimizationResult(OptResult opt) {
+	optResults.addResultSet(opt);
+    }
+
+    public OptResultSet getOptimizationResults() {
+	return optResults;
+    }
+
+    public void writeOutResults() {
+	int row = optResults.getResultSet().size();
+
+	try {
+	    FileWriter writer = new FileWriter(
+		    "C:\\Users\\Weili\\Desktop\\New folder (2)\\output.txt");
+	    for (int i = 0; i < row; i++) {
+		OptResult r = optResults.getResult(i);
+		writer.append(i + "@");
+		writer.append(r.getFirstCost() + "@");
+		writer.append(r.getOperationCost() + "@");
+		for (int j = 0; j < r.getComponentLength(); j++) {
+		    writer.append(r.getComponent(j));
+		    writer.append("@");
+		}
+		writer.append("\n");
+	    }
+	    writer.flush();
+	    writer.close();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
 
     private void extractThermalZones() {
 	Elements thermalZoneSummary = doc.getElementsByAttributeValue(

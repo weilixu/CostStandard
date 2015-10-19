@@ -908,14 +908,14 @@ public class EnergyPlusModel {
 //       componentList.add(lt);
 //       componentList.add(hvac);
        Problem problem = new OPT1(bldg,idfDomain,parentFolder);
-       int threads = 4;
+       int threads = 6;
        IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
        Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
        //Algorithm algorithm = new NSGAII(problem);       
        
        /*Algorithm parameters */
-       algorithm.setInputParameter("populationSize", 4);
-       algorithm.setInputParameter("maxEvaluations", 20);
+       algorithm.setInputParameter("populationSize", 30);
+       algorithm.setInputParameter("maxEvaluations", 5000);
        
        // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;
@@ -948,6 +948,7 @@ public class EnergyPlusModel {
 	population.printObjectivesToFile("FUN");
 	System.out.println("Variables values have been writen to file VAR");
 	population.printVariablesToFile("VAR");
+	bldg.writeOutResults();
    }
 
     private void processHTML() {
