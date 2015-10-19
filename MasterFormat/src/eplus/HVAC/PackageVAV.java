@@ -37,6 +37,9 @@ public class PackageVAV implements HVACSystem {
     
     private static final String sizingTable = "Component Sizing Summary%Coil:Cooling:DX:SingleSpeed";
     private static final String TAG = "tableID";
+    
+    private int numOfSupplySystem;
+    private int numOfDemandSystem;
 
     public PackageVAV(HashMap<String, ArrayList<EplusObject>> objects,
 	    EnergyPlusBuildingForHVACSystems bldg) {
@@ -88,6 +91,7 @@ public class PackageVAV implements HVACSystem {
 	Iterator<String> floorMapIterator = floorMapSet.iterator();
 
 	int roomCounter = 0;
+	int supplySystemCounter = 0;
 	while (floorMapIterator.hasNext()) {
 	    zoneSplitterList.clear();
 	    zoneMixerList.clear();
@@ -95,6 +99,7 @@ public class PackageVAV implements HVACSystem {
 	    // first process the demand side system and their connection to
 	    // plant and supply side system
 	    ArrayList<ThermalZone> zones = floorMap.get(floor);
+	    supplySystemCounter++;
 	    for (ThermalZone zone : zones) {
 		demandSideSystem.addAll(processDemandTemp(zone.getFullName(),
 			demandSideSystemTemplate));
@@ -107,7 +112,9 @@ public class PackageVAV implements HVACSystem {
 	    supplySideSystem.addAll(processSupplyTemp(floor,
 		    supplySideSystemTemplate));
 	}
-
+	
+	numOfSupplySystem = supplySystemCounter;
+	numOfDemandSystem = roomCounter;
 	plantSystem.addAll(processPlantTemp(plantSystemTemplate));
 	System.out.println("Counting the rooms: " + roomCounter);
 	objectLists.put("Supply Side System", supplySideSystem);
@@ -249,5 +256,16 @@ public class PackageVAV implements HVACSystem {
     public String getSystemName() {
 	// TODO Auto-generated method stub
 	return "Package VAV";
+    }
+    
+
+    @Override
+    public int getNumberOfSupplySystem() {
+	return numOfSupplySystem;
+    }
+
+    @Override
+    public int getNumberOfDemandSystem() {
+	return numOfDemandSystem;
     }
 }

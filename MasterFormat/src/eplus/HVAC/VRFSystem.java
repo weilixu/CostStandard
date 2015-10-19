@@ -24,6 +24,9 @@ public class VRFSystem implements HVACSystem{
     private static final String sizingTable = "Component Sizing Summary%AirConditioner:VariableRefrigerantFlow";
     private static final String TAG = "tableID";
     
+    private int numOfSupplySystem;
+    private int numOfDemandSystem;
+    
     public VRFSystem(HashMap<String, ArrayList<EplusObject>> objects,
 	    EnergyPlusBuildingForHVACSystems bldg){
 	objectLists = objects;
@@ -55,20 +58,27 @@ public class VRFSystem implements HVACSystem{
 	Iterator<String> vrfMapIterator = vrfMapSet.iterator();
 	
 	//every zone has one set of the system
+	int supplySystemCounter = 0;
+	int demandSystemCounter = 0;
 	while(vrfMapIterator.hasNext()){
 	    String vrfCondenser = vrfMapIterator.next();
 	    ArrayList<ThermalZone> zones = vrfMap.get(vrfCondenser);
 	    ArrayList<String> zoneNames = new ArrayList<String>();
 	    for(ThermalZone zone: zones){
+		demandSystemCounter ++;
 		demandSideSystem.addAll(processDemandTemp(zone.getFullName(),
 			demandSideSystemTemplate));
 		zoneNames.add(zone.getFullName());
 
 	    }
+	    supplySystemCounter++;
 	    supplySideSystem.addAll(processSupplyTemp(vrfCondenser,
 			supplySideSystemTemplate,zoneNames));
 	    
 	}
+	
+	numOfSupplySystem = supplySystemCounter;
+	numOfDemandSystem = demandSystemCounter;
 	objectLists.put("Supply Side System", supplySideSystem);
 	objectLists.put("Demand Side System", demandSideSystem);
     }
@@ -142,5 +152,16 @@ public class VRFSystem implements HVACSystem{
     @Override
     public String getSystemName() {
 	return "VRF";
+    }
+    
+
+    @Override
+    public int getNumberOfSupplySystem() {
+	return numOfSupplySystem;
+    }
+
+    @Override
+    public int getNumberOfDemandSystem() {
+	return numOfDemandSystem;
     }
 }

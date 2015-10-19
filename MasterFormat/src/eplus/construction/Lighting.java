@@ -1,6 +1,5 @@
 package eplus.construction;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,10 +8,8 @@ import java.util.Set;
 
 import org.jsoup.nodes.Document;
 
-import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
 import eplus.IdfReader.ValueNode;
-import eplus.HVAC.HVACSystem;
 import eplus.htmlparser.ZoneHTMLParser;
 import masterformat.api.AbstractMasterFormatComponent;
 
@@ -27,6 +24,9 @@ public class Lighting extends AbstractMasterFormatComponent implements
 	    + ":Quantity"; // indicates the component cost line item object
 			   // inputs
     private final String componentCostObject = "ComponentCost:LineItem";
+
+    private final String reccuringCostDescription = "Name:Category:Cost:Start of Costs:Years from Start:Months from Start:Repeat Period Years:Repeat Period Months:Annual escalation rate";
+    private final String recurringCostObject = "LifeCycleCost:RecurringCosts";
 
     private String[] selectedComponents = null;
 
@@ -85,7 +85,7 @@ public class Lighting extends AbstractMasterFormatComponent implements
     }
 
     @Override
-    public void writeInEnergyPlus(IdfReader eplusFile, String component) {	
+    public void writeInEnergyPlus(IdfReader eplusFile, String component) {
 	String lightType = component.split(":")[1];
 
 	try {
@@ -93,17 +93,17 @@ public class Lighting extends AbstractMasterFormatComponent implements
 	    super.testConnect();
 
 	    statement = connect.createStatement();
-	    
-	    //take out the useful data
+
+	    // take out the useful data
 	    resultSet = statement
 		    .executeQuery("select * from energyplusconstruction.lighting where description = '"
 			    + lightType + "'");
 	    resultSet.next();
 	    String costTable = resultSet.getString("CostTable");
 	    String power = resultSet.getString("Power");
-	    //re request from the costtable
-//	    System.out.println("select * from '" + costTable
-//		    + "' where description = '" + lightType + "'");
+	    // re request from the costtable
+	    // System.out.println("select * from '" + costTable
+	    // + "' where description = '" + lightType + "'");
 	    resultSet = statement.executeQuery("select * from " + costTable
 		    + " where description = '" + lightType + "'");
 	    resultSet.next();
@@ -128,21 +128,45 @@ public class Lighting extends AbstractMasterFormatComponent implements
 			vn.setAttribute(power);
 		    } else if (vn.getDescription().equalsIgnoreCase("Name")) {
 			lightName = vn.getAttribute();
-		    } else if(vn.getDescription().equalsIgnoreCase("Zone or ZoneList Name")){
+		    } else if (vn.getDescription().equalsIgnoreCase(
+			    "Zone or ZoneList Name")) {
 			zoneName = vn.getAttribute();
 		    }
 		}
-		//W/m2 * m2 / W * $ = $
-		Double cost = Double.parseDouble(power) * ZoneHTMLParser.getZoneArea(zoneName)
+		// W/m2 * m2 / W * $ = $
+		resultSet = statement.executeQuery("select * from " + costTable
+			+ " where description = '" + lightType + "'");
+		resultSet.next();
+		Double cost = Double.parseDouble(power)
+			* ZoneHTMLParser.getZoneArea(zoneName)
 			/ resultSet.getDouble("power")
 			* resultSet.getDouble("materialcost");
-		//3. insert cost object to eplus
+		// 3. insert cost object to eplus
 		String[] values = { lightName + " Cost", "", "Lights",
-			lightName, "", cost + "", "","", "", "", "", "", "" };
+			lightName, "", cost + "", "", "", "", "", "", "", "" };
 		String[] description = componentCostDescription.split(":");
 
 		eplusFile.addNewEnergyPlusObject(componentCostObject, values,
 			description);
+
+		// 4. create lca replacement schedule
+		resultSet = statement
+			.executeQuery("select * from energyplusconstruction.recurringcost where System = '"
+				+ lightType + "'");
+		while (resultSet.next()) {
+		    String recost = resultSet.getString("Cost");
+		    String reCategory = resultSet.getString("Category");
+		    Double reYear = resultSet.getDouble("Year");
+		    Double month = reYear * 12;// 12 months
+		    String reTask = resultSet.getString("Task");
+		    String[] reValues = { zoneName + " " + reTask, reCategory,
+			    recost, "ServicePeriod", "0", "0", "",
+			    month.toString(), "" };
+		    String[] reDescirption = reccuringCostDescription
+			    .split(":");
+		    eplusFile.addNewEnergyPlusObject(recurringCostObject,
+			    reValues, reDescirption);
+		}
 	    }
 	} catch (SQLException e) {
 	    e.printStackTrace();
@@ -173,6 +197,4 @@ public class Lighting extends AbstractMasterFormatComponent implements
     public double getComponentCost(Document doc) {
 	return 0.0;
     }
-
-
 }

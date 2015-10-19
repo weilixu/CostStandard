@@ -19,6 +19,9 @@ public class DOAS implements HVACSystem {
     // building object contains building information and energyplus data
     private EnergyPlusBuildingForHVACSystems building;
     
+    private int numOfSupplySystem;
+    private int numOfDemandSystem;
+    
     public DOAS(HashMap<String, ArrayList<EplusObject>> objects,
 	    EnergyPlusBuildingForHVACSystems bldg) {
 	objectLists = objects;
@@ -51,11 +54,15 @@ public class DOAS implements HVACSystem {
 	Iterator<String> doasMapIterator = doasMapSet.iterator();
 
 	// every zone has one set of the system
+	int supplySystemCounter = 0;
+	int demandSystemCounter = 0;
 	while (doasMapIterator.hasNext()) {
+	    supplySystemCounter ++;
 	    String doasSys = doasMapIterator.next();
 	    ArrayList<ThermalZone> zones = doasMap.get(doasSys);
 	    ArrayList<String> zoneNames = new ArrayList<String>();
 	    for (ThermalZone zone : zones) {
+		demandSystemCounter ++;
 		demandSideSystem.addAll(processDemandTemp(zone.getFullName(),
 			demandSideSystemTemplate));
 		zoneNames.add(zone.getFullName());
@@ -63,6 +70,8 @@ public class DOAS implements HVACSystem {
 	    supplySideSystem.addAll(processSupplyTemp(doasSys,
 		    supplySideSystemTemplate, zoneNames));
 	}
+	numOfSupplySystem = supplySystemCounter;
+	numOfDemandSystem = demandSystemCounter;
 	objectLists.put("Supply Side System", supplySideSystem);
 	objectLists.put("Demand Side System", demandSideSystem);
     }
@@ -144,5 +153,15 @@ public class DOAS implements HVACSystem {
     public String getSystemName() {
 	// TODO Auto-generated method stub
 	return "DOAS";
+    }
+
+    @Override
+    public int getNumberOfSupplySystem() {
+	return numOfSupplySystem;
+    }
+
+    @Override
+    public int getNumberOfDemandSystem() {
+	return numOfDemandSystem;
     }
 }

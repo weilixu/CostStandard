@@ -13,4 +13,8 @@ public interface HVACSystem {
     public double getTotalLoad(Document doc);
     
     public String getSystemName();
+    
+    public int getNumberOfSupplySystem();
+    
+    public int getNumberOfDemandSystem();
 }

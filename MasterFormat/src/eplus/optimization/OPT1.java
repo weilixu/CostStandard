@@ -96,12 +96,12 @@ public class OPT1 extends Problem {
 	    //Double load = system.getTotalLoad(parser.getDoc());
 	   // Double unitCost = system.getUnitCost();
 	    //cost = load * unitCost/1000;
-	    System.out.println(html_dir);
-	    System.out.println();
+	    //System.out.println(html_dir);
+	    //System.out.println();
 	    System.out.println("This is hvac cost: "+ cost);
 	    System.out.println("This is total cost: " + cost+ " "
 		    +parser.getBudget());
-	    solution.setObjective(0, parser.getEUI());
+	    solution.setObjective(0, parser.getOperationCost());
 	    solution.setObjective(1, parser.getBudget() + cost);
 	} catch (IOException e) {
 	    e.printStackTrace();

@@ -17,6 +17,7 @@ import baseline.generator.KeyValuePair;
  *
  */
 public class SystemMerger implements HVACSystem {
+    
     private HashMap<String, ArrayList<EplusObject>> heatCoolSystem;
     private HashMap<String, ArrayList<EplusObject>> ventSystem;
     private HashMap<String, ArrayList<EplusObject>> mergedSystem;
@@ -27,9 +28,14 @@ public class SystemMerger implements HVACSystem {
     private static final String sizingTable = "Component Sizing Summary%AirConditioner:VariableRefrigerantFlow";
     private static final String TAG = "tableID";
     
+    private int numOfSupplySystem;
+    private int numOfDemandSystem;
+    
     public SystemMerger(HVACSystem ventilation, HVACSystem heatcool) {
 	ventSystem = ventilation.getSystemData();
+	numOfSupplySystem = ventilation.getNumberOfSupplySystem();
 	heatCoolSystem = heatcool.getSystemData();
+	numOfDemandSystem = heatcool.getNumberOfDemandSystem();	
 	mergedSystem = new HashMap<String, ArrayList<EplusObject>>();
 	mergeSystems();
     }
@@ -180,5 +186,16 @@ public class SystemMerger implements HVACSystem {
     public String getSystemName() {
 	// TODO Auto-generated method stub
 	return "DOAS+VRF";
+    }
+    
+
+    @Override
+    public int getNumberOfSupplySystem() {
+	return numOfSupplySystem;
+    }
+
+    @Override
+    public int getNumberOfDemandSystem() {
+	return numOfDemandSystem;
     }
 }

@@ -35,6 +35,9 @@ public class HVACSimple extends AbstractMasterFormatComponent implements
 
     private Double systemUnitCost;
 
+    private final String reccuringCostDescription = "Name:Category:Cost:Start of Costs:Years from Start:Months from Start:Repeat Period Years:Repeat Period Months:Annual escalation rate";
+    private final String recurringCostObject = "LifeCycleCost:RecurringCosts";
+
     public HVACSimple(EnergyPlusBuildingForHVACSystems bldg) {
 	selectedComponents = getListAvailableComponent();
 	eplusBldg = bldg;
@@ -91,7 +94,9 @@ public class HVACSimple extends AbstractMasterFormatComponent implements
 
     @Override
     public void writeInEnergyPlus(IdfReader eplusFile, String component) {
-	String sysName = component.split(":")[0];
+	String[] sysCharacter = component.split(":");
+	String sysName = sysCharacter[0];
+	String sysDes = sysCharacter[1];
 
 	try {
 	    super.testConnect();
@@ -114,6 +119,49 @@ public class HVACSimple extends AbstractMasterFormatComponent implements
 		DOASFactory doasFactory = new DOASFactory(eplusBldg);
 		system = new SystemMerger(doasFactory.getSystem(),
 			vrfFactory.getSystem());
+	    }
+
+	    // 4. create lca maintenance/replacement schedule
+	    resultSet = statement
+		    .executeQuery("select * from energyplusconstruction.recurringcost where System = '"
+			    + sysDes + "'");
+	    while (resultSet.next()) {
+		String hvacside = resultSet.getString("HVACPART");
+		if (hvacside.equals("Demand")) {
+		    for (int i = 0; i < system.getNumberOfDemandSystem(); i++) {
+			String recost = resultSet.getString("Cost");
+			String reCategory = resultSet.getString("Category");
+			Double reYear = resultSet.getDouble("Year");
+			Double month = reYear * 12;// 12 months
+			String reTask = resultSet.getString("Task");
+			String[] reValues = {
+				system.getSystemName() + "_Demand_" + i + "_"
+					+ reTask, reCategory, recost,
+				"ServicePeriod", "0", "0", "",
+				month.toString(), "" };
+			String[] reDescirption = reccuringCostDescription
+				.split(":");
+			eplusFile.addNewEnergyPlusObject(recurringCostObject,
+				reValues, reDescirption);
+		    }
+		} else {
+		    for (int i = 0; i < system.getNumberOfSupplySystem(); i++) {
+			String recost = resultSet.getString("Cost");
+			String reCategory = resultSet.getString("Category");
+			Double reYear = resultSet.getDouble("Year");
+			Double month = reYear * 12;// 12 months
+			String reTask = resultSet.getString("Task");
+			String[] reValues = {
+				system.getSystemName() + "_Supply" + i + "_"
+					+ reTask, reCategory, recost,
+				"ServicePeriod", "0", "0", "",
+				month.toString(), "" };
+			String[] reDescirption = reccuringCostDescription
+				.split(":");
+			eplusFile.addNewEnergyPlusObject(recurringCostObject,
+				reValues, reDescirption);
+		    }
+		}
 	    }
 	} catch (SQLException e) {
 	    e.printStackTrace();

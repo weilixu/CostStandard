@@ -197,6 +197,19 @@ public class EnergyPlusHTMLParser {
 	return 0.0;
     }
     
+    public double getOperationCost(){
+	Elements energyTable = doc
+		.getElementsByAttributeValue("tableID",
+			"Life-Cycle Cost Report%Present Value by Category")
+		.get(0).getElementsByTag("td");
+	for (int i = 0; i < energyTable.size(); i++) {
+	    if (energyTable.get(i).text().equalsIgnoreCase("Total Operation")) {
+		return Double.parseDouble(energyTable.get(i + 1).text());
+	    }
+	}
+	return 0.0;
+    }
+    
     public double getBudget() {
 	Elements costTable = doc
 		.getElementsByAttributeValue("tableID",
