@@ -908,10 +908,10 @@ public class EnergyPlusModel {
 //       componentList.add(lt);
 //       componentList.add(hvac);
        Problem problem = new OPT1(bldg,idfDomain,parentFolder);
-       int threads = 6;
+       int threads = 4;
        IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
        Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
-       //Algorithm algorithm = new NSGAII(problem);       
+       //Algorithm algorithm = new NSGAII(problem);
        
        /*Algorithm parameters */
        algorithm.setInputParameter("populationSize", 30);

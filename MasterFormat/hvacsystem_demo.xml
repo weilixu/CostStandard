@@ -9,10 +9,10 @@
 		</object>
 		<object description = "Sizing:Zone" reference = "Demand Side System">
 			<field description = "Zone or ZoneList Name" type = "String">Zone%</field>
-			<field description = "Zone Cooling Design Supply Air Temperature Input Method" type = "String">SupplyAirTemperature</field>
+			<field description = "Zone Cooling Design Supply Air Temperature Input Method" type = "String">TemperatureDifference</field>
 			<field description = "Zone Cooling Design Supply Air Temperature" type = "Double">12.5</field>
 			<field description = "Zone Cooling Design Supply Air Temperature Difference" type = "Double">11.0</field>
-			<field description = "Zone Heating Design Supply Air Temperature Input Method" type = "String">SupplyAirTemperature</field>
+			<field description = "Zone Heating Design Supply Air Temperature Input Method" type = "String">TemperatureDifference</field>
 			<field description = "Zone Heating Design Supply Air Temperature" type = "Double">50.0</field>
 			<field description = "Zone Heating Design Supply Air Temperature Difference" type = "Double">11.0</field>
 			<field description = "Zone Cooling Design Supply Air Humidity Ratio" type = "Double">0.009</field>
@@ -561,10 +561,10 @@
 		</object>		
 		<object description = "Sizing:Zone" reference = "Demand Side System">
 			<field description = "Zone or ZoneList Name" type = "String">Zone%</field>
-			<field description = "Zone Cooling Design Supply Air Temperature Input Method" type = "String">SupplyAirTemperature</field>
+			<field description = "Zone Cooling Design Supply Air Temperature Input Method" type = "String">TemperatureDifference</field>
 			<field description = "Zone Cooling Design Supply Air Temperature" type = "Double">12.5</field>
 			<field description = "Zone Cooling Design Supply Air Temperature Difference" type = "Double">11.0</field>
-			<field description = "Zone Heating Design Supply Air Temperature Input Method" type = "String">SupplyAirTemperature</field>
+			<field description = "Zone Heating Design Supply Air Temperature Input Method" type = "String">TemperatureDifference</field>
 			<field description = "Zone Heating Design Supply Air Temperature" type = "Double">50.0</field>
 			<field description = "Zone Heating Design Supply Air Temperature Difference" type = "Double">11.0</field>
 			<field description = "Zone Cooling Design Supply Air Humidity Ratio" type = "Double">0.008</field>
