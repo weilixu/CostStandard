@@ -124,13 +124,22 @@ public class EnergyPlusBuildingForHVACSystems {
     public OptResultSet getOptimizationResults() {
 	return optResults;
     }
+    
+    public OptResult duplicatedSimulationCase(OptResult result){
+	for(int i=0; i<optResults.getSize(); i++){
+	    if(result.equals(optResults.getResult(i))){
+		return optResults.getResult(i);
+	    }
+	}
+	return null;
+    }
 
     public void writeOutResults() {
 	int row = optResults.getResultSet().size();
 
 	try {
 	    FileWriter writer = new FileWriter(
-		    "C:\\Users\\Weili\\Desktop\\New folder (2)\\output.txt");
+		    "E:\\02_Weili\\02_ResearchTopic\\Optimization\\output.txt");
 	    for (int i = 0; i < row; i++) {
 		OptResult r = optResults.getResult(i);
 		writer.append(i + "@");

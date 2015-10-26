@@ -11,6 +11,10 @@ public class OptResultSet {
 		resultSet = new ArrayList<OptResult>();
 	}
 	
+	public int getSize(){
+	    return resultSet.size();
+	}
+	
 	public void addResultSet(OptResult r){
 		resultSet.add(r);
 	}

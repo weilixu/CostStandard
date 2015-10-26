@@ -915,7 +915,7 @@ public class EnergyPlusModel {
        
        /*Algorithm parameters */
        algorithm.setInputParameter("populationSize", 30);
-       algorithm.setInputParameter("maxEvaluations", 5000);
+       algorithm.setInputParameter("maxEvaluations", 750);
        
        // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;

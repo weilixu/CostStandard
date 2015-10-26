@@ -41,4 +41,14 @@ public class OptResult {
 	public void addComponent(String component){
 	    componentSelection.add(component);
 	}
+	
+	public boolean equals(OptResult another){
+	    int size = componentSelection.size();
+	    for(int i=0; i<size; i++){
+		if(!componentSelection.get(i).equals(another.getComponent(i))){
+		    return false;
+		}
+	    }
+	    return true;
+	}
 }
