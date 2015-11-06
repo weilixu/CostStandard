@@ -12,11 +12,17 @@ import jmetal.core.Operator;
 import jmetal.core.Problem;
 import jmetal.core.SolutionSet;
 import jmetal.metaheuristics.nsgaII.NSGAII;
+import jmetal.metaheuristics.nsgaII.NSGAIIMutationAdaptive;
 import jmetal.metaheuristics.nsgaII.pNSGAII;
+import jmetal.metaheuristics.nsgaII.pNSGAIIAdaptive;
 import jmetal.operators.crossover.CrossoverFactory;
 import jmetal.operators.mutation.MutationFactory;
 import jmetal.operators.selection.SelectionFactory;
 import jmetal.util.JMException;
+import jmetal.util.offspring.BitFlipMutationOffspring;
+import jmetal.util.offspring.DifferentialEvolutionOffspring;
+import jmetal.util.offspring.Offspring;
+import jmetal.util.offspring.SinglePointOffSpring;
 import jmetal.util.parallel.IParallelEvaluator;
 import jmetal.util.parallel.MultithreadedEvaluator;
 import eplus.MaterialAnalyzer.Material;
@@ -29,6 +35,7 @@ import eplus.construction.Window;
 import eplus.htmlparser.EnergyPlusHTMLParser;
 import eplus.htmlparser.ZoneHTMLParser;
 import eplus.optimization.OPT1;
+import eplus.optimization.OPT2;
 import masterformat.api.MasterFormat;
 import masterformat.listener.BoilerListener;
 import masterformat.listener.CostTableListener;
@@ -907,26 +914,28 @@ public class EnergyPlusModel {
 //       componentList.add(rf);
 //       componentList.add(lt);
 //       componentList.add(hvac);
-       Problem problem = new OPT1(bldg,idfDomain,parentFolder);
+       Problem problem = new OPT2(bldg,idfDomain,parentFolder);
        int threads = 4;
        IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
        Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
+       //Algorithm algorithm = new pNSGAIIAdaptive(problem, parallelEvaluator); // adaptive nsgaII
        //Algorithm algorithm = new NSGAII(problem);
+       //Algorithm algorithm = new NSGAIIMutationAdaptive(problem, parallelEvaluator);
        
        /*Algorithm parameters */
-       algorithm.setInputParameter("populationSize", 30);
-       algorithm.setInputParameter("maxEvaluations", 750);
+       algorithm.setInputParameter("populationSize", 32);
+       algorithm.setInputParameter("maxEvaluations", 800);
        
-       // Mutation and Crossover for Real codification 
+//       // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;
        parameters.put("probability", 0.9) ;
        parameters.put("distributionIndex", 20.0) ;
        crossover = CrossoverFactory.getCrossoverOperator("SinglePointCrossover", parameters);                   
 
        parameters = new HashMap<String, Double>() ;
-       parameters.put("probability", 1.0/problem.getNumberOfVariables()) ;
+       parameters.put("probability", 0.5) ;
        parameters.put("distributionIndex", 20.0) ;
-       mutation = MutationFactory.getMutationOperator("BitFlipMutation", parameters);                    
+       mutation = MutationFactory.getMutationOperator("BitFlipMutationAdaptive", parameters);                    
 
        // Selection Operator 
        parameters = null ;
@@ -936,6 +945,12 @@ public class EnergyPlusModel {
        algorithm.addOperator("crossover",crossover);
        algorithm.addOperator("mutation",mutation);
        algorithm.addOperator("selection",selection);
+       
+       //adaptive nsga ii operation
+       //Offspring[] getOffspring = new Offspring[2];
+       //getOffspring[0] = new SinglePointOffSpring(0.9,20.0);
+       //getOffspring[1] = new BitFlipMutationOffspring(1.0/problem.getNumberOfVariables(),20.0);
+      //algorithm.setInputParameter("offspringsCreators", getOffspring);
        
        // Execute the Algorithm
        long initTime = System.currentTimeMillis();

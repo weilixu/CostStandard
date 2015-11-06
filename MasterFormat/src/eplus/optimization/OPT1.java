@@ -106,14 +106,14 @@ public class OPT1 extends Problem {
 		    +parser.getBudget());
 	    Double operationCost = parser.getOperationCost();
 	    Double totalCost = parser.getBudget() + cost;
-	    result.setFirstCost(totalCost);
+	    
 	    result.setOperationCost(operationCost);
+	    result.setFirstCost(totalCost);
 	    bldg.addOptimizationResult(result);
 	    
 	    solution.setObjective(0, operationCost);
 	    solution.setObjective(1, totalCost);
-	    
-	    
+
 	    
 	} catch (IOException e) {
 	    e.printStackTrace();

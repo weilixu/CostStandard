@@ -38,6 +38,7 @@ public class EnergyPlusBuildingForHVACSystems {
     private Document doc;
     private static final String FILE_NAME = "HVACObjects.txt";
     private String[] objectList;
+    private double totalArea = 0.0;
 
     public EnergyPlusBuildingForHVACSystems(IdfReader energyModel) {
 	energyplusModel = energyModel;
@@ -59,7 +60,7 @@ public class EnergyPlusBuildingForHVACSystems {
 	    // String block = zone.getBlock();
 	    String hvac = zone.getZoneCoolHeat();
 	    String vent = zone.getZoneVent();
-
+	    totalArea += zone.getZoneArea();
 	    if (!vent.equalsIgnoreCase("NONE") && !vent.equalsIgnoreCase("EXT")) {
 		if (!ventilationMap.containsKey(vent)) {
 		    ventilationMap.put(vent, new ArrayList<ThermalZone>());
@@ -133,6 +134,10 @@ public class EnergyPlusBuildingForHVACSystems {
 	}
 	return null;
     }
+    
+    public double getTotalBuildingArea(){
+	return totalArea;
+    }
 
     public void writeOutResults() {
 	int row = optResults.getResultSet().size();
@@ -143,8 +148,8 @@ public class EnergyPlusBuildingForHVACSystems {
 	    for (int i = 0; i < row; i++) {
 		OptResult r = optResults.getResult(i);
 		writer.append(i + "@");
-		writer.append(r.getFirstCost() + "@");
 		writer.append(r.getOperationCost() + "@");
+		writer.append(r.getFirstCost() + "@");
 		for (int j = 0; j < r.getComponentLength(); j++) {
 		    writer.append(r.getComponent(j));
 		    writer.append("@");

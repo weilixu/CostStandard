@@ -29,6 +29,7 @@ public class OPT2 extends Problem {
     private IdfReader originalData;
     private File analyzeFolder;
     private EnergyPlusBuildingForHVACSystems bldg;
+    private int skipedSimulation = 0;
 
     // private List<BuildingComponent> componentList;
 
@@ -95,7 +96,8 @@ public class OPT2 extends Problem {
 	    // if there is any duplicate solutions
 	    OptResult temp = bldg.duplicatedSimulationCase(result);
 	    if (temp != null) {
-		System.out.println("find a duplicate case!");
+		skipedSimulation++;
+		System.out.println("find a duplicate case! " + skipedSimulation);
 		result.setFirstCost(temp.getFirstCost());
 		result.setOperationCost(temp.getOperationCost());
 	    } else {
@@ -111,6 +113,7 @@ public class OPT2 extends Problem {
 	    EnergyPlusHTMLParser parser = null;
 	    try {
 		parser = optimization.runSimulation();
+		//this step is just to get HVAC system cost
 		for (int i = 0; i < decisionVariables.length; i++) {
 		    BuildingComponent comp = componentList.get(i);
 		    cost = cost + comp.getComponentCost(parser.getDoc());
@@ -140,7 +143,7 @@ public class OPT2 extends Problem {
 	} else {
 	    // duplicate case
 	    bldg.addOptimizationResult(result);
-	    System.out.println("This is hvac cost: " + cost);
+	    System.out.println("This is not hvac cost: " + cost);
 	    System.out.println("This is total cost: " + result.getFirstCost());
 	    solution.setObjective(0, result.getOperationCost());
 	    solution.setObjective(1, result.getFirstCost());
