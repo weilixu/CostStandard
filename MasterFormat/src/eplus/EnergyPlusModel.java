@@ -36,6 +36,7 @@ import eplus.htmlparser.EnergyPlusHTMLParser;
 import eplus.htmlparser.ZoneHTMLParser;
 import eplus.optimization.OPT1;
 import eplus.optimization.OPT2;
+import eplus.optimization.OPT3;
 import masterformat.api.MasterFormat;
 import masterformat.listener.BoilerListener;
 import masterformat.listener.CostTableListener;
@@ -914,7 +915,8 @@ public class EnergyPlusModel {
 //       componentList.add(rf);
 //       componentList.add(lt);
 //       componentList.add(hvac);
-       Problem problem = new OPT2(bldg,idfDomain,parentFolder);
+       int pop = 32;
+       Problem problem = new OPT3(bldg,idfDomain,parentFolder,3,13,pop);
        int threads = 4;
        IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
        Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
@@ -923,12 +925,12 @@ public class EnergyPlusModel {
        //Algorithm algorithm = new NSGAIIMutationAdaptive(problem, parallelEvaluator);
        
        /*Algorithm parameters */
-       algorithm.setInputParameter("populationSize", 32);
-       algorithm.setInputParameter("maxEvaluations", 800);
+       algorithm.setInputParameter("populationSize", pop);
+       algorithm.setInputParameter("maxEvaluations", 2080);
        
 //       // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;
-       parameters.put("probability", 0.9) ;
+       parameters.put("probability", 0.9);
        parameters.put("distributionIndex", 20.0) ;
        crossover = CrossoverFactory.getCrossoverOperator("SinglePointCrossover", parameters);                   
 

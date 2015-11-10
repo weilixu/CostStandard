@@ -17,7 +17,7 @@ public class VRFSystemFactory {
 	systemObjects = new HashMap<String, ArrayList<EplusObject>>();
 	
 	processTemplate();
-	System.out.println("Receive the template, Size: " + systemObjects.size());
+	//System.out.println("Receive the template, Size: " + systemObjects.size());
 	vrfSys = new VRFSystem(systemObjects, building);
     }
     

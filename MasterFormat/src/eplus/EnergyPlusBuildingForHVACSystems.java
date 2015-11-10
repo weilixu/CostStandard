@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import eplus.optimization.OptResult;
@@ -60,7 +61,7 @@ public class EnergyPlusBuildingForHVACSystems {
 	    // String block = zone.getBlock();
 	    String hvac = zone.getZoneCoolHeat();
 	    String vent = zone.getZoneVent();
-	    totalArea += zone.getZoneArea();
+	    //totalArea += zone.getZoneArea();
 	    if (!vent.equalsIgnoreCase("NONE") && !vent.equalsIgnoreCase("EXT")) {
 		if (!ventilationMap.containsKey(vent)) {
 		    ventilationMap.put(vent, new ArrayList<ThermalZone>());
@@ -115,6 +116,8 @@ public class EnergyPlusBuildingForHVACSystems {
 	} catch (IOException e) {
 	    // do nothing
 	}
+	totalArea = getBuildingArea();
+	System.out.println(totalArea);
 	extractThermalZones();
     }
 
@@ -212,5 +215,26 @@ public class EnergyPlusBuildingForHVACSystems {
 	} finally {
 	    br.close();
 	}
+    }
+    
+    /**
+     * gets the building area
+     * 
+     * @return
+     */
+    private double getBuildingArea() {
+	double area;
+	Elements tables = doc.getElementsByTag("table");
+	for (Element table : tables) {
+	    Elements texts = table.getAllElements();
+	    for (int i = 0; i < texts.size(); i++) {
+		if (texts.get(i).getElementsByTag("td").text()
+			.equals("Total Building Area")) {
+		    area = Double.parseDouble(texts.get(i + 1).text());
+		    return area;
+		}
+	    }
+	}
+	return -1;
     }
 }

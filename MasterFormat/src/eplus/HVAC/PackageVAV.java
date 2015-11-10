@@ -116,11 +116,11 @@ public class PackageVAV implements HVACSystem {
 	numOfSupplySystem = supplySystemCounter;
 	numOfDemandSystem = roomCounter;
 	plantSystem.addAll(processPlantTemp(plantSystemTemplate));
-	System.out.println("Counting the rooms: " + roomCounter);
+	//System.out.println("Counting the rooms: " + roomCounter);
 	objectLists.put("Supply Side System", supplySideSystem);
 	objectLists.put("Demand Side System", demandSideSystem);
 	objectLists.put("Plant", plantSystem);
-	System.out.println("Connect plans");
+	//System.out.println("Connect plans");
 	processConnections();
     }
 

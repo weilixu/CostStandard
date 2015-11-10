@@ -22,10 +22,9 @@ public final class WekaUtil {
 	
 	
 	private static String[] m5pOptions = {"-U","-N"};
-	private static String[] svmOptions = {"-C","0.5"};
+	private static String[] svmOptions = { "-C", "1.0" };
 	private static String[] nnOptions = {"-L","0.3","-M","0.2","-N","500","-H","i"};
-	private static String[] lrOptions = {"-S","2","-C"};
-	
+	private static String[] lrOptions = { "-S", "0", "-R","1" };	
 	/**
 	 * get classifier after selection process is complete
 	 * @param classifierName
@@ -161,7 +160,6 @@ public final class WekaUtil {
 		int numAttributes = data.numAttributes();
 		double meanAbsError = eval.meanAbsoluteError();
 		double rootmeanSQ = eval.rootMeanSquaredError();
-		
 		System.out.println("Number of Attributes: "+ numAttributes);
 		System.out.println("mean absolute Error: " + meanAbsError);
 		System.out.println("root mean square error: "+ rootmeanSQ);

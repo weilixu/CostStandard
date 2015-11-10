@@ -18,7 +18,7 @@ public class PackagedVAVFactory {
  	systemObjects = new HashMap<String, ArrayList<EplusObject>>();
  	
  	processTemplate();
- 	System.out.println("VAV: " + systemObjects.size());
+ 	//System.out.println("VAV: " + systemObjects.size());
  	vavSystem = new PackageVAV(systemObjects, building);
     }
     
