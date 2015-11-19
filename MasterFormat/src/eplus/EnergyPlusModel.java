@@ -915,18 +915,20 @@ public class EnergyPlusModel {
 //       componentList.add(rf);
 //       componentList.add(lt);
 //       componentList.add(hvac);
+       int realSimuN = 3;
+       int circleDivider = 13;
        int pop = 32;
-       Problem problem = new OPT3(bldg,idfDomain,parentFolder,3,13,pop);
+       Problem problem = new OPT3(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
        int threads = 4;
        IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
-       Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
-       //Algorithm algorithm = new pNSGAIIAdaptive(problem, parallelEvaluator); // adaptive nsgaII
+       //Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
+       Algorithm algorithm = new pNSGAIIAdaptive(problem, parallelEvaluator,realSimuN,circleDivider); // adaptive nsgaII
        //Algorithm algorithm = new NSGAII(problem);
-       //Algorithm algorithm = new NSGAIIMutationAdaptive(problem, parallelEvaluator);
+       //Algorithm algorithm = new NSGAIIMutationAdaptive(problem, parallelEvaluator); //mutation adaptive
        
        /*Algorithm parameters */
        algorithm.setInputParameter("populationSize", pop);
-       algorithm.setInputParameter("maxEvaluations", 2080);
+       algorithm.setInputParameter("maxEvaluations", 2176);
        
 //       // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;

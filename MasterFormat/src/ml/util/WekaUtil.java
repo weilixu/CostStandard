@@ -24,7 +24,7 @@ public final class WekaUtil {
 	private static String[] m5pOptions = {"-U","-N"};
 	private static String[] svmOptions = { "-C", "1.0" };
 	private static String[] nnOptions = {"-L","0.3","-M","0.2","-N","500","-H","i"};
-	private static String[] lrOptions = { "-S", "0", "-R","1" };	
+	private static String[] lrOptions = { "-S", "0", "-R","1" };
 	/**
 	 * get classifier after selection process is complete
 	 * @param classifierName

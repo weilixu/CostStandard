@@ -29,10 +29,11 @@ import jmetal.util.JMException;
  * from Kalyanmoy Deb and Pawan K.S. Nain "An Evolutionary Multi-Objective
  * Adaptive Meta-modeling Procedure Using Artificial Neural Networks"
  * 
+ * This algorithm collects all the simulated data for metal-model training at each cycle.
  * @author Weili
  *
  */
-public class OPT3 extends Problem {
+public class OPT4 extends Problem {
     /*
      * Adaptive regression algorithm parameters
      */
@@ -58,7 +59,7 @@ public class OPT3 extends Problem {
 
     // private List<BuildingComponent> componentList;
 
-    public OPT3(EnergyPlusBuildingForHVACSystems building, IdfReader data,
+    public OPT4(EnergyPlusBuildingForHVACSystems building, IdfReader data,
 	    File folder, int n, int Q, int p) {
 	bldg = building;
 	List<BuildingComponent> componentList = ComponentFactory
@@ -129,7 +130,7 @@ public class OPT3 extends Problem {
 	o1Ins.setDataset(o1TrainSet);
 	o2Ins.setDataset(o2TrainSet);
 
-	synchronized (OPT3.lock) {
+	synchronized (OPT4.lock) {
 
 	    // create flag that determine whether we can run on regression or
 	    // real simulation
@@ -147,8 +148,8 @@ public class OPT3 extends Problem {
 		if (o1Classifier!=null & o2Classifier!=null) {
 		    o1Classifier=null;
 		    o2Classifier=null;
-		    o1TrainSet = new Instances(o1TrainSet, 0);
-		    o2TrainSet = new Instances(o2TrainSet, 0);
+		    //o1TrainSet = new Instances(o1TrainSet, 0);
+		    //o2TrainSet = new Instances(o2TrainSet, 0);
 		}// if
 
 		// 1.2 modify the idf according to generated data
