@@ -37,6 +37,7 @@ import eplus.htmlparser.ZoneHTMLParser;
 import eplus.optimization.OPT1;
 import eplus.optimization.OPT2;
 import eplus.optimization.OPT3;
+import eplus.optimization.OPT4;
 import masterformat.api.MasterFormat;
 import masterformat.listener.BoilerListener;
 import masterformat.listener.CostTableListener;
@@ -915,8 +916,8 @@ public class EnergyPlusModel {
 //       componentList.add(rf);
 //       componentList.add(lt);
 //       componentList.add(hvac);
-       int realSimuN = 3;
-       int circleDivider = 13;
+       int realSimuN = 2;
+       int circleDivider = 22;
        int pop = 32;
        Problem problem = new OPT3(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
        int threads = 4;
@@ -928,7 +929,7 @@ public class EnergyPlusModel {
        
        /*Algorithm parameters */
        algorithm.setInputParameter("populationSize", pop);
-       algorithm.setInputParameter("maxEvaluations", 2176);
+       algorithm.setInputParameter("maxEvaluations", 4960);
        
 //       // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;
