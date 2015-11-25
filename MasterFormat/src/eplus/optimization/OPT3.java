@@ -282,7 +282,7 @@ public class OPT3 extends Problem {
 		System.out.println("Classified Operation Cost: " + operation);
 		result.setFirstCost(capital);
 		result.setOperationCost(operation);
-		bldg.addOptimizationResult(result);
+		//bldg.addOptimizationResult(result);
 
 		solution.setObjective(0, result.getOperationCost());
 		solution.setObjective(1, result.getFirstCost());

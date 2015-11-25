@@ -916,8 +916,8 @@ public class EnergyPlusModel {
 //       componentList.add(rf);
 //       componentList.add(lt);
 //       componentList.add(hvac);
-       int realSimuN = 2;
-       int circleDivider = 22;
+       int realSimuN = 3;
+       int circleDivider = 23;
        int pop = 32;
        Problem problem = new OPT3(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
        int threads = 4;
@@ -929,7 +929,7 @@ public class EnergyPlusModel {
        
        /*Algorithm parameters */
        algorithm.setInputParameter("populationSize", pop);
-       algorithm.setInputParameter("maxEvaluations", 4960);
+       algorithm.setInputParameter("maxEvaluations", 2976);
        
 //       // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;
