@@ -71,7 +71,6 @@ public class Window extends AbstractMasterFormatComponent implements
 	} finally {
 	    close();
 	}
-
 	return availableComponents;
     }
 

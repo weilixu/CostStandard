@@ -6,7 +6,12 @@ import java.util.List;
 import eplus.EnergyPlusBuildingForHVACSystems;
 
 public final class ComponentFactory {
-
+    private static boolean wwrFlag = false;
+    
+    public static void allowWWR(){
+	wwrFlag = true;
+    }
+    
     public static List<BuildingComponent> getFullComponentList(
 	    EnergyPlusBuildingForHVACSystems bldg) {
 	ArrayList<BuildingComponent> componentList = new ArrayList<BuildingComponent>();
@@ -21,6 +26,12 @@ public final class ComponentFactory {
 	componentList.add(lt);
 	componentList.add(hvac);
 	componentList.add(new DaylightSensor());
+	if(wwrFlag){
+	    componentList.add(new WindowWallRatio("N"));
+	    componentList.add(new WindowWallRatio("S"));
+	    componentList.add(new WindowWallRatio("E"));
+	    componentList.add(new WindowWallRatio("W"));
+	}
 	return componentList;
     }
 }
