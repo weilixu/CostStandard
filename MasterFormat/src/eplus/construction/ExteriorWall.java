@@ -37,6 +37,11 @@ public class ExteriorWall extends AbstractMasterFormatComponent implements
 	selectedComponents = getListAvailableComponent();
 	// System.out.println(selectedComponents.length);
     }
+    
+    @Override
+    public String getName(){
+	return "exteriorwall";
+    }
 
     @Override
     public String[] getListAvailableComponent() {

@@ -3,28 +3,48 @@ package eplus.construction;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.jsoup.nodes.Document;
 
 import eplus.IdfReader;
 import eplus.IdfReader.ValueNode;
+import eplus.geometry.Coordinate3D;
+import eplus.geometry.EplusWindow;
+import eplus.geometry.Wall;
 import eplus.htmlparser.ZoneHTMLParser;
 import masterformat.api.AbstractMasterFormatComponent;
 
 public class WindowWallRatio extends AbstractMasterFormatComponent
 	implements BuildingComponent {
 
-    private final static String fenestration = "FenestrationSurface:Detailed";
-    private final static String field = "Multiplier";
+    public static final int INVALID_POLYGON = -1;
+    public static final int ZERO_AREA_WALL = -2;
+    private static final int SurfaceNumVerticeLoc = 9;
+    private static final int SurfaceCoordsOffset = 10;
+    // private static final double maximumRatio = 90; //assume the model has 90%
+    // WWR
+
+    // private final static String fenestration =
+    // "FenestrationSurface:Detailed";
+    // private final static String field = "Multiplier";
     private String orientation;
+
+    private LinkedList<Wall> walls;
+    private HashMap<String, ArrayList<ValueNode>> feneSurfaces;
 
     private String[] selectedComponents; // daylight sensor has only on/off
 
     public WindowWallRatio(String orientation) {
 	this.orientation = orientation;
 	selectedComponents = getListAvailableComponent();
+    }
+
+    @Override
+    public String getName() {
+	return "wwr" + orientation;
     }
 
     @Override
@@ -78,24 +98,39 @@ public class WindowWallRatio extends AbstractMasterFormatComponent
 
     @Override
     public void writeInEnergyPlus(IdfReader reader, String component) {
-	Integer ratio = Integer.parseInt(component);
-	HashMap<String, ArrayList<ValueNode>> fene = reader
-		.getObjectListCopy(fenestration);
-	Set<String> feneSet = fene.keySet();
-	Iterator<String> feneIterator = feneSet.iterator();
-	while (feneIterator.hasNext()) {
-	    String element = feneIterator.next();
-	    ArrayList<ValueNode> nodes = fene.get(element);
-	    String name = nodes.get(0).getAttribute();
-	    if (ZoneHTMLParser.getFenestrationOrientation(name)
-		    .equals(orientation)) {
-		for (ValueNode vn : nodes) {
-		    if (vn.getDescription().equalsIgnoreCase(field)) {
-			vn.setAttribute(ratio.toString());
-		    }
-		}
+
+	initWWR(reader);
+	double currentRatio = this.getWindowWallRatio();
+	//System.out.println(currentRatio);
+	Double ratio = Double.parseDouble(component);
+	if (ratio >= 10 && ratio <= 90) {
+	    ratio = ratio / 100;
+	    //System.out.println(ratio);
+	    double scaleRatio = ratio / currentRatio;
+	    //System.out.println(scaleRatio);
+	    for (Wall wall : walls) {
+		wall.scaleWindows(scaleRatio);
+		this.saveWindowCoordsToReader(wall);
 	    }
 	}
+
+	// HashMap<String, ArrayList<ValueNode>> fene = reader
+	// .getObjectListCopy(fenestration);
+	// Set<String> feneSet = fene.keySet();
+	// Iterator<String> feneIterator = feneSet.iterator();
+	// while (feneIterator.hasNext()) {
+	// String element = feneIterator.next();
+	// ArrayList<ValueNode> nodes = fene.get(element);
+	// String name = nodes.get(0).getAttribute();
+	// if (ZoneHTMLParser.getFenestrationOrientation(name)
+	// .equals(orientation)) {
+	// for (ValueNode vn : nodes) {
+	// if (vn.getDescription().equalsIgnoreCase(field)) {
+	// vn.setAttribute(ratio.toString());
+	// }
+	// }
+	// }
+	// }
     }
 
     @Override
@@ -105,19 +140,127 @@ public class WindowWallRatio extends AbstractMasterFormatComponent
 
     @Override
     public void selectCostVector() {
-	// TODO Auto-generated method stub
-
     }
 
     @Override
     public void setUserInputs(HashMap<String, String> userInputsMap) {
-	// TODO Auto-generated method stub
 
     }
 
     @Override
     public void setVariable(String[] surfaceProperties) {
-	// TODO Auto-generated method stub
 
+    }
+
+    private void initWWR(IdfReader reader) {
+	this.walls = new LinkedList<Wall>();
+	int buildSurfaceNameLoc = 3;
+
+	HashMap<String, Wall> idfWalls = new HashMap<String, Wall>();
+
+	HashMap<String, ArrayList<ValueNode>> buildSurfaces = reader
+		.getObjectListCopy("BuildingSurface:Detailed");
+
+	Set<String> names = buildSurfaces.keySet();
+	for (String name : names) {
+	    ArrayList<ValueNode> info = buildSurfaces.get(name);
+	    ValueNode type = info.get(1);
+	    if (type.getAttribute().equals("Wall")) {
+		List<Coordinate3D> coords = this.readSurfaceCoords(info);
+		idfWalls.put(info.get(0).getAttribute(), new Wall(coords));
+	    }
+	}
+
+	this.feneSurfaces = reader
+		.getObjectListCopy("FenestrationSurface:Detailed");
+	names = feneSurfaces.keySet();
+	for (String name : names) {
+	    ArrayList<ValueNode> info = feneSurfaces.get(name);
+	    ValueNode type = info.get(1);
+	    if (type.getAttribute().equals("Window")) {
+		if (ZoneHTMLParser.getFenestrationOrientation(info.get(0).getAttribute())
+			.equals(orientation)) {
+		    List<Coordinate3D> coords = this.readSurfaceCoords(info);
+		    String buildSurfaceName = info.get(buildSurfaceNameLoc)
+			    .getAttribute();
+		    if (idfWalls.containsKey(buildSurfaceName)) {
+			idfWalls.get(buildSurfaceName).addWindow(coords,
+				info.get(0).getAttribute(), name);
+		    } else {
+			System.err.println("Window has no wall: " + name
+				+ ", missing wall name:" + buildSurfaceName);
+		    }
+		}
+	    }
+	}
+
+	// remove walls has no window
+	names = idfWalls.keySet();
+	for (String name : names) {
+	    Wall wall = idfWalls.get(name);
+	    if (wall.hasWindow()) {
+		this.walls.add(wall);
+	    }
+	}
+    }
+
+    /**
+     * Same for BuildingSurface:Detailed and FenestrationSurface:Detailed
+     * 
+     * @param attrs
+     * @return
+     */
+    private List<Coordinate3D> readSurfaceCoords(ArrayList<ValueNode> attrs) {
+	List<Coordinate3D> coords = new LinkedList<Coordinate3D>();
+	int numVertices = Integer
+		.valueOf(attrs.get(SurfaceNumVerticeLoc).getAttribute());
+	for (int i = 0; i < numVertices; i++) {
+	    double x = Double.parseDouble(
+		    attrs.get(i * 3 + SurfaceCoordsOffset).getAttribute());
+	    double y = Double.parseDouble(
+		    attrs.get(i * 3 + SurfaceCoordsOffset + 1).getAttribute());
+	    double z = Double.parseDouble(
+		    attrs.get(i * 3 + SurfaceCoordsOffset + 2).getAttribute());
+	    Coordinate3D coord = new Coordinate3D(x, y, z);
+	    coords.add(coord);
+	}
+	return coords;
+    }
+
+    private double getWindowWallRatio() {
+	double wallArea = 0, winArea = 0;
+	for (Wall wall : walls) {
+	    wallArea += wall.getWallArea();
+	    winArea += wall.getWindowArea();
+	}
+
+	return winArea / wallArea;
+    }
+
+    private void saveWindowCoordsToReader(Wall wall) {
+	List<EplusWindow> wins = wall.getWindows();
+	for (EplusWindow win : wins) {
+	    String id = win.getId();
+	    
+	    ArrayList<ValueNode> winInfo = this.feneSurfaces.get(id);
+	    List<Coordinate3D> points = win.getCoords();
+	    for (int i = 0; i < points.size(); i++) {
+		Coordinate3D point = points.get(i);
+		//System.out.print("Before: " + winInfo.get(i * 3 + SurfaceCoordsOffset).getAttribute());
+		//System.out.println(point.getX());
+		winInfo.get(i * 3 + SurfaceCoordsOffset)
+			.setAttribute(String.valueOf(point.getX()));
+		//System.out.println("After: " + winInfo.get(i * 3 + SurfaceCoordsOffset).getAttribute());
+		//System.out.print("Before: " + winInfo.get(i * 3 + SurfaceCoordsOffset+1).getAttribute());
+		//System.out.println(point.getY());
+		winInfo.get(i * 3 + SurfaceCoordsOffset + 1).setAttribute(String.valueOf(point.getY()));
+		//System.out.println("After: " + winInfo.get(i * 3 + SurfaceCoordsOffset+1).getAttribute());
+		//System.out.print("Before: " + winInfo.get(i * 3 + SurfaceCoordsOffset+2).getAttribute());
+		//System.out.println(point.getZ());		
+		winInfo.get(i * 3 + SurfaceCoordsOffset + 2)
+			.setAttribute(String.valueOf(point.getZ()));
+		//System.out.println("After: " + winInfo.get(i * 3 + SurfaceCoordsOffset+2).getAttribute());
+	    }
+	}
     }
 }

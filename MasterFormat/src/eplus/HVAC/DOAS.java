@@ -8,9 +8,9 @@ import java.util.Set;
 import org.jsoup.nodes.Document;
 
 import eplus.EnergyPlusBuildingForHVACSystems;
-import baseline.generator.EplusObject;
-import baseline.generator.KeyValuePair;
-import baseline.idfdata.ThermalZone;
+import baseline.idfdata.EplusObject;
+import baseline.idfdata.KeyValuePair;
+import baseline.idfdata.thermalzone.ThermalZone;
 
 public class DOAS implements HVACSystem {
     // recording all the required data for DOAS

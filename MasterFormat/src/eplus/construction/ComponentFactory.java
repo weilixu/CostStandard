@@ -26,12 +26,10 @@ public final class ComponentFactory {
 	componentList.add(lt);
 	componentList.add(hvac);
 	componentList.add(new DaylightSensor());
-	if(wwrFlag){
-	    componentList.add(new WindowWallRatio("N"));
-	    componentList.add(new WindowWallRatio("S"));
-	    componentList.add(new WindowWallRatio("E"));
-	    componentList.add(new WindowWallRatio("W"));
-	}
+	componentList.add(new WindowWallRatio("N"));
+	componentList.add(new WindowWallRatio("S"));
+	componentList.add(new WindowWallRatio("E"));
+	componentList.add(new WindowWallRatio("W"));
 	return componentList;
     }
 }

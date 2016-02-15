@@ -39,6 +39,11 @@ BuildingComponent{
 	selectedComponents = getListAvailableComponent();
 	//System.out.println(selectedComponents.length);
     }
+    
+    @Override
+    public String getName(){
+	return "roof";
+    }
 
     @Override
     public String[] getListAvailableComponent() {

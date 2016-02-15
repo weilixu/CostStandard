@@ -14,10 +14,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import baseline.idfdata.thermalzone.DesignBuilderThermalZone;
+import baseline.idfdata.thermalzone.ThermalZone;
 import eplus.optimization.OptResult;
 import eplus.optimization.OptResultSet;
-import baseline.idfdata.DesignBuilderThermalZone;
-import baseline.idfdata.ThermalZone;
 
 public class EnergyPlusBuildingForHVACSystems {
     /**

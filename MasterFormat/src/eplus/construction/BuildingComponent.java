@@ -9,6 +9,8 @@ import masterformat.api.MasterFormat;
 
 public interface BuildingComponent extends MasterFormat{
     
+    public String getName();
+    
     /**
      * provide the available building component list for
      * user to select

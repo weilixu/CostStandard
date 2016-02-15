@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import org.jsoup.nodes.Document;
 
-import baseline.generator.EplusObject;
+import baseline.idfdata.EplusObject;
 
 public interface HVACSystem {
     public HashMap<String, ArrayList<EplusObject>> getSystemData();

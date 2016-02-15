@@ -33,6 +33,11 @@ public class Lighting extends AbstractMasterFormatComponent implements
     public Lighting() {
 	selectedComponents = getListAvailableComponent();
     }
+    
+    @Override
+    public String getName(){
+	return "lpd";
+    }
 
     @Override
     public String[] getListAvailableComponent() {

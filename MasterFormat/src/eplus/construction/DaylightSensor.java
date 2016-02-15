@@ -29,6 +29,11 @@ public class DaylightSensor extends AbstractMasterFormatComponent implements
     public DaylightSensor() {
 	selectedComponents = getListAvailableComponent();
     }
+    
+    @Override
+    public String getName(){
+	return "daylightsensor";
+    }
 
     @Override
     public String[] getListAvailableComponent() {

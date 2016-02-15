@@ -6,8 +6,8 @@ import java.util.HashMap;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import baseline.generator.EplusObject;
-import baseline.generator.KeyValuePair;
+import baseline.idfdata.EplusObject;
+import baseline.idfdata.KeyValuePair;
 
 /**
  * This class mainly help to merge systems such that the ventilation and

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import eplus.EnergyPlusBuildingForHVACSystems;
-import baseline.generator.EplusObject;
 import baseline.hvac.SystemParser;
+import baseline.idfdata.EplusObject;
 
 public class VRFSystemFactory {
     //extract the template system

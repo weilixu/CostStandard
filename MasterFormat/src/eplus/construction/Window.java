@@ -39,6 +39,11 @@ public class Window extends AbstractMasterFormatComponent implements
 	selectedComponents = getListAvailableComponent();
 	// System.out.println(selectedComponents.length);
     }
+    
+    @Override
+    public String getName(){
+	return "window";
+    }
 
     @Override
     public String[] getListAvailableComponent() {

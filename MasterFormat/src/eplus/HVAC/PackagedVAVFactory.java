@@ -6,8 +6,8 @@ import java.util.HashMap;
 import org.jsoup.nodes.Document;
 
 import eplus.EnergyPlusBuildingForHVACSystems;
-import baseline.generator.EplusObject;
 import baseline.hvac.SystemParser;
+import baseline.idfdata.EplusObject;
 
 public class PackagedVAVFactory {
     private final SystemParser system = new SystemParser("PackageVAV Template");

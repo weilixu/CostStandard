@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.jsoup.nodes.Document;
 
-import baseline.generator.EplusObject;
+import baseline.idfdata.EplusObject;
 import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
 import eplus.HVAC.DOASFactory;
@@ -41,6 +41,11 @@ public class HVACSimple extends AbstractMasterFormatComponent implements
     public HVACSimple(EnergyPlusBuildingForHVACSystems bldg) {
 	selectedComponents = getListAvailableComponent();
 	eplusBldg = bldg;
+    }
+    
+    @Override
+    public String getName(){
+	return "hvac";
     }
 
     @Override

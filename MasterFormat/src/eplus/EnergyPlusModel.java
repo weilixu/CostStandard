@@ -38,6 +38,7 @@ import eplus.optimization.OPT1;
 import eplus.optimization.OPT2;
 import eplus.optimization.OPT3;
 import eplus.optimization.OPT4;
+import eplus.optimization.OPT5;
 import masterformat.api.MasterFormat;
 import masterformat.listener.BoilerListener;
 import masterformat.listener.CostTableListener;
@@ -916,10 +917,10 @@ public class EnergyPlusModel {
 //       componentList.add(rf);
 //       componentList.add(lt);
 //       componentList.add(hvac);
-       int realSimuN = 4;
-       int circleDivider = 14;
-       int pop = 32;
-       Problem problem = new OPT3(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
+       int realSimuN = 3;
+       int circleDivider = 20;
+       int pop = 30;
+       Problem problem = new OPT5(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
        int threads = 4;
        IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
        //Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
@@ -929,7 +930,7 @@ public class EnergyPlusModel {
        
        /*Algorithm parameters */
        algorithm.setInputParameter("populationSize", pop);
-       algorithm.setInputParameter("maxEvaluations", 1824);
+       algorithm.setInputParameter("maxEvaluations", 1830);
        
 //       // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;
@@ -938,7 +939,7 @@ public class EnergyPlusModel {
        crossover = CrossoverFactory.getCrossoverOperator("SinglePointCrossover", parameters);                   
 
        parameters = new HashMap<String, Double>() ;
-       parameters.put("probability", 0.5) ;
+       parameters.put("probability", 0.7) ;
        parameters.put("distributionIndex", 20.0) ;
        mutation = MutationFactory.getMutationOperator("BitFlipMutationAdaptive", parameters);                    
 
