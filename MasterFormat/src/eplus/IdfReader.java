@@ -59,6 +59,8 @@ public class IdfReader {
     // data structures
     private HashMap<String, HashMap<String, ArrayList<ValueNode>>> eplusMap;
     private ArrayList<String> variableList;
+    private HashMap<String, ArrayList<String>> zoneListMap;
+
     // this Arraylist records the key pairs to access each variable. Trade
     // memory for speed
     private ArrayList<String[]> variableKeySets;
@@ -67,6 +69,7 @@ public class IdfReader {
     // boolean indicates the flag
     private boolean output = false;
     private boolean dataFilled = false;
+    private boolean hasZoneList = false;
 
     // GUI listener for this module
 
@@ -84,6 +87,7 @@ public class IdfReader {
 	eplusMap = new HashMap<String, HashMap<String, ArrayList<ValueNode>>>();
 	variableList = new ArrayList<String>();
 	variableKeySets = new ArrayList<String[]>();
+	zoneListMap = new HashMap<String, ArrayList<String>>();
     }
 
     /**
@@ -95,12 +99,14 @@ public class IdfReader {
      */
     public IdfReader(String p,
 	    HashMap<String, HashMap<String, ArrayList<ValueNode>>> map,
-	    ArrayList<String> vl, ArrayList<String[]> vks) {
+	    ArrayList<String> vl, ArrayList<String[]> vks, Boolean zoneList, HashMap<String, ArrayList<String>> zlm) {
 	dataFilled = true;
+	hasZoneList = true;
 	path = p;
 	eplusMap = map;
 	variableList = vl;
 	variableKeySets = vks;
+	zoneListMap = zlm;
     }
 
     /**
@@ -217,6 +223,27 @@ public class IdfReader {
 	    }
 	    if (sc != null) {
 		sc.close();
+	    }
+	}
+	
+	// process zone list
+	zoneListMap = new HashMap<String, ArrayList<String>>();
+	HashMap<String, ArrayList<ValueNode>> zonelist = getObjectListCopy("ZoneList");
+	
+	if (zonelist !=null){
+	    hasZoneList = true;
+	    //there are zone list
+	    Set<String> zoneListName = zonelist.keySet();
+	    Iterator<String> itr = zoneListName.iterator();
+	    while(itr.hasNext()){
+		String listCounter = itr.next();
+		ArrayList<ValueNode> zones = zonelist.get(listCounter);
+		String listName = zones.get(0).getAttribute();
+		zoneListMap.put(zones.get(0).getAttribute(), new ArrayList<String>());
+		for(int i=1; i<zones.size(); i++){
+		    //SKIP THE FIRST ZONE LIST NAME
+		    zoneListMap.get(listName).add(zones.get(i).getAttribute());
+		}
 	    }
 	}
 	// indicates the data structure is created and filled with data
@@ -354,6 +381,18 @@ public class IdfReader {
 	    }
 	}
 	// cannot find it
+	return null;
+    }
+    
+    public ArrayList<String> hasZoneList(String name){
+	if(hasZoneList){
+	    ArrayList<String> zones = zoneListMap.get(name);
+	    if(zones!=null){
+		return zones;
+	    }else{
+		return null;
+	    }
+	}
 	return null;
     }
 
@@ -611,7 +650,7 @@ public class IdfReader {
      * @return
      */
     public IdfReader cloneIdf() {
-	return new IdfReader(path, deepCopyMap(), variableList, variableKeySets);
+	return new IdfReader(path, deepCopyMap(), variableList, variableKeySets, hasZoneList, zoneListMap);
     }
 
     private HashMap<String, HashMap<String, ArrayList<ValueNode>>> deepCopyMap() {
@@ -807,7 +846,7 @@ public class IdfReader {
 	private boolean isCriticalLine = false;
 
 	public ValueNode(String att, String des) {
-	    if (des.indexOf("{") > -1) {
+	    if (des!=null && des.indexOf("{") > -1) {
 		description = des.substring(0, des.indexOf(" {"));
 		unit = des.substring(des.indexOf("{"));
 	    } else {

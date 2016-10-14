@@ -38,6 +38,10 @@ public final class ZoneHTMLParser {
 	return feneSummary.getFenestrationOrientation(fene);
     }
     
+    public static String getFenestrationAzimuth(String fene){
+	return feneSummary.getFenestrationAzimuth(fene);
+    }
+    
     private static void preprocessTable() {
 	String report = null;
 	Elements htmlNodes = doc.getAllElements();

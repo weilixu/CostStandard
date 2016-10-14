@@ -16,8 +16,11 @@ import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
 import eplus.HVAC.DOASFactory;
 import eplus.HVAC.HVACSystem;
+import eplus.HVAC.PSZACFactory;
+import eplus.HVAC.PTHPFactory;
 import eplus.HVAC.PackagedVAVFactory;
 import eplus.HVAC.SystemMerger;
+import eplus.HVAC.VAVFactory;
 import eplus.HVAC.VRFSystemFactory;
 import masterformat.api.AbstractMasterFormatComponent;
 
@@ -102,7 +105,7 @@ public class HVACSimple extends AbstractMasterFormatComponent implements
 	String[] sysCharacter = component.split(":");
 	String sysName = sysCharacter[0];
 	String sysDes = sysCharacter[1];
-
+	
 	try {
 	    super.testConnect();
 
@@ -116,15 +119,28 @@ public class HVACSimple extends AbstractMasterFormatComponent implements
 	    if (sysName.equals("Packaged VAV")) {
 		PackagedVAVFactory factory = new PackagedVAVFactory(eplusBldg);
 		system = factory.getSystem();
-	    } else if (sysName.equals("VRF")) {
+	    } else if(sysName.equals("VAV")){
+		VAVFactory factory = new VAVFactory(eplusBldg);
+		system = factory.getSystem();
+	    }else if (sysName.equals("VRF")) {
 		VRFSystemFactory factory = new VRFSystemFactory(eplusBldg);
 		system = factory.getSystem();
-	    } else {
+	    } else if(sysName.equals("PTHP")){
+		PTHPFactory factory = new PTHPFactory(eplusBldg);
+		system = factory.getSystem();
+	    }else if(sysName.equals("PSZAC")){
+		PSZACFactory factory = new PSZACFactory(eplusBldg);
+		system = factory.getSystem();
+	    }else {
 		VRFSystemFactory vrfFactory = new VRFSystemFactory(eplusBldg);
 		DOASFactory doasFactory = new DOASFactory(eplusBldg);
 		system = new SystemMerger(doasFactory.getSystem(),
 			vrfFactory.getSystem());
 	    }
+	    
+///		VAVFactory factory = new VAVFactory(eplusBldg);
+//		system = factory.getSystem();
+//	    System.out.println("get the system!!!");
 
 	    // 4. create lca maintenance/replacement schedule
 	    resultSet = statement
@@ -220,7 +236,7 @@ public class HVACSimple extends AbstractMasterFormatComponent implements
 		    objectDes[i] = eo.getKeyValuePair(i).getKey();
 		}
 		// add the object to the baseline model
-
+		
 		eplusFile.addNewEnergyPlusObject(eo.getObjectName(),
 			objectValues, objectDes);
 	    }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import baseline.util.BaselineUtils;
 import jmetal.core.Algorithm;
 import jmetal.core.Operator;
 import jmetal.core.Problem;
@@ -920,8 +921,13 @@ public class EnergyPlusModel {
        int realSimuN = 3;
        int circleDivider = 20;
        int pop = 30;
-       Problem problem = new OPT5(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
-       int threads = 4;
+       int ammMaxEvaluation = 2490;
+       int regularEvaluation = 900;
+       //Problem problem = new OPT2(bldg,idfDomain,parentFolder);
+       //System.out.println(parentFolder.getAbsolutePath());
+       
+       Problem problem = new OPT4(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
+       int threads = 6;
        IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
        //Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
        Algorithm algorithm = new pNSGAIIAdaptive(problem, parallelEvaluator,realSimuN,circleDivider); // adaptive nsgaII
@@ -930,7 +936,7 @@ public class EnergyPlusModel {
        
        /*Algorithm parameters */
        algorithm.setInputParameter("populationSize", pop);
-       algorithm.setInputParameter("maxEvaluations", 1830);
+       algorithm.setInputParameter("maxEvaluations", ammMaxEvaluation);
        
 //       // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;
@@ -939,7 +945,7 @@ public class EnergyPlusModel {
        crossover = CrossoverFactory.getCrossoverOperator("SinglePointCrossover", parameters);                   
 
        parameters = new HashMap<String, Double>() ;
-       parameters.put("probability", 0.7) ;
+       parameters.put("probability", 0.9) ;
        parameters.put("distributionIndex", 20.0) ;
        mutation = MutationFactory.getMutationOperator("BitFlipMutationAdaptive", parameters);                    
 

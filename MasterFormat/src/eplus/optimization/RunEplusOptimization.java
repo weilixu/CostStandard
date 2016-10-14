@@ -45,6 +45,7 @@ public class RunEplusOptimization {
 	// create the Energyplus folder
 	eplusFolder = new File(folder.getAbsolutePath() + "\\"
 		+ simulationCount.toString());
+	//System.out.println(eplusFolder.getAbsolutePath());
 	eplusFolder.mkdir();
 
 	// create a copy of weather file

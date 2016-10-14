@@ -25,7 +25,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 /**
- * Add window to wall ratio based on previous OPT4
+ * Add window to wall ratio based on previous OPT3
  */
 public class OPT5 extends Problem{
     /*
@@ -55,7 +55,6 @@ public class OPT5 extends Problem{
     public OPT5(EnergyPlusBuildingForHVACSystems building, IdfReader data,
 	    File folder, int n, int Q, int p){
 	bldg = building;
-	ComponentFactory.allowWWR();
 	List<BuildingComponent> componentList = ComponentFactory
 		.getFullComponentList(bldg);
 	originalData = data;
@@ -145,21 +144,26 @@ public class OPT5 extends Problem{
 		    //o1TrainSet = new Instances(o1TrainSet, 0);
 		    //o2TrainSet = new Instances(o2TrainSet, 0);
 		}// if
-
+		
 		// 1.2 modify the idf according to generated data
+		//System.out.println("Step 1.2 " + decisionVariables.length);
 		for (int i = 0; i < decisionVariables.length; i++) {
+		    //System.out.println(i);
 		    Double value = (Double) decisionVariables[i].getValue();
 		    BuildingComponent comp = componentList.get(i);
 		    int index = value.intValue();
 		    String name = comp.getSelectedComponentName(index);
+		    //System.out.println(i + " " + name);
 		    result.addComponent(name);
 		    // add value
 		    o1Ins.setValue(i, name);
 		    o2Ins.setValue(i, name);
-		    
 		    comp.writeInEnergyPlus(copiedData, name);
+		    //System.out.println("hahah00000000000000000000");
+		    //System.out.println(name + " Success!");
 		}// for
-
+		
+		
 		// 1.3 duplicate case detection
 		OptResult temp = bldg.duplicatedSimulationCase(result);
 		if (temp != null) {

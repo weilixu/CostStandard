@@ -57,10 +57,10 @@ public class SystemMerger implements HVACSystem {
 		.get("Demand Side System");
 	ArrayList<EplusObject> ventDemandSystem = ventSystem
 		.get("Demand Side System");
-
 	mergedSystem.put("Demand Side System", new ArrayList<EplusObject>());
 	for (int i = 0; i < heatCoolDemandSystem.size(); i++) {
 	    EplusObject object = heatCoolDemandSystem.get(i);
+	    //System.out.println(object.getObjectName());
 	    /* 1. find equipment list case */
 	    if (object.getObjectName().equalsIgnoreCase(
 		    "ZoneHVAC:EquipmentList")) {
@@ -84,12 +84,18 @@ public class SystemMerger implements HVACSystem {
 		    }
 		}
 	    }
+	    //System.out.println("No PROBLEM 1");
 	    /* 2. if find NodeList case */
+	    //System.out.println(!object.getKeyValuePair(0).getValue()
+	    //    .split(" ")[0].split("X")[3].equals("NONE"));
+	    //CAUTION, SPLIT BY "X" is the recent syntax change.
 	    if (object.getObjectName().equalsIgnoreCase("NodeList")
 		    && !object.getKeyValuePair(0).getValue()
-			    .split(" ")[0].split("%")[3].equals("NONE")) {
+			    .split(" ")[0].split("X")[3].equals("NONE")) {
+		//System.out.println(object.getKeyValuePair(0).getValue());
 		String name = object.getKeyValuePair(0).getValue();
 		String zoneName = name.split(" ")[0];
+		
 		if (name.contains("Inlet")) {
 		    KeyValuePair inlet = new KeyValuePair("Node 2 Name",
 			    zoneName + " DOAS Supply Inlet");
@@ -100,12 +106,15 @@ public class SystemMerger implements HVACSystem {
 		    object.addField(outlet);
 		}
 	    }
+	    //System.out.println("No PROBLEM 2");
 	    mergedSystem.get("Demand Side System").add(object);
 	}
+	//System.out.println("No PROBLEM 3 " + ventDemandSystem.size());
 	/* 3. remove DOAS demand system now! */
 	ArrayList<EplusObject> reducedDemandComponents = new ArrayList<EplusObject>();
 	for (int l = 0; l < ventDemandSystem.size(); l++) {
 	    EplusObject ventObject = ventDemandSystem.get(l);
+	    //System.out.println(ventObject.getObjectName());
 	    if (ventObject.getObjectName().equals("ZoneHVAC:EquipmentList")
 		    || ventObject.getObjectName().equals(
 			    "ZoneHVAC:EquipmentConnections")
@@ -121,6 +130,7 @@ public class SystemMerger implements HVACSystem {
 		reducedDemandComponents.add(ventObject);
 	    }
 	}
+	//System.out.println("No PROBLEM 4");
 	if (reducedDemandComponents != null) {
 	    mergedSystem.get("Demand Side System").addAll(
 		    reducedDemandComponents);
@@ -129,9 +139,11 @@ public class SystemMerger implements HVACSystem {
     }
 
     private boolean inVentOnlyZones(String zoneName) {
-	String[] zoneNameComponent = zoneName.split("%");
+	//CAUTION, X IS BECAUSE SYNTAX CHANGE
+	//System.out.println(zoneName);
+	String[] zoneNameComponent = zoneName.split("X");
 	// the new name indicates
-	if (zoneNameComponent[4].equals("NONE")) {
+	if (zoneNameComponent[2].equals("NONE")) {
 	    return true;
 	}
 	return false;

@@ -7,7 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,6 +18,7 @@ import org.jsoup.select.Elements;
 
 import baseline.idfdata.thermalzone.DesignBuilderThermalZone;
 import baseline.idfdata.thermalzone.ThermalZone;
+import eplus.IdfReader.ValueNode;
 import eplus.optimization.OptResult;
 import eplus.optimization.OptResultSet;
 
@@ -41,12 +44,13 @@ public class EnergyPlusBuildingForHVACSystems {
     private String[] objectList;
     private double totalArea = 0.0;
 
+
     public EnergyPlusBuildingForHVACSystems(IdfReader energyModel) {
-	energyplusModel = energyModel;
-	thermalZoneList = new ArrayList<ThermalZone>();
-	ventilationMap = new HashMap<String, ArrayList<ThermalZone>>();
-	zoneSystemMap = new HashMap<String, ArrayList<ThermalZone>>();
-	optResults = new OptResultSet();
+        energyplusModel = energyModel;
+        thermalZoneList = new ArrayList<ThermalZone>();
+        ventilationMap = new HashMap<String, ArrayList<ThermalZone>>();
+        zoneSystemMap = new HashMap<String, ArrayList<ThermalZone>>();
+        optResults = new OptResultSet();
     }
 
     /**
@@ -56,6 +60,7 @@ public class EnergyPlusBuildingForHVACSystems {
      * @return
      */
     public void processModelInfo() {
+	
 	// building the thermal zones
 	for (ThermalZone zone : thermalZoneList) {
 	    // String block = zone.getBlock();
@@ -77,7 +82,7 @@ public class EnergyPlusBuildingForHVACSystems {
 	    }
 	}
     }
-
+    
     public HashMap<String, ArrayList<ThermalZone>> getVentilationMap() {
 	return ventilationMap;
     }
@@ -131,7 +136,8 @@ public class EnergyPlusBuildingForHVACSystems {
     
     public OptResult duplicatedSimulationCase(OptResult result){
 	for(int i=0; i<optResults.getSize(); i++){
-	    if(result.equals(optResults.getResult(i))){
+	    if(optResults.getResult(i).getRegressionMode()==false &&
+		    result.equals(optResults.getResult(i))){
 		return optResults.getResult(i);
 	    }
 	}
@@ -147,7 +153,7 @@ public class EnergyPlusBuildingForHVACSystems {
 
 	try {
 	    FileWriter writer = new FileWriter(
-		    "E:\\02_Weili\\02_ResearchTopic\\Optimization\\output.txt");
+		    "E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\OneMP\\output.txt");
 	    for (int i = 0; i < row; i++) {
 		OptResult r = optResults.getResult(i);
 		writer.append(i + "@");

@@ -7,6 +7,7 @@ public class OptResult {
 	double firstcost;
 	double operationcost;
 	ArrayList<String> componentSelection;
+	boolean regressionMode = false;
 	
 	public OptResult(){
 		firstcost = 0.0;
@@ -50,5 +51,13 @@ public class OptResult {
 		}
 	    }
 	    return true;
+	}
+	
+	public boolean getRegressionMode(){
+	    return regressionMode;
+	}
+	
+	public void setRegressionMode(){
+	    regressionMode = true;
 	}
 }

@@ -31,7 +31,7 @@ import jmetal.util.JMException;
  * 
  * This algorithm collects all the simulated data for metal-model training at each cycle.
  * @author Weili
- *
+ * 09/20/2016 changed the verification mode so that the verification step can be simulated.
  */
 public class OPT4 extends Problem {
     /*
@@ -56,14 +56,14 @@ public class OPT4 extends Problem {
     private EnergyPlusBuildingForHVACSystems bldg;
     private int skipedSimulation = 0;
     private int population;
-
-    // private List<BuildingComponent> componentList;
+    
+   // private List<BuildingComponent> componentList;
 
     public OPT4(EnergyPlusBuildingForHVACSystems building, IdfReader data,
 	    File folder, int n, int Q, int p) {
 	bldg = building;
 	List<BuildingComponent> componentList = ComponentFactory
-		.getFullComponentList(bldg);
+		.getPartialComponentList(bldg);
 	originalData = data;
 	analyzeFolder = folder;
 	generationNumForSim = n;
@@ -95,7 +95,7 @@ public class OPT4 extends Problem {
 		//System.out.println(comp.getSelectedComponentName(i));
 		fvNominalVal.addElement(comp.getSelectedComponentName(i));
 	    }
-	    Attribute temp = new Attribute(comp.getClass().getName(),fvNominalVal);
+	    Attribute temp = new Attribute(comp.getName(),fvNominalVal);
 	    fvO1Attributes.addElement(temp);
 	    fvO2Attributes.addElement(temp);
 
@@ -117,7 +117,7 @@ public class OPT4 extends Problem {
     public void evaluate(Solution solution) throws JMException {
 	// set up values
 	List<BuildingComponent> componentList = ComponentFactory
-		.getFullComponentList(bldg);
+		.getPartialComponentList(bldg);
 	Variable[] decisionVariables = solution.getDecisionVariables();
 	IdfReader copiedData = originalData.cloneIdf();
 	OptResult result = new OptResult();
@@ -134,6 +134,7 @@ public class OPT4 extends Problem {
 
 	    // create flag that determine whether we can run on regression or
 	    // real simulation
+	    
 	    Double generation = Math.floor(simulationCount / population);
 	    int newGenCounter = (generation.intValue()) % generationNumForCir;
 	    simulationCount++;
@@ -156,6 +157,7 @@ public class OPT4 extends Problem {
 		for (int i = 0; i < decisionVariables.length; i++) {
 		    Double value = (Double) decisionVariables[i].getValue();
 		    BuildingComponent comp = componentList.get(i);
+		    //System.out.println(comp.getName());
 		    int index = value.intValue();
 		    String name = comp.getSelectedComponentName(index);
 		    result.addComponent(name);
@@ -189,6 +191,7 @@ public class OPT4 extends Problem {
 	    } else {
 		// 2 Regression Case
 		realSimulation = false;
+		result.setRegressionMode();
 		System.out.println("Regression Simulation");
 
 		if (o1Classifier==null&&o2Classifier==null) {
@@ -265,9 +268,9 @@ public class OPT4 extends Problem {
 	    } else {
 		// 3.1.2 find duplicate case in real simulation
 
-		System.out.println("This is not hvac cost: " + cost);
-		System.out.println("This is total cost: "
-			+ result.getFirstCost());
+		//System.out.println("This is not hvac cost: " + cost);
+		//System.out.println("This is total cost: "
+		//	+ result.getFirstCost());
 
 		bldg.addOptimizationResult(result);
 
@@ -333,13 +336,11 @@ public class OPT4 extends Problem {
 		sb.append(o2TrainSet.instance(i).classValue());
 		sb.append("\n");
 	    } catch (Exception e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }
 	    try {
 		File file = new File(
-			"E:\\02_Weili\\02_ResearchTopic\\Optimization\\predict" + trainNumber + ".csv");
-		// if file doesnt exists, then create it
+			"E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\OneMP\\predict" + trainNumber + ".csv");
 		if (!file.exists()) {
 		    file.createNewFile();
 		}

@@ -70,7 +70,7 @@ public class PackageVAV implements HVACSystem {
 		load = load + Double.parseDouble(coilList.get(i+2).text());
 	    }
 	}
-	System.out.println(load);
+	//System.out.println(load);
 	return load;
     }
 

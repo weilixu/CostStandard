@@ -98,7 +98,7 @@ public class WindowWallRatio extends AbstractMasterFormatComponent
 
     @Override
     public void writeInEnergyPlus(IdfReader reader, String component) {
-
+	
 	initWWR(reader);
 	double currentRatio = this.getWindowWallRatio();
 	//System.out.println(currentRatio);
@@ -107,6 +107,7 @@ public class WindowWallRatio extends AbstractMasterFormatComponent
 	    ratio = ratio / 100;
 	    //System.out.println(ratio);
 	    double scaleRatio = ratio / currentRatio;
+	    //System.out.println("The scale ratio is: " + scaleRatio);
 	    //System.out.println(scaleRatio);
 	    for (Wall wall : walls) {
 		wall.scaleWindows(scaleRatio);
@@ -162,6 +163,8 @@ public class WindowWallRatio extends AbstractMasterFormatComponent
 		.getObjectListCopy("BuildingSurface:Detailed");
 
 	Set<String> names = buildSurfaces.keySet();
+	//System.out.println("Test........................");
+
 	for (String name : names) {
 	    ArrayList<ValueNode> info = buildSurfaces.get(name);
 	    ValueNode type = info.get(1);
@@ -178,8 +181,10 @@ public class WindowWallRatio extends AbstractMasterFormatComponent
 	    ArrayList<ValueNode> info = feneSurfaces.get(name);
 	    ValueNode type = info.get(1);
 	    if (type.getAttribute().equals("Window")) {
+		//System.out.println(info.get(0).getAttribute());
 		if (ZoneHTMLParser.getFenestrationOrientation(info.get(0).getAttribute())
 			.equals(orientation)) {
+		    //System.out.println("I am here!");
 		    List<Coordinate3D> coords = this.readSurfaceCoords(info);
 		    String buildSurfaceName = info.get(buildSurfaceNameLoc)
 			    .getAttribute();
@@ -196,6 +201,7 @@ public class WindowWallRatio extends AbstractMasterFormatComponent
 
 	// remove walls has no window
 	names = idfWalls.keySet();
+	//System.out.println(names);
 	for (String name : names) {
 	    Wall wall = idfWalls.get(name);
 	    if (wall.hasWindow()) {
