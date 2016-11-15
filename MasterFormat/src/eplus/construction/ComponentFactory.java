@@ -67,8 +67,31 @@ public final class ComponentFactory {
 	//componentList.add(new WindowWallRatio("S"));
 	componentList.add(new WindowWallRatio("E"));
 	componentList.add(new WindowWallRatio("W"));
+	componentList.add(new PVEnergy("N"));
+	componentList.add(new PVEnergy("S"));
+	componentList.add(new PVEnergy("E"));
+	componentList.add(new PVEnergy("W"));
+	
 	componentList.add(lt);
 	
+	//numerical values
+	componentList.add(new LightShelf());
+	
 	return componentList;
+    }
+    
+    public static int getNumberOfVariable(List<BuildingComponent> componentList){
+	int IntegerVariables = 0;
+	int NumericalVariables = 0;
+	
+	for(int i=0; i<componentList.size(); i++){
+	    if(componentList.get(i).isIntegerTypeComponent()){
+		IntegerVariables += componentList.get(i).getNumberOfVariables();
+	    }else{
+		NumericalVariables += componentList.get(i).getNumberOfVariables();
+	    }
+	}
+	
+	return IntegerVariables + NumericalVariables;
     }
 }

@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import eplus.htmlparser.EnergyPlusHTMLParser;
 import jmetal.core.Problem;
 import jmetal.core.Solution;
 import jmetal.core.Variable;
-import jmetal.encodings.solutionType.IntSolutionType;
+import jmetal.encodings.solutionType.IntRealSolutionType;
 import jmetal.util.JMException;
 import ml.util.WekaUtil;
 import weka.classifiers.Classifier;
@@ -25,9 +26,13 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 /**
- * Add window to wall ratio based on previous OPT3
+ * Mixed Type optimization
  */
-public class OPT5 extends Problem{
+public class OPT5 extends Problem {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6683372632523045889L;
     /*
      * Adaptive regression algorithm parameters
      */
@@ -50,52 +55,93 @@ public class OPT5 extends Problem{
     private EnergyPlusBuildingForHVACSystems bldg;
     private int skipedSimulation = 0;
     private int population;
-    
-    
+
+    // private List<BuildingComponent> componentList;
+    private int IntegerIndex;
+    private int NumericIndex;
+
     public OPT5(EnergyPlusBuildingForHVACSystems building, IdfReader data,
-	    File folder, int n, int Q, int p){
+	    File folder, int n, int Q, int p) {
 	bldg = building;
 	List<BuildingComponent> componentList = ComponentFactory
-		.getFullComponentList(bldg);
+		.getPartialComponentList(bldg);
 	originalData = data;
 	analyzeFolder = folder;
 	generationNumForSim = n;
 	generationNumForCir = Q;
 	trainNumber = 0;
 	population = p;
-	fvO1Attributes = new FastVector(componentList.size());
-	fvO2Attributes = new FastVector(componentList.size());
-
+	int size = ComponentFactory.getNumberOfVariable(componentList);
+	//System.out.println("The size of the opti: " + size);
+	
 	/*
 	 * set-up optimization parameters
 	 */
-	numberOfVariables_ = componentList.size();
+	numberOfVariables_ = size;
 	numberOfObjectives_ = 2; // budget and eui
 	numberOfConstraints_ = 0;
 	problemName_ = "Budget and EUI";
-
+	
+	fvO1Attributes = new FastVector(numberOfVariables_);
+	fvO2Attributes = new FastVector(numberOfVariables_);
 	upperLimit_ = new double[numberOfVariables_];
 	lowerLimit_ = new double[numberOfVariables_];
 	Iterator<BuildingComponent> componentIterator = componentList
 		.iterator();
-	int index = 0;
+
+	// Integer variables
+	IntegerIndex = 0;
 	while (componentIterator.hasNext()) {
 	    BuildingComponent comp = componentIterator.next();
-	    lowerLimit_[index] = 0;
-	    upperLimit_[index] = comp.getSelectedComponents().length - 1;
-	    FastVector fvNominalVal = new FastVector(comp.getSelectedComponents().length);
-	    for(int i=0; i<upperLimit_[index]+1; i++){
-		//System.out.println(comp.getSelectedComponentName(i));
-		fvNominalVal.addElement(comp.getSelectedComponentName(i));
+	    if (comp.isIntegerTypeComponent()) {
+		lowerLimit_[IntegerIndex] = 0;
+		upperLimit_[IntegerIndex] = comp.getSelectedComponents().length
+			- 1;
+		FastVector fvNominalVal = new FastVector(
+			comp.getSelectedComponents().length);
+		for (int i = 0; i < upperLimit_[IntegerIndex] + 1; i++) {
+		    // System.out.println(comp.getSelectedComponentName(i));
+		    fvNominalVal.addElement(comp.getSelectedComponentName(i));
+		}
+		Attribute temp = new Attribute(comp.getName(), fvNominalVal);
+		fvO1Attributes.addElement(temp);
+		fvO2Attributes.addElement(temp);
 	    }
-	    Attribute temp = new Attribute(comp.getName(),fvNominalVal);
-	    fvO1Attributes.addElement(temp);
-	    fvO2Attributes.addElement(temp);
-
-	    index++;
+	    IntegerIndex++;
 	}
-	solutionType_ = new IntSolutionType(this);
+	
+	/*
+	 * Numerical variables
+	 */
+	NumericIndex = 0;
+	componentIterator = componentList.iterator();
+	while (componentIterator.hasNext()) {
+	    BuildingComponent comp = componentIterator.next();
+	    if (!comp.isIntegerTypeComponent()) {
+		for (int i = 0; i < comp.getNumberOfVariables(); i++) {
+		    String property = comp.getSelectedComponentName(i);
+		    String[] propertyList = property.split(":");
 
+		    String name = propertyList[0];
+		    Double lower = Double.valueOf(propertyList[1]);
+		    Double higher = Double.valueOf(propertyList[2]);
+		    lowerLimit_[IntegerIndex-1 + NumericIndex] = lower;
+		    upperLimit_[IntegerIndex-1 + NumericIndex] = higher;
+
+		    Attribute temp = new Attribute(name);
+		    fvO1Attributes.addElement(temp);
+		    fvO2Attributes.addElement(temp);
+		    NumericIndex++;
+		}
+	    }
+	}
+
+	solutionType_ = new IntRealSolutionType(this, IntegerIndex-1,
+		NumericIndex); //need to offset 1
+
+	/*
+	 * Add class and initiate data
+	 */
 	Attribute capitalcost = new Attribute("CapitalCost");
 	Attribute operationcost = new Attribute("OperationCost");
 	fvO1Attributes.addElement(operationcost);
@@ -105,12 +151,12 @@ public class OPT5 extends Problem{
 	o1TrainSet.setClassIndex(o1TrainSet.numAttributes() - 1);
 	o2TrainSet.setClassIndex(o2TrainSet.numAttributes() - 1);
     }
-    
+
     @Override
     public void evaluate(Solution solution) throws JMException {
 	// set up values
 	List<BuildingComponent> componentList = ComponentFactory
-		.getFullComponentList(bldg);
+		.getPartialComponentList(bldg);
 	Variable[] decisionVariables = solution.getDecisionVariables();
 	IdfReader copiedData = originalData.cloneIdf();
 	OptResult result = new OptResult();
@@ -124,9 +170,11 @@ public class OPT5 extends Problem{
 	o2Ins.setDataset(o2TrainSet);
 
 	synchronized (OPT5.lock) {
+	    System.out.println(simulationCount);
 
 	    // create flag that determine whether we can run on regression or
 	    // real simulation
+
 	    Double generation = Math.floor(simulationCount / population);
 	    int newGenCounter = (generation.intValue()) % generationNumForCir;
 	    simulationCount++;
@@ -138,38 +186,59 @@ public class OPT5 extends Problem{
 		realSimulation = true;
 		System.out.println("Real Simulation");
 		// 1.1 rebuild training data or continuously build up
-		if (o1Classifier!=null & o2Classifier!=null) {
-		    o1Classifier=null;
-		    o2Classifier=null;
-		    //o1TrainSet = new Instances(o1TrainSet, 0);
-		    //o2TrainSet = new Instances(o2TrainSet, 0);
-		}// if
-		
+		if (o1Classifier != null & o2Classifier != null) {
+		    o1Classifier = null;
+		    o2Classifier = null;
+		    // o1TrainSet = new Instances(o1TrainSet, 0);
+		    // o2TrainSet = new Instances(o2TrainSet, 0);
+		} // if
+
 		// 1.2 modify the idf according to generated data
-		//System.out.println("Step 1.2 " + decisionVariables.length);
-		for (int i = 0; i < decisionVariables.length; i++) {
-		    //System.out.println(i);
-		    Double value = (Double) decisionVariables[i].getValue();
-		    BuildingComponent comp = componentList.get(i);
-		    int index = value.intValue();
-		    String name = comp.getSelectedComponentName(index);
-		    //System.out.println(i + " " + name);
-		    result.addComponent(name);
-		    // add value
-		    o1Ins.setValue(i, name);
-		    o2Ins.setValue(i, name);
-		    comp.writeInEnergyPlus(copiedData, name);
-		    //System.out.println("hahah00000000000000000000");
-		    //System.out.println(name + " Success!");
-		}// for
-		
-		
+		int counter = 0;
+		int componentCounter = 0;
+		while (counter < decisionVariables.length) {
+
+		    BuildingComponent comp = componentList.get(componentCounter);
+		    
+		    if (comp.isIntegerTypeComponent()) {
+			Double value = (Double) decisionVariables[counter]
+				    .getValue();
+			// System.out.println(comp.getName());
+			int index = value.intValue();
+			String name = comp.getSelectedComponentName(index);
+			result.addComponent(name);
+			// add value
+			o1Ins.setValue(counter, name);
+			o2Ins.setValue(counter, name);
+
+			comp.writeInEnergyPlus(copiedData, name);
+			counter++;
+			componentCounter ++; //count the component;
+		    } else {
+			HashMap<String, Double> property = new HashMap<String, Double>();
+			for (int i = 0; i < comp.getNumberOfVariables(); i++) {
+			    Double value = (Double) decisionVariables[counter]
+				    .getValue();
+			    String propertyName = comp
+				    .getSelectedComponentName(i).split(":")[0];
+
+			    property.put(propertyName, value);
+			    o1Ins.setValue(counter, value);
+			    o2Ins.setValue(counter, value);
+			    counter++;//count the variables
+			}
+			comp.readsInProperty(property, "");
+			comp.writeInEnergyPlus(copiedData, "");
+			componentCounter ++; //count the component
+		    }//ELSE
+		} // while
+
 		// 1.3 duplicate case detection
 		OptResult temp = bldg.duplicatedSimulationCase(result);
 		if (temp != null) {
 		    skipedSimulation++;
-		    System.out.println("find a duplicate case! "
-			    + skipedSimulation);
+		    System.out.println(
+			    "find a duplicate case! " + skipedSimulation);
 		    result.setFirstCost(temp.getFirstCost());
 		    result.setOperationCost(temp.getOperationCost());
 		    // start training data
@@ -183,15 +252,16 @@ public class OPT5 extends Problem{
 		    optimization = new RunEplusOptimization(copiedData);
 		    optimization.setFolder(analyzeFolder);
 		    optimization.setSimulationTime(simulationCount);
-		}// if
+		} // if
 	    } else {
 		// 2 Regression Case
 		realSimulation = false;
+		result.setRegressionMode();
 		System.out.println("Regression Simulation");
 
-		if (o1Classifier==null&&o2Classifier==null) {
-		    System.out
-			    .println("Regression Simulation, need to train model");
+		if (o1Classifier == null && o2Classifier == null) {
+		    System.out.println(
+			    "Regression Simulation, need to train model");
 
 		    // 2.1 build a new classifier if it is the start of
 		    // simulation case
@@ -200,28 +270,42 @@ public class OPT5 extends Problem{
 			o2Classifier = trainModel(o2TrainSet);
 			dataForplot();
 		    } catch (Exception e) {
-			System.err
-				.println("Exception caught when classifying the training data");
+			System.err.println(
+				"Exception caught when classifying the training data");
 			e.printStackTrace();
-		    }// if
-		}// if
+		    } // if
+		} // if
 
 		// o1Ins = o1TrainSet.instance(0);
 		// o2Ins = o2TrainSet.instance(0);
 		// 2.2 give design values to the instance
-		for (int i = 0; i < decisionVariables.length; i++) {
-		    Double value = (Double) decisionVariables[i].getValue();
-		    BuildingComponent comp = componentList.get(i);
+		int counter = 0;
+		int componentCounter = 0;
+		while(counter < decisionVariables.length){
+		    BuildingComponent comp = componentList.get(componentCounter);
+		    if (comp.isIntegerTypeComponent()) {
+			Double value = (Double) decisionVariables[counter].getValue();
+			int index = value.intValue();
 
-		    int index = value.intValue();
-
-		    String name = comp.getSelectedComponentName(index);
-		    result.addComponent(name);
-		    o1Ins.setValue(i, name);
-		    o2Ins.setValue(i, name);
-		}// for
-	    }// else
-	}// synchronized
+			String name = comp.getSelectedComponentName(index);
+			result.addComponent(name);
+			o1Ins.setValue(counter, name);
+			o2Ins.setValue(counter, name);
+			counter ++;
+			componentCounter ++;
+		    }else{
+			for(int i=0; i<comp.getNumberOfVariables(); i++){
+			    Double value = (Double) decisionVariables[counter].getValue();
+			    result.addComponent(Double.toString(value));
+			    o1Ins.setValue(counter, value);
+			    o2Ins.setValue(counter, value);
+			    counter ++;
+			}//for
+			componentCounter++;
+		    }
+		}//while
+	    } // else
+	} // synchronized
 
 	/*
 	 * 3. Done with settings, test results
@@ -234,10 +318,10 @@ public class OPT5 extends Problem{
 		try {
 		    parser = optimization.runSimulation();
 		    // this step is just to get HVAC system cost
-		    for (int i = 0; i < decisionVariables.length; i++) {
+		    for (int i = 0; i < componentList.size(); i++) {
 			BuildingComponent comp = componentList.get(i);
 			cost = cost + comp.getComponentCost(parser.getDoc());
-		    }// for
+		    } // for
 		    System.out.println("This is hvac cost: " + cost);
 		    System.out.println("This is total cost: " + cost + " "
 			    + parser.getBudget());
@@ -259,19 +343,19 @@ public class OPT5 extends Problem{
 
 		} catch (IOException e) {
 		    e.printStackTrace();
-		}// try-catch
+		} // try-catch
 	    } else {
 		// 3.1.2 find duplicate case in real simulation
 
-		System.out.println("This is not hvac cost: " + cost);
-		System.out.println("This is total cost: "
-			+ result.getFirstCost());
+		// System.out.println("This is not hvac cost: " + cost);
+		// System.out.println("This is total cost: "
+		// + result.getFirstCost());
 
 		bldg.addOptimizationResult(result);
 
 		solution.setObjective(0, result.getOperationCost());
 		solution.setObjective(1, result.getFirstCost());
-	    }// if
+	    } // if
 	} else {
 	    // 3.2 Regression mode
 	    try {
@@ -289,12 +373,12 @@ public class OPT5 extends Problem{
 		System.err
 			.print("Exception catched when classifying the costs");
 		e.printStackTrace();
-	    }// try-catch
-	}// if
+	    } // try-catch
+	} // if
     }// end of method
 
     private Classifier trainModel(Instances data) throws Exception {
-	String[] algorithm = {"SVM","LR"}; // algorithms
+	String[] algorithm = { "SVM", "LR" }; // algorithms
 	String bestSelected = null;
 	double minRootMeanError = Double.MAX_VALUE;
 	for (int i = 0; i < algorithm.length; i++) {
@@ -318,7 +402,7 @@ public class OPT5 extends Problem{
 		Instance insC = o2TrainSet.instance(i);
 		double operation = o1Classifier.classifyInstance(ins);
 		double capital = o2Classifier.classifyInstance(insC);
-		for(int j=0; j<ins.numAttributes(); j++){
+		for (int j = 0; j < ins.numAttributes(); j++) {
 		    sb.append(ins.value(j));
 		    sb.append(",");
 		}
@@ -331,13 +415,12 @@ public class OPT5 extends Problem{
 		sb.append(o2TrainSet.instance(i).classValue());
 		sb.append("\n");
 	    } catch (Exception e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }
 	    try {
 		File file = new File(
-			"E:\\02_Weili\\02_ResearchTopic\\Optimization\\predict" + trainNumber + ".csv");
-		// if file doesnt exists, then create it
+			"E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\OneMP\\predict"
+				+ trainNumber + ".csv");
 		if (!file.exists()) {
 		    file.createNewFile();
 		}

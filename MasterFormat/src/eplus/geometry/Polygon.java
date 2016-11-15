@@ -20,6 +20,10 @@ public class Polygon {
 	private boolean isValid;
 	private int numPoints;
 	
+	private double zDiff;
+	private double xDiff;
+	private double yDiff;
+	
 	/**
 	 * Follow the sequence of the coordinates, 
 	 * the polygon should not be self-intersected
@@ -39,6 +43,7 @@ public class Polygon {
 			//this.buildTriangles();
 			this.area = this.computeArea();
 		}
+		findOutGeometry();
 	}
 	
 	public int getNumPoints(){
@@ -55,6 +60,18 @@ public class Polygon {
 
 	public boolean isValid() {
 		return isValid;
+	}
+	
+	public double getXDiff(){
+	    return xDiff;
+	}
+	
+	public double getYDiff(){
+	    return yDiff;
+	}
+	
+	public double getZDiff(){
+	    return zDiff;
 	}
 
 	/**
@@ -150,6 +167,49 @@ public class Polygon {
 		}
 		
 		return new Coordinate3D(); //origin
+	}
+	
+	/**
+	 * Calculate width and height
+	 */
+	private void findOutGeometry(){
+	    double highVertex = Double.MIN_VALUE;
+	    double lowVertex = Double.MAX_VALUE;
+	    double leftVertex = Double.MAX_VALUE;
+	    double rightVertex = Double.MIN_VALUE;
+	    double frontwardVertex = Double.MAX_VALUE;
+	    double backwardVertex = Double.MIN_VALUE;
+	    
+	    for(int i=0; i<coords.size(); i++){
+		Coordinate3D coord = coords.get(i);
+		if(coord.getZ() > highVertex){
+		    highVertex = coord.getZ();
+		}
+		
+		if(coord.getZ() < lowVertex){
+		    lowVertex = coord.getZ();
+		}
+		
+		if(coord.getX() < leftVertex){
+		    leftVertex = coord.getX();
+		}
+		
+		if(coord.getX() > rightVertex){
+		    rightVertex = coord.getX();
+		}
+		
+		if(coord.getY() > backwardVertex){
+		    backwardVertex = coord.getY();
+		}
+		
+		if(coord.getY() < frontwardVertex){
+		    frontwardVertex = coord.getY();
+		}
+		
+		xDiff = Math.abs(rightVertex - leftVertex);
+		yDiff = Math.abs(backwardVertex - frontwardVertex);
+		zDiff = Math.abs(highVertex - lowVertex);
+	    }
 	}
 	
 	/**

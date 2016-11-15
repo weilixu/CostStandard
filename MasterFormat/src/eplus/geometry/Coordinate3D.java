@@ -20,7 +20,7 @@ public class Coordinate3D {
 	}
 
 	public void setX(double x) {
-		this.x = x;
+	    this.x = x;
 	}
 
 	public double getY() {

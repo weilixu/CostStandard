@@ -12,8 +12,8 @@ import eplus.IdfReader;
 import eplus.IdfReader.ValueNode;
 import masterformat.api.AbstractMasterFormatComponent;
 
-public class DaylightSensor extends AbstractMasterFormatComponent implements
-	BuildingComponent {
+public class DaylightSensor extends AbstractMasterFormatComponent
+	implements BuildingComponent {
 
     private final static String daylight = "Daylighting:Controls";
 
@@ -29,9 +29,9 @@ public class DaylightSensor extends AbstractMasterFormatComponent implements
     public DaylightSensor() {
 	selectedComponents = getListAvailableComponent();
     }
-    
+
     @Override
-    public String getName(){
+    public String getName() {
 	return "daylightsensor";
     }
 
@@ -43,16 +43,16 @@ public class DaylightSensor extends AbstractMasterFormatComponent implements
 
 	    statement = connect.createStatement();
 
-	    resultSet = statement
-		    .executeQuery("select count(*) AS rowcount from energyplusconstruction.sensor");
+	    resultSet = statement.executeQuery(
+		    "select count(*) AS rowcount from energyplusconstruction.sensor");
 
 	    resultSet.next();
 	    int count = resultSet.getInt("rowcount");
 
 	    availableComponents = new String[count];
 
-	    resultSet = statement
-		    .executeQuery("select * from energyplusconstruction.sensor");
+	    resultSet = statement.executeQuery(
+		    "select * from energyplusconstruction.sensor");
 	    int index = 0;
 	    while (resultSet.next()) {
 		String des = resultSet.getString("TYPE") + ":"
@@ -96,8 +96,8 @@ public class DaylightSensor extends AbstractMasterFormatComponent implements
 		statement = connect.createStatement();
 
 		// take out the useful data
-		resultSet = statement
-			.executeQuery("select * from energyplusconstruction.sensor where description = '"
+		resultSet = statement.executeQuery(
+			"select * from energyplusconstruction.sensor where description = '"
 				+ sensor + "'");
 		resultSet.next();
 		String cost = resultSet.getString("Cost");
@@ -112,12 +112,11 @@ public class DaylightSensor extends AbstractMasterFormatComponent implements
 		    String element = daylightIterator.next();
 		    ArrayList<ValueNode> nodes = daylightSensors.get(element);
 		    for (ValueNode vn : nodes) {
-			if (vn.getDescription()
-				.equalsIgnoreCase(
-					"Fraction of Zone Controlled by First Reference Point")) {
+			if (vn.getDescription().equalsIgnoreCase(
+				"Fraction of Zone Controlled by First Reference Point")) {
 			    vn.setAttribute("1");
-			} else if (vn.getDescription().equalsIgnoreCase(
-				"Zone Name")) {
+			} else if (vn.getDescription()
+				.equalsIgnoreCase("Zone Name")) {
 			    zoneName = vn.getAttribute();
 			}
 		    }
@@ -127,13 +126,31 @@ public class DaylightSensor extends AbstractMasterFormatComponent implements
 			    "Daylighting:Controls", zoneName, "", cost, "", "",
 			    "", "", "", "", "" };
 		    String[] description = componentCostDescription.split(":");
-		    reader.addNewEnergyPlusObject(componentCostObject, values, description);
+		    reader.addNewEnergyPlusObject(componentCostObject, values,
+			    description);
 		}
 
 	    } catch (SQLException e) {
 		e.printStackTrace();
 	    } finally {
 		close();
+	    }
+	} else {
+	    // modify the idf daylight sensors
+	    HashMap<String, ArrayList<ValueNode>> daylightSensors = reader
+		    .getObjectListCopy(daylight);
+	    Set<String> daylightSet = daylightSensors.keySet();
+	    Iterator<String> daylightIterator = daylightSet.iterator();
+	    //String zoneName = null;
+	    while (daylightIterator.hasNext()) {
+		String element = daylightIterator.next();
+		ArrayList<ValueNode> nodes = daylightSensors.get(element);
+		for (ValueNode vn : nodes) {
+		    if (vn.getDescription().equalsIgnoreCase(
+			    "Fraction of Zone Controlled by First Reference Point")) {
+			vn.setAttribute("0");
+		    }
+		}
 	    }
 	}
     }
@@ -160,6 +177,23 @@ public class DaylightSensor extends AbstractMasterFormatComponent implements
     public void setVariable(String[] surfaceProperties) {
 	// TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public boolean isIntegerTypeComponent() {
+	return true;
+    }
+
+    @Override
+    public int getNumberOfVariables() {
+	return 1;
+    }
+
+    @Override
+    public void readsInProperty(HashMap<String, Double> shelfProperty,
+	    String component) {
+	// TODO Auto-generated method stub
+	
     }
 
 }

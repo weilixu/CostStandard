@@ -200,4 +200,21 @@ public class Window extends AbstractMasterFormatComponent implements
     public double getComponentCost(Document doc) {
 	return 0.0;
     }
+
+    @Override
+    public boolean isIntegerTypeComponent() {
+	return true;
+    }
+
+    @Override
+    public int getNumberOfVariables() {
+	return 1;
+    }
+
+    @Override
+    public void readsInProperty(HashMap<String, Double> shelfProperty,
+	    String component) {
+	// TODO Auto-generated method stub
+	
+    }
 }

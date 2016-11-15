@@ -14,6 +14,7 @@ public final class ZoneHTMLParser {
     //All Summary tables
     private static ZoneSummaryParser zoneSummary;
     private static FenestrationParser feneSummary;
+    private static EnvelopeSummary surfaceSummary;
     /**
      * process the sizing results
      * @param html
@@ -24,6 +25,7 @@ public final class ZoneHTMLParser {
 	    preprocessTable();
 	    zoneSummary = new ZoneSummaryParser(doc);
 	    feneSummary = new FenestrationParser(doc);
+	    surfaceSummary = new EnvelopeSummary(doc);
 	} catch (IOException e) {
 	    // do nothing
 	}
@@ -31,6 +33,16 @@ public final class ZoneHTMLParser {
     
     public static Double getZoneArea(String zone){
 	Double area = zoneSummary.getZoneArea(zone);
+	return area;
+    }
+    
+    public static String getSurfaceOrientation(String surface){
+	String orientation = surfaceSummary.getSurfaceOrientation(surface);
+	return orientation;
+    }
+    
+    public static double getSurfaceArea(String surface){
+	double area = surfaceSummary.getSurfaceArea(surface);
 	return area;
     }
     

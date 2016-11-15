@@ -269,4 +269,21 @@ public class WindowWallRatio extends AbstractMasterFormatComponent
 	    }
 	}
     }
+
+    @Override
+    public boolean isIntegerTypeComponent() {
+	return true;
+    }
+
+    @Override
+    public int getNumberOfVariables() {
+	return 1;
+    }
+
+    @Override
+    public void readsInProperty(HashMap<String, Double> shelfProperty,
+	    String component) {
+	// TODO Auto-generated method stub
+	
+    }
 }

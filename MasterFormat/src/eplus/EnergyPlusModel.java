@@ -926,7 +926,7 @@ public class EnergyPlusModel {
        //Problem problem = new OPT2(bldg,idfDomain,parentFolder);
        //System.out.println(parentFolder.getAbsolutePath());
        
-       Problem problem = new OPT4(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
+       Problem problem = new OPT5(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
        int threads = 6;
        IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
        //Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
@@ -940,14 +940,16 @@ public class EnergyPlusModel {
        
 //       // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>() ;
-       parameters.put("probability", 0.9);
+       parameters.put("realProbability", 0.9);
+       parameters.put("intProbability", 0.9);
        parameters.put("distributionIndex", 20.0) ;
-       crossover = CrossoverFactory.getCrossoverOperator("SinglePointCrossover", parameters);                   
+       crossover = CrossoverFactory.getCrossoverOperator("MixedSBXSinglePointCrossover", parameters);                   
 
        parameters = new HashMap<String, Double>() ;
-       parameters.put("probability", 0.9) ;
+       parameters.put("realProbability", 0.5) ;
+       parameters.put("intProbability", 0.5);
        parameters.put("distributionIndex", 20.0) ;
-       mutation = MutationFactory.getMutationOperator("BitFlipMutationAdaptive", parameters);                    
+       mutation = MutationFactory.getMutationOperator("MixedBitFlipPolynomialMutation", parameters);                    
 
        // Selection Operator 
        parameters = null ;

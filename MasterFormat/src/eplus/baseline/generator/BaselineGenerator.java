@@ -2,10 +2,14 @@ package eplus.baseline.generator;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
+import baseline.generator.BaselineSetting;
 import baseline.generator.Generator;
 import baseline.idfdata.BaselineInfo;
 import baseline.util.ClimateZone;
+import baseline.util.parallel.BaselineParallel;
+import baseline.util.parallel.MultithreadedBaselineSimulator;
 
 public class BaselineGenerator {
 
@@ -21,6 +25,8 @@ public class BaselineGenerator {
     private String energyPlusAuthor;
 
     private boolean buildingCondition;
+    
+    private BaselineParallel parallelEvaluator;
 
     public BaselineGenerator() {
 	pathList = new ArrayList<String>();
@@ -33,6 +39,7 @@ public class BaselineGenerator {
 	energyPlusAuthor = "DesignBuilder";
 
 	buildingCondition = false;
+	parallelEvaluator = new MultithreadedBaselineSimulator(4);
     }
 
     /**
@@ -53,6 +60,7 @@ public class BaselineGenerator {
 	energyPlusAuthor = "DesignBuilder";
 
 	buildingCondition = false;
+	parallelEvaluator = new MultithreadedBaselineSimulator(4);
     }
 
     public BaselineGenerator(ArrayList<String> paths, String weatherPath,
@@ -66,6 +74,7 @@ public class BaselineGenerator {
 	buildingFunction = function;
 	energyPlusAuthor = author;
 	buildingCondition = condition;
+	parallelEvaluator = new MultithreadedBaselineSimulator(4);
     }
 
     public void setEnergyPlusFile(String path) {
@@ -100,12 +109,24 @@ public class BaselineGenerator {
 	if (!pathList.isEmpty() && weatherFile != null) {
 	    for (String path : pathList) {
 		energyPlusFile = new File(path);
-		Generator gen = new Generator(energyPlusFile, weatherFile, zone,
-			buildingFunction, buildingCondition, energyPlusAuthor);
-		BaselineInfo info = gen.getBaselineInfo();
-		Double baselineCost = info.getOperationCost();
 		
+		BaselineSetting setting = new BaselineSetting();
+		setting.setBaselineInfo(new BaselineInfo());
+		setting.setExisting(buildingCondition);
+		setting.setIdfFile(energyPlusFile);
+		setting.setTool(energyPlusAuthor);
+		setting.setType(buildingFunction);
+		setting.setWeatherFile(weatherFile);
+		setting.setZone(zone);
+		
+		parallelEvaluator.addBaselineForEvaluation(setting);
+	    }
+	    List<BaselineSetting> solutionList = parallelEvaluator.parallelEvaluation();
+	    
+	    for(BaselineSetting bs : solutionList){
+		Double cost = bs.getBaselineInfo().getOperationCost();
 	    }
 	}
+	parallelEvaluator.stopEvaluator();
     }
 }
