@@ -37,6 +37,18 @@ public class PVEnergy extends AbstractMasterFormatComponent
 	    + "Track Meter Scheme Meter Name:Electrical Buss Type:Inverter Object Name:Electrical Storage Object Name:Transformer object Name";
     private final String distributionObject = "ElectricLoadCenter:Distribution";
 
+    private final String constructionName = "BIPV_Construction";
+    
+    private final String internalSourceCons = "Name:Source Present After Layer Number:Temperature Calculation Requested After Layer Number:Dimensions for the CTF Calculation:"+
+	    "Tube Spacing:Outside Layer:Layer 2:Layer 3:Layer 4: Layer 5:Layer 6:Layer 7:Layer 8:Layer 9:Layer 10";
+    private final String internalSourceObject = "Construction:InternalSource";
+    
+    private final String material = "Name:Roughness:Thickness:Conductivity:Density:Specific Heat:Thermal Absorptance:Solar Absorptance:Visible Absorptance";
+    private final String materialObject = "Material";
+    
+    private final String frontGlass = "PVModuleFRONTGlass";
+    private final String backGlass = "PVModuleBACKGlass";
+    
     private String[] selectedComponents = null;
     private final String orientation;
     
@@ -139,20 +151,91 @@ public class PVEnergy extends AbstractMasterFormatComponent
 		// Generates generator:photovoltaic data
 		// 1 take out all the exterior wall surfaces face to one
 		// orientation.
+		String currentConstruction = null;
 		HashMap<String, ArrayList<ValueNode>> tempList = reader
 			.getObjectListCopy("BuildingSurface:Detailed");
 		Set<String> names = tempList.keySet();
 		for (String name : names) {
 		    ArrayList<ValueNode> info = tempList.get(name);
 		    String surfaceName = info.get(0).getAttribute();
+		    String surfaceType = info.get(1).getAttribute();
 		    String sunExpo = info.get(6).getAttribute();
-		    if (sunExpo.equalsIgnoreCase("SunExposed")) {
+		    
+		    if (surfaceType.equalsIgnoreCase("Wall")&& sunExpo.equalsIgnoreCase("SunExposed")) {
 			if (ZoneHTMLParser.getSurfaceOrientation(surfaceName)
 				.equals(orientation)) {
+			    //currentConstruction = info.get(2).getAttribute();
+			    //info.get(2).setAttribute(constructionName + "_"+orientation);
 			    surfaces.add(surfaceName);
 			}
 		    }
 		}
+		
+		//get layers of the wall construction
+//		ArrayList<String> layers = new ArrayList<String>();
+//		HashMap<String, ArrayList<ValueNode>> constructList = reader.getObjectListCopy("Construction");
+//		Set<String> cons = constructList.keySet();
+//		for(String con:cons){
+//		    String conName = constructList.get(con).get(0).getAttribute();
+//		    if(conName.equals(currentConstruction)){
+//			for(int i=2; i<constructList.get(con).size(); i++){
+//			    layers.add(constructList.get(con).get(i).getAttribute());
+//			}
+//		    }
+//		}
+//		
+//		//get materials
+//		String[] materialDes = material.split(":");
+//		String[] frontMaterialValue = {
+//			frontGlass + "_"+orientation,
+//			resultSet.getString("Roughness"),
+//			Double.toString(resultSet.getDouble("Thickness")),
+//			Double.toString(resultSet.getDouble("Conductivity")),
+//			Double.toString(resultSet.getDouble("Density")),
+//			Double.toString(resultSet.getDouble("SpecificHeat")),
+//			Double.toString(resultSet.getDouble("ThermalAbsorptance")),
+//			Double.toString(resultSet.getDouble("SolarAbsorptance")),
+//			Double.toString(resultSet.getDouble("VisibleAbsorptance")),
+//		};
+//		
+//		String[] backMateiralValue = {
+//			backGlass + "_" + orientation,
+//			resultSet.getString("Roughness"),
+//			Double.toString(resultSet.getDouble("Thickness")),
+//			Double.toString(resultSet.getDouble("Conductivity")),
+//			Double.toString(resultSet.getDouble("Density")),
+//			Double.toString(resultSet.getDouble("SpecificHeat")),
+//			Double.toString(resultSet.getDouble("ThermalAbsorptance")),
+//			Double.toString(resultSet.getDouble("SolarAbsorptance")),
+//			Double.toString(resultSet.getDouble("VisibleAbsorptance")),
+//		};
+//		
+//		reader.addNewEnergyPlusObject(materialObject,
+//			frontMaterialValue,materialDes);
+//		reader.addNewEnergyPlusObject(materialObject,
+//			backMateiralValue, materialDes);		
+//		//set-up construction internal source object
+//		String[] internalSourceDes = internalSourceCons.split(":");
+//		int offSet = 7;
+//		String[] internalSourceValue = {
+//			constructionName + "_"+orientation,
+//			"1",
+//			"1",
+//			"1",
+//			"0",
+//			frontGlass,
+//			backGlass,
+//			"","","","","","","",""
+//		};
+//		
+//		for(int j=0; j<layers.size();j++){
+//		    internalSourceValue[j+offSet] = layers.get(j);
+//		}
+//		
+//		reader.addNewEnergyPlusObject(internalSourceObject,
+//			internalSourceValue,internalSourceDes);
+		
+		
 		// 2. start creating generator:photovoltaic object for each
 		// surface in surfaces list
 		for (int i = 0; i < surfaces.size(); i++) {
@@ -247,7 +330,7 @@ public class PVEnergy extends AbstractMasterFormatComponent
     @Override
     public double getComponentCost(Document doc) {
 	// TODO Auto-generated method stub
-	return totalPower * 4500;
+	return totalPower * 4500 / 1000;
     }
 
     @Override

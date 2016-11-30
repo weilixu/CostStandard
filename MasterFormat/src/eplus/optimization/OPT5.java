@@ -221,7 +221,8 @@ public class OPT5 extends Problem {
 				    .getValue();
 			    String propertyName = comp
 				    .getSelectedComponentName(i).split(":")[0];
-
+			    
+			    result.addNumericValues(value);
 			    property.put(propertyName, value);
 			    o1Ins.setValue(counter, value);
 			    o2Ins.setValue(counter, value);
@@ -296,7 +297,7 @@ public class OPT5 extends Problem {
 		    }else{
 			for(int i=0; i<comp.getNumberOfVariables(); i++){
 			    Double value = (Double) decisionVariables[counter].getValue();
-			    result.addComponent(Double.toString(value));
+			    result.addNumericValues(value);
 			    o1Ins.setValue(counter, value);
 			    o2Ins.setValue(counter, value);
 			    counter ++;

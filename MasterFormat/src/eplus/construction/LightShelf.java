@@ -109,11 +109,15 @@ public class LightShelf implements BuildingComponent{
 	//check the inputs to make sure whether we should generate the inside shelf
 	if(insideShelfDepth < 0.5){
 	    insideShelf = false;
+	}else{
+	    insideShelf = true;
 	}
 	
 	//check the inputs to make sure whether we should generate the inside shelf
 	if(outsideShelfDepth < 0.5){
 	    outsideShelf = false;
+	}else{
+	    outsideShelf = true;
 	}
 	//check the inputs to make sure whether we should generate the daylight shelf
 	if(shelfHeightPercentage < 0.1){
@@ -121,10 +125,12 @@ public class LightShelf implements BuildingComponent{
 	    outsideShelf = false;
 	}
 	
+	//System.out.println(insideShelfDepth + " " + outsideShelfDepth + " "+ shelfHeightPercentage + " " + insideShelf + " " + outsideShelf);
 	
 	int counter = 0;
 	//System.out.println(shelfHeightPercentage + "" + insideShelf + " " + outsideShelf);
 	while ((insideShelf!=false || outsideShelf!=false) && windowIterator.hasNext()) {
+	    //System.out.println("working on it...");
 	    String windowName = windowIterator.next();
 	    EplusWindow win = idfWindow.get(windowName);
 	    shelfHeight = win.getZDiff()*shelfHeightPercentage;

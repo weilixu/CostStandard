@@ -4,8 +4,10 @@ import masterformat.standard.concrete.Concrete;
 import masterformat.standard.electrical.Electrical;
 import masterformat.standard.finishes.Finishes;
 import masterformat.standard.hvac.boiler.Boiler;
+import masterformat.standard.hvac.chiller.Chiller;
 import masterformat.standard.hvac.condenserunits.CondenserUnits;
 import masterformat.standard.hvac.convectionunits.ConvectionUnits;
+import masterformat.standard.hvac.cooltower.CoolingTower;
 import masterformat.standard.hvac.fan.Fan;
 import masterformat.standard.hvac.furnaces.Furnace;
 import masterformat.standard.hvac.pump.Pump;
@@ -35,6 +37,14 @@ public abstract class ComponentFactory {
     }
     
     public Fan getFan(String fan){
+	return null;
+    }
+    
+    public Chiller getChiller(String chiller){
+	return null;
+    }
+    
+    public CoolingTower getCoolingTower(String coolTower){
 	return null;
     }
     

@@ -163,6 +163,10 @@ public class EnergyPlusBuildingForHVACSystems {
 		    writer.append(r.getComponent(j));
 		    writer.append("@");
 		}
+		for(int k=0; k<r.getNumericLength(); k++){
+		    writer.append(r.getNumericValue(k).toString());
+		    writer.append("@");
+		}
 		writer.append("\n");
 	    }
 	    writer.flush();

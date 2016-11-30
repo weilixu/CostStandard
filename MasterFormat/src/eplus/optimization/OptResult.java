@@ -7,12 +7,14 @@ public class OptResult {
 	double firstcost;
 	double operationcost;
 	ArrayList<String> componentSelection;
+	ArrayList<Double> numericValueList;
 	boolean regressionMode = false;
 	
 	public OptResult(){
 		firstcost = 0.0;
 		operationcost = 0.0;
 		componentSelection = new ArrayList<String>();
+		numericValueList = new ArrayList<Double>();
 	}
 	
 	public void setFirstCost(double first){
@@ -43,10 +45,28 @@ public class OptResult {
 	    componentSelection.add(component);
 	}
 	
+	public void addNumericValues(Double value){
+	    numericValueList.add(value);
+	}
+	
+	public int getNumericLength(){
+	    return numericValueList.size();
+	}
+	
+	public Double getNumericValue(int index){
+	    return numericValueList.get(index);
+	}
+	
 	public boolean equals(OptResult another){
 	    int size = componentSelection.size();
 	    for(int i=0; i<size; i++){
 		if(!componentSelection.get(i).equals(another.getComponent(i))){
+		    return false;
+		}
+	    }
+	    
+	    for(int j=0; j<numericValueList.size(); j++){
+		if(!numericValueList.get(j).equals(another.getNumericValue(j))){
 		    return false;
 		}
 	    }
