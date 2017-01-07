@@ -196,4 +196,10 @@ public class DaylightSensor extends AbstractMasterFormatComponent
 	
     }
 
+    @Override
+    public String[] getSelectedComponentsForRetrofit() {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
 }

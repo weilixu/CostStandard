@@ -291,4 +291,15 @@ public class HVACSimple extends AbstractMasterFormatComponent implements
 	// TODO Auto-generated method stub
 	
     }
+
+    @Override
+    public String[] getSelectedComponentsForRetrofit() {
+	String[] retrofitSelect = new String[selectedComponents.length];
+	retrofitSelect[0] = "NONE:NONE";
+	for(int i=0; i<selectedComponents.length; i++){
+	    retrofitSelect[i+1] = selectedComponents[i];
+	}
+	
+	return retrofitSelect;
+    }
 }

@@ -99,83 +99,86 @@ public class Window extends AbstractMasterFormatComponent implements
 	    String component) {
 	// create constructions and put into eplusFile
 	String windowDescription = component.split(":")[1];
-	try {
-	    // 1. setup connections
-	    super.testConnect();
+	if(!windowDescription.equalsIgnoreCase("NONE")){
+		try {
+		    // 1. setup connections
+		    super.testConnect();
 
-	    statement = connect.createStatement();
+		    statement = connect.createStatement();
 
-	    resultSet = statement
-		    .executeQuery("select * from energyplusconstruction.window where description = '"
-			    + windowDescription + "'");
-	    resultSet.next();
-	    // 2. Extract the information and insert object to idf file
-	    String name = resultSet.getString("WindowType");
-	    String uvalue = resultSet.getString("UValue");
-	    String shgc = resultSet.getString("SHGC");
-	    String vt = resultSet.getString("VT");
-	    String[] windowproperty = new String[4];
-	    String[] constructionList = new String[2];
+		    resultSet = statement
+			    .executeQuery("select * from energyplusconstruction.window where description = '"
+				    + windowDescription + "'");
+		    resultSet.next();
+		    // 2. Extract the information and insert object to idf file
+		    String name = resultSet.getString("WindowType");
+		    String uvalue = resultSet.getString("UValue");
+		    String shgc = resultSet.getString("SHGC");
+		    String vt = resultSet.getString("VT");
+		    String[] windowproperty = new String[4];
+		    String[] constructionList = new String[2];
 
-	    windowproperty[0] = name;
-	    windowproperty[1] = uvalue;
-	    windowproperty[2] = shgc;
-	    windowproperty[3] = vt;
+		    windowproperty[0] = name;
+		    windowproperty[1] = uvalue;
+		    windowproperty[2] = shgc;
+		    windowproperty[3] = vt;
 
-	    String constructionName = name + " System";
-	    constructionList[0] = constructionName;
-	    constructionList[1] = name;
+		    String constructionName = name + " System";
+		    constructionList[0] = constructionName;
+		    constructionList[1] = name;
 
-	    eplusFile.addNewEnergyPlusObject(simplewindow, windowproperty,
-		    simpleWindowDescription.split(":"));
-	    eplusFile.addNewEnergyPlusObject(construction, constructionList,
-		    constructionDes.split(":"));
+		    eplusFile.addNewEnergyPlusObject(simplewindow, windowproperty,
+			    simpleWindowDescription.split(":"));
+		    eplusFile.addNewEnergyPlusObject(construction, constructionList,
+			    constructionDes.split(":"));
 
-	    // 3. replace the fenestration material to created material
-	    HashMap<String, ArrayList<ValueNode>> surfaceMap = eplusFile
-		    .getObjectListCopy(surface);
-	    Set<String> surfaceList = surfaceMap.keySet();
-	    Iterator<String> surfaceIterator = surfaceList.iterator();
-	    while (surfaceIterator.hasNext()) {
-		// get one surface
-		String surfaceCount = surfaceIterator.next();
-		ArrayList<ValueNode> nodes = surfaceMap.get(surfaceCount);
-		String surfaceType = null;
-		for (int i = 0; i < nodes.size(); i++) {
-		    if (nodes.get(i).getDescription().equals("Surface Type")) {
-			surfaceType = nodes.get(i).getAttribute();
-		    }
-		}
-		if (surfaceType.equals("Window")) {
-		    // find window
-		    for (int i = 0; i < nodes.size(); i++) {
-			if (nodes.get(i).getDescription()
-				.equals("Construction Name")) {
-			    nodes.get(i).setAttribute(constructionName);
-			    break;
+		    // 3. replace the fenestration material to created material
+		    HashMap<String, ArrayList<ValueNode>> surfaceMap = eplusFile
+			    .getObjectListCopy(surface);
+		    Set<String> surfaceList = surfaceMap.keySet();
+		    Iterator<String> surfaceIterator = surfaceList.iterator();
+		    while (surfaceIterator.hasNext()) {
+			// get one surface
+			String surfaceCount = surfaceIterator.next();
+			ArrayList<ValueNode> nodes = surfaceMap.get(surfaceCount);
+			String surfaceType = null;
+			for (int i = 0; i < nodes.size(); i++) {
+			    if (nodes.get(i).getDescription().equals("Surface Type")) {
+				surfaceType = nodes.get(i).getAttribute();
+			    }
+			}
+			if (surfaceType.equals("Window")) {
+			    // find window
+			    for (int i = 0; i < nodes.size(); i++) {
+				if (nodes.get(i).getDescription()
+					.equals("Construction Name")) {
+				    nodes.get(i).setAttribute(constructionName);
+				    break;
+				}
+			    }
 			}
 		    }
+
+		    // 5. write cost data into energyplus
+		    String cost = resultSet.getString("COST");
+
+		    // prepare data for the component cost
+		    String[] values = { constructionName.toUpperCase(), "",
+			    "Construction", constructionName, "", "", cost, "", "", "",
+			    "", "", "" };
+		    String[] description = componentCostDescription.split(":");
+		    // add to eplus
+		    eplusFile.addNewEnergyPlusObject(componentCostObject, values,
+			    description);
+		    // DONE!!!
+
+		} catch (SQLException e) {
+		    e.printStackTrace();
+		} finally {
+		    close();
 		}
-	    }
-
-	    // 5. write cost data into energyplus
-	    String cost = resultSet.getString("COST");
-
-	    // prepare data for the component cost
-	    String[] values = { constructionName.toUpperCase(), "",
-		    "Construction", constructionName, "", "", cost, "", "", "",
-		    "", "", "" };
-	    String[] description = componentCostDescription.split(":");
-	    // add to eplus
-	    eplusFile.addNewEnergyPlusObject(componentCostObject, values,
-		    description);
-	    // DONE!!!
-
-	} catch (SQLException e) {
-	    e.printStackTrace();
-	} finally {
-	    close();
 	}
+
     }
 
     @Override
@@ -216,5 +219,16 @@ public class Window extends AbstractMasterFormatComponent implements
 	    String component) {
 	// TODO Auto-generated method stub
 	
+    }
+
+    @Override
+    public String[] getSelectedComponentsForRetrofit() {
+	String[] retrofitSelect = new String[selectedComponents.length+1];
+	retrofitSelect[0] = "NONE:NONE";
+	for(int i=0; i<selectedComponents.length; i++){
+	    retrofitSelect[i+1] = selectedComponents[i];
+	}
+	selectedComponents = retrofitSelect;
+	return selectedComponents;
     }
 }

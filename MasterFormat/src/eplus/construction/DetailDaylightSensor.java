@@ -186,4 +186,10 @@ public class DetailDaylightSensor implements BuildingComponent{
 	
     }
 
+    @Override
+    public String[] getSelectedComponentsForRetrofit() {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
 }

@@ -40,6 +40,7 @@ import eplus.optimization.OPT2;
 import eplus.optimization.OPT3;
 import eplus.optimization.OPT4;
 import eplus.optimization.OPT5;
+import eplus.optimization.OPT6;
 import masterformat.api.MasterFormat;
 import masterformat.listener.BoilerListener;
 import masterformat.listener.CostTableListener;
@@ -926,7 +927,7 @@ public class EnergyPlusModel {
        //Problem problem = new OPT2(bldg,idfDomain,parentFolder);
        //System.out.println(parentFolder.getAbsolutePath());
        
-       Problem problem = new OPT5(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
+       Problem problem = new OPT6(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
        int threads = 6;
        IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
        //Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
@@ -939,10 +940,10 @@ public class EnergyPlusModel {
        algorithm.setInputParameter("maxEvaluations", ammMaxEvaluation);
        
 //       // Mutation and Crossover for Real codification 
-       parameters = new HashMap<String, Double>() ;
+       parameters = new HashMap<String, Double>();
        parameters.put("realProbability", 0.9);
        parameters.put("intProbability", 0.9);
-       parameters.put("distributionIndex", 20.0) ;
+       parameters.put("distributionIndex", 20.0);
        crossover = CrossoverFactory.getCrossoverOperator("MixedSBXSinglePointCrossover", parameters);                   
 
        parameters = new HashMap<String, Double>() ;

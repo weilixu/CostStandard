@@ -103,6 +103,7 @@ public class WindowWallRatio extends AbstractMasterFormatComponent
 	double currentRatio = this.getWindowWallRatio();
 	//System.out.println(currentRatio);
 	Double ratio = Double.parseDouble(component);
+	//System.out.println(ratio);
 	if (ratio >= 10 && ratio <= 90) {
 	    ratio = ratio / 100;
 	    //System.out.println(ratio);
@@ -285,5 +286,11 @@ public class WindowWallRatio extends AbstractMasterFormatComponent
 	    String component) {
 	// TODO Auto-generated method stub
 	
+    }
+
+    @Override
+    public String[] getSelectedComponentsForRetrofit() {
+	// TODO Auto-generated method stub
+	return null;
     }
 }

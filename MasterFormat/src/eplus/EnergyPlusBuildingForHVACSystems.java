@@ -66,6 +66,7 @@ public class EnergyPlusBuildingForHVACSystems {
 	    // String block = zone.getBlock();
 	    String hvac = zone.getZoneCoolHeat();
 	    String vent = zone.getZoneVent();
+	    
 	    //totalArea += zone.getZoneArea();
 	    if (!vent.equalsIgnoreCase("NONE") && !vent.equalsIgnoreCase("EXT")) {
 		if (!ventilationMap.containsKey(vent)) {
@@ -184,7 +185,7 @@ public class EnergyPlusBuildingForHVACSystems {
 	int conditionIndex = 2;
 	for (int i = 1; i < zoneList.size(); i++) {
 	    Elements info = zoneList.get(i).getElementsByTag("td");
-	    if (info.get(conditionIndex).text().equalsIgnoreCase("YES")) {
+	    if (info.get(conditionIndex).text().equalsIgnoreCase("YES") && info.get(conditionIndex+1).text().equalsIgnoreCase("YES")) {
 		String zoneName = info.get(0).text();
 		ThermalZone temp = null;
 		temp = new DesignBuilderThermalZone(zoneName);

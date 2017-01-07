@@ -30,6 +30,12 @@ public interface BuildingComponent extends MasterFormat{
      */
     public String[] getSelectedComponents();
     
+    /**
+     * should add one more option - none to the whole list
+     * @return
+     */
+    public String[] getSelectedComponentsForRetrofit();
+    
     
     public String getSelectedComponentName(int Index);
     

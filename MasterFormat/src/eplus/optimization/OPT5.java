@@ -199,11 +199,11 @@ public class OPT5 extends Problem {
 		while (counter < decisionVariables.length) {
 
 		    BuildingComponent comp = componentList.get(componentCounter);
-		    
 		    if (comp.isIntegerTypeComponent()) {
 			Double value = (Double) decisionVariables[counter]
 				    .getValue();
-			// System.out.println(comp.getName());
+			
+			//System.out.println(comp.getName());
 			int index = value.intValue();
 			String name = comp.getSelectedComponentName(index);
 			result.addComponent(name);
@@ -212,8 +212,9 @@ public class OPT5 extends Problem {
 			o2Ins.setValue(counter, name);
 
 			comp.writeInEnergyPlus(copiedData, name);
+			//System.out.println("Complete writing comp: " + comp.getName());
 			counter++;
-			componentCounter ++; //count the component;
+			componentCounter++; //count the component;
 		    } else {
 			HashMap<String, Double> property = new HashMap<String, Double>();
 			for (int i = 0; i < comp.getNumberOfVariables(); i++) {
@@ -420,7 +421,7 @@ public class OPT5 extends Problem {
 	    }
 	    try {
 		File file = new File(
-			"E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\OneMP\\predict"
+			"E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\CSL\\Optimization\\predict"
 				+ trainNumber + ".csv");
 		if (!file.exists()) {
 		    file.createNewFile();

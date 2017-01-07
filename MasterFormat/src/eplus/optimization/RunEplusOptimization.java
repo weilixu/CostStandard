@@ -55,9 +55,12 @@ public class RunEplusOptimization {
 
 	// create a batch file to run the simulation
 	File eplusBatFile = createBatchFile();
+	//System.out.println(simulationCount);
 	// create the idf file under the created energyplus folder
 	idfData.WriteIdf(eplusFolder.getAbsolutePath(),
 		simulationCount.toString());
+	//System.out.println(simulationCount);
+
 	// make it in a folder
 	File energyPlusFile = new File(folder.getAbsolutePath() + "\\"
 		+ simulationCount.toString() + "\\"

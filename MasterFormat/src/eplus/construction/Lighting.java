@@ -92,109 +92,112 @@ public class Lighting extends AbstractMasterFormatComponent
     @Override
     public void writeInEnergyPlus(IdfReader eplusFile, String component) {
 	String lightType = component.split(":")[1];
-	//System.out.println(lightType);
+	if(!lightType.equals("NONE")){
+		//System.out.println(lightType);
 
-	try {
-	    // 1. setup connections
-	    super.testConnect();
+		try {
+		    // 1. setup connections
+		    super.testConnect();
 
-	    statement = connect.createStatement();
+		    statement = connect.createStatement();
 
-	    // take out the useful data
-	    resultSet = statement.executeQuery(
-		    "select * from energyplusconstruction.lighting where description = '"
-			    + lightType + "'");
-	    resultSet.next();
-	    String costTable = resultSet.getString("CostTable");
-	    String power = resultSet.getString("Power");
+		    // take out the useful data
+		    resultSet = statement.executeQuery(
+			    "select * from energyplusconstruction.lighting where description = '"
+				    + lightType + "'");
+		    resultSet.next();
+		    String costTable = resultSet.getString("CostTable");
+		    String power = resultSet.getString("Power");
 
-	    // 2. modify lighting related data
-	    HashMap<String, ArrayList<ValueNode>> lightMap = eplusFile
-		    .getObjectListCopy(lights);
-	    Set<String> lightList = lightMap.keySet();
-	    Iterator<String> lightIterator = lightList.iterator();
-	    while (lightIterator.hasNext()) {
-		// get the light object
-		String lightName = null;
-		String count = lightIterator.next();
-		// System.out.println(lightIterator.hasNext() + " " + count);
-		String zoneName = null;
-		ArrayList<ValueNode> lightNodes = lightMap.get(count);
-		for (ValueNode vn : lightNodes) {
-		    // System.out.println(vn.getAttribute());
-		    if (vn.getDescription().equalsIgnoreCase(
-			    "Design Level Calculation Method")) {
-			vn.setAttribute("Watts/Area");
-			// System.out.println("Design Level Calculation Method
-			// Set to " + vn.getAttribute());
-		    } else if (vn.getDescription()
-			    .equalsIgnoreCase("Watts per Zone Floor Area")) {
-			vn.setAttribute(power);
-			// System.out.println("Watts per Zone Floor Area Set to
-			// " + vn.getAttribute());
-		    } else if (vn.getDescription().equalsIgnoreCase("Name")) {
-			lightName = vn.getAttribute();
-			// System.out.println("Name Set to " +
-			// vn.getAttribute());
-		    } else if (vn.getDescription()
-			    .equalsIgnoreCase("Zone or ZoneList Name")) {
-			zoneName = vn.getAttribute();
-			// System.out.println("Zone or ZoneList Name Set to " +
-			// vn.getAttribute());
+		    // 2. modify lighting related data
+		    HashMap<String, ArrayList<ValueNode>> lightMap = eplusFile
+			    .getObjectListCopy(lights);
+		    Set<String> lightList = lightMap.keySet();
+		    Iterator<String> lightIterator = lightList.iterator();
+		    while (lightIterator.hasNext()) {
+			// get the light object
+			String lightName = null;
+			String count = lightIterator.next();
+			// System.out.println(lightIterator.hasNext() + " " + count);
+			String zoneName = null;
+			ArrayList<ValueNode> lightNodes = lightMap.get(count);
+			for (ValueNode vn : lightNodes) {
+			    // System.out.println(vn.getAttribute());
+			    if (vn.getDescription().equalsIgnoreCase(
+				    "Design Level Calculation Method")) {
+				vn.setAttribute("Watts/Area");
+				// System.out.println("Design Level Calculation Method
+				// Set to " + vn.getAttribute());
+			    } else if (vn.getDescription()
+				    .equalsIgnoreCase("Watts per Zone Floor Area")) {
+				vn.setAttribute(power);
+				// System.out.println("Watts per Zone Floor Area Set to
+				// " + vn.getAttribute());
+			    } else if (vn.getDescription().equalsIgnoreCase("Name")) {
+				lightName = vn.getAttribute();
+				// System.out.println("Name Set to " +
+				// vn.getAttribute());
+			    } else if (vn.getDescription()
+				    .equalsIgnoreCase("Zone or ZoneList Name")) {
+				zoneName = vn.getAttribute();
+				// System.out.println("Zone or ZoneList Name Set to " +
+				// vn.getAttribute());
+			    }
+			}
+			//System.out.println(zoneName);
+			// W/m2 * m2 / W * $ = $
+			// re request from the costtable
+			resultSet = statement.executeQuery("select * from " + costTable
+				+ " where description = '" + lightType + "'");
+			resultSet.next();
+
+			// check zone list
+			double floorArea = 0.0;
+			ArrayList<String> zones = eplusFile.hasZoneList(zoneName);
+			if (zones != null) {
+			    for (int i = 0; i < zones.size(); i++) {
+				floorArea += ZoneHTMLParser.getZoneArea(zones.get(i));
+			    }
+			} else {
+			    floorArea = ZoneHTMLParser.getZoneArea(zoneName);
+			}
+			Double cost = Double.parseDouble(power) * floorArea
+				/ resultSet.getDouble("POWER")
+				* resultSet.getDouble("materialcost");
+			// 3. insert cost object to eplus
+			String[] values = { lightName + " Cost", "", "Lights",
+				lightName, "", cost + "", "", "", "", "", "", "", "" };
+			String[] description = componentCostDescription.split(":");
+
+			eplusFile.addNewEnergyPlusObject(componentCostObject, values,
+				description);
+
+			// 4. create lca replacement schedule
+			resultSet = statement.executeQuery(
+				"select * from energyplusconstruction.recurringcost where System = '"
+					+ lightType + "'");
+			while (resultSet.next()) {
+			    String recost = resultSet.getString("Cost");
+			    String reCategory = resultSet.getString("Category");
+			    Double reYear = resultSet.getDouble("Year");
+			    Double month = reYear * 12;// 12 months
+			    String reTask = resultSet.getString("Task");
+			    String[] reValues = { zoneName + " " + reTask, reCategory,
+				    recost, "ServicePeriod", "0", "0", "",
+				    month.toString(), "" };
+			    String[] reDescirption = reccuringCostDescription
+				    .split(":");
+			    eplusFile.addNewEnergyPlusObject(recurringCostObject,
+				    reValues, reDescirption);
+			}
 		    }
+		} catch (SQLException e) {
+		    e.printStackTrace();
+		} finally {
+		    close();
 		}
-		//System.out.println(zoneName);
-		// W/m2 * m2 / W * $ = $
-		// re request from the costtable
-		resultSet = statement.executeQuery("select * from " + costTable
-			+ " where description = '" + lightType + "'");
-		resultSet.next();
-
-		// check zone list
-		double floorArea = 0.0;
-		ArrayList<String> zones = eplusFile.hasZoneList(zoneName);
-		if (zones != null) {
-		    for (int i = 0; i < zones.size(); i++) {
-			floorArea += ZoneHTMLParser.getZoneArea(zones.get(i));
-		    }
-		} else {
-		    floorArea = ZoneHTMLParser.getZoneArea(zoneName);
-		}
-		Double cost = Double.parseDouble(power) * floorArea
-			/ resultSet.getDouble("POWER")
-			* resultSet.getDouble("materialcost");
-		// 3. insert cost object to eplus
-		String[] values = { lightName + " Cost", "", "Lights",
-			lightName, "", cost + "", "", "", "", "", "", "", "" };
-		String[] description = componentCostDescription.split(":");
-
-		eplusFile.addNewEnergyPlusObject(componentCostObject, values,
-			description);
-
-		// 4. create lca replacement schedule
-		resultSet = statement.executeQuery(
-			"select * from energyplusconstruction.recurringcost where System = '"
-				+ lightType + "'");
-		while (resultSet.next()) {
-		    String recost = resultSet.getString("Cost");
-		    String reCategory = resultSet.getString("Category");
-		    Double reYear = resultSet.getDouble("Year");
-		    Double month = reYear * 12;// 12 months
-		    String reTask = resultSet.getString("Task");
-		    String[] reValues = { zoneName + " " + reTask, reCategory,
-			    recost, "ServicePeriod", "0", "0", "",
-			    month.toString(), "" };
-		    String[] reDescirption = reccuringCostDescription
-			    .split(":");
-		    eplusFile.addNewEnergyPlusObject(recurringCostObject,
-			    reValues, reDescirption);
-		}
-	    }
-	} catch (SQLException e) {
-	    e.printStackTrace();
-	} finally {
-	    close();
 	}
+
     }
 
     @Override
@@ -235,5 +238,16 @@ public class Lighting extends AbstractMasterFormatComponent
 	    String component) {
 	// TODO Auto-generated method stub
 	
+    }
+
+    @Override
+    public String[] getSelectedComponentsForRetrofit() {	
+	String[] retrofitSelect = new String[selectedComponents.length+1];
+	retrofitSelect[0] = "NONE:NONE";
+	for(int i=0; i<selectedComponents.length; i++){
+	    retrofitSelect[i+1] = selectedComponents[i];
+	}
+	selectedComponents = retrofitSelect;
+	return selectedComponents;
     }
 }

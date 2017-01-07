@@ -1,5 +1,7 @@
 package eplus.construction;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -245,6 +247,7 @@ public class LightShelf implements BuildingComponent{
 	    String[] description = componentCostDescription.split(":");
 	    reader.addNewEnergyPlusObject(componentCostObject, values,
 		    description);
+	    
 	}
 	
 	insertShelfConstruction(reader);	
@@ -552,24 +555,19 @@ public class LightShelf implements BuildingComponent{
 	    pointB = coordArray.get(pointBIndex).duplicate();
 	    pointB.setZ(pointB.getZ() - shelfHeight);
 	}
+	
 	// 3. calculate differences for the other two coordinates
 	double radians = Math.toRadians(azimuth);
-	
-	double sinResult = Math.sin(radians);
-	if(sinResult <= 1E-10){
-	    sinResult = 0;
-	}
-	//System.out.println("Outside shelf depth: " + outsideShelfDepth);
-	double deltaX = Math.abs(format(Math.sin(radians))) * outsideShelfDepth* x_dir;//round to 2 decimal points
+	//double deltaX = Math.abs(format(Math.sin(radians))) * outsideShelfDepth* x_dir;//round to 2 decimal points
 	double deltaY = Math.abs(format(Math.cos(radians))) * outsideShelfDepth* y_dir;//round to 2 decimal points
 	
 	
 	// 4. calculate the rest two points
 	Coordinate3D smallPointA = pointA.duplicate();
 	Coordinate3D smallPointB = pointB.duplicate();
-	smallPointA.setX(smallPointA.getX() + deltaX);
+	smallPointA.setX(smallPointA.getX());
 	smallPointA.setY(smallPointA.getY() + deltaY);
-	smallPointB.setX(smallPointB.getX() + deltaX);
+	smallPointB.setX(smallPointB.getX());
 	smallPointB.setY(smallPointB.getY() + deltaY);
 
 	// 5. return
@@ -880,6 +878,33 @@ public class LightShelf implements BuildingComponent{
 	 * 3 variables: depth, inside shelf length, outside shelf length
 	 */
 	return 3;
+    }
+
+    @Override
+    public String[] getSelectedComponentsForRetrofit() {
+	// TODO Auto-generated method stub
+	return null;
+    }
+    
+    //test
+    public static void main(String[] args) throws IOException{
+	IdfReader reader = new IdfReader();
+	reader.setFilePath("E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\1MP lightshelf\\Both\\Both.idf");
+	reader.readEplusFile();
+	
+	ZoneHTMLParser.processOutputs(new File("E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\1MP lightshelf\\Both\\BothTable.html"));
+	LightShelf shelf = new LightShelf();
+	HashMap<String,Double> property = new HashMap<String, Double>();
+	property.put("ShelfHeight", 0.3);
+	property.put("InsideShelfDepth", 1.25);
+	property.put("OutsideShelfDepth", 0.0);
+	
+	shelf.readsInProperty(property, "");
+	
+	shelf.writeInEnergyPlus(reader, "");
+	
+	reader.WriteIdf("E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\1MP lightshelf\\InteriorLightShelf\\1.25", "Design");
+	
     }
 
 }
