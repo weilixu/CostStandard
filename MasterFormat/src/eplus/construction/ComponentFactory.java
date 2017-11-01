@@ -239,7 +239,6 @@ public final class ComponentFactory {
 	}else if(system.equals("PV")){
 	    bc = new PVEnergy("S");
 	}
-	
 	return bc.getSelectedComponents();
     }
     
