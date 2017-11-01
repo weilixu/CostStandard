@@ -69,6 +69,7 @@ public class LightShelf implements BuildingComponent{
     }
     
     
+    @Override
     public void readsInProperty(HashMap<String, Double> shelfProperty, String component){
 	if (shelfProperty != null && shelfProperty.size() != 0) {
 	    Set<String> shelfPropSet = shelfProperty.keySet();
@@ -719,7 +720,7 @@ public class LightShelf implements BuildingComponent{
     }
     
     private double format(double value){
-	return (double)Math.round(value * 1E10) / 1E10;
+	return Math.round(value * 1E10) / 1E10;
     }
 
     @Override
@@ -824,14 +825,13 @@ public class LightShelf implements BuildingComponent{
 
     @Override
     public String getName() {
-	// TODO Auto-generated method stub
 	return "LightShelf";
     }
 
     @Override
     public String[] getListAvailableComponent() {
-	// TODO Auto-generated method stub
-	return null;
+	String[] variable = {"NONE", "Add Light Shelf"};
+	return variable;
     }
 
     @Override
@@ -842,8 +842,8 @@ public class LightShelf implements BuildingComponent{
 
     @Override
     public String[] getSelectedComponents() {
-	// TODO Auto-generated method stub
-	return null;
+	String[] variable = {"NONE", "Add Light Shelf"};
+	return variable;
     }
 
     @Override
@@ -882,28 +882,28 @@ public class LightShelf implements BuildingComponent{
 
     @Override
     public String[] getSelectedComponentsForRetrofit() {
-	// TODO Auto-generated method stub
-	return null;
+	String[] variable = {"NONE", "Add Light Shelf"};
+	return variable;
     }
     
     //test
     public static void main(String[] args) throws IOException{
 	IdfReader reader = new IdfReader();
-	reader.setFilePath("E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\1MP lightshelf\\Both\\Both.idf");
+	reader.setFilePath("E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\1MP lightshelf\\InteriorLightShelf\\InteriorShelf.idf");
 	reader.readEplusFile();
 	
-	ZoneHTMLParser.processOutputs(new File("E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\1MP lightshelf\\Both\\BothTable.html"));
+	ZoneHTMLParser.processOutputs(new File("E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\1MP lightshelf\\InteriorShelf\\InteriorShelfTable.html"));
 	LightShelf shelf = new LightShelf();
 	HashMap<String,Double> property = new HashMap<String, Double>();
 	property.put("ShelfHeight", 0.3);
-	property.put("InsideShelfDepth", 1.25);
+	property.put("InsideShelfDepth", 0.5);
 	property.put("OutsideShelfDepth", 0.0);
 	
 	shelf.readsInProperty(property, "");
 	
 	shelf.writeInEnergyPlus(reader, "");
 	
-	reader.WriteIdf("E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\1MP lightshelf\\InteriorLightShelf\\1.25", "Design");
+	reader.WriteIdf("E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\1MP lightshelf\\InteriorLightShelf\\0.5", "Design");
 	
     }
 

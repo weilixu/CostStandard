@@ -15,8 +15,6 @@ import java.util.Set;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import baseline.idfdata.IdfReader.ValueNode;
-
 
 
 
@@ -262,6 +260,14 @@ public class IdfReader {
 	    eplusMap.remove(objectName);
 	}
     }
+    
+    public HashMap<String, HashMap<String, ArrayList<ValueNode>>> getMap(){
+	return eplusMap;
+    }
+    
+    public void writeInObjects(String objectName, HashMap<String, ArrayList<ValueNode>> objects){
+	eplusMap.put(objectName, objects);
+    }
 
     /**
      * get value from the database. This method will extract the value according
@@ -456,6 +462,7 @@ public class IdfReader {
 	    //System.out.println(objectName + " " + Arrays.toString(objectValues) + " " + Arrays.toString(objectDes));
 	    newObject.add(new ValueNode(objectValues[i], objectDes[i]));
 	}
+	//System.out.println(objectName);
 	// create a new map
 	String elementCount = null;
 	if (eplusMap.containsKey(objectName)) {
@@ -481,6 +488,7 @@ public class IdfReader {
 //	    System.out.println("We found something else : "+ Arrays.toString(objectValues) + elementCount);    
 //	}
 //	System.out.println(objectName + eplusMap.get(objectName).size());
+	
 	eplusMap.get(objectName).put(elementCount, newObject);
 //	System.out.println(objectName + eplusMap.get(objectName).size() + eplusMap.get(objectName).get(elementCount).get(0).getAttribute());
     }
@@ -726,6 +734,7 @@ public class IdfReader {
 	    return name;
 	}
 
+	@Override
 	public String toString() {
 	    return infoList.get(0).getAttribute();
 	}
@@ -905,6 +914,7 @@ public class IdfReader {
 	}
 
 	// clone a new value node
+	@Override
 	public ValueNode clone() {
 	    return new ValueNode(originalAttribute, description);
 	}

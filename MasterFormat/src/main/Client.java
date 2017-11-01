@@ -1,14 +1,6 @@
 package main;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
-import masterformat.api.ComponentFactory;
-import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtection;
-import masterformat.standard.thermalmoistureprotection.ThermalMoistureProtectionFactory;
 import eplus.IdfReader;
 
 public class Client {

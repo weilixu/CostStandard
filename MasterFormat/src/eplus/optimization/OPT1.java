@@ -8,7 +8,6 @@ import java.util.List;
 import jmetal.core.Problem;
 import jmetal.core.Solution;
 import jmetal.core.Variable;
-import jmetal.encodings.solutionType.BinarySolutionType;
 import jmetal.encodings.solutionType.IntSolutionType;
 import jmetal.util.JMException;
 import eplus.EnergyPlusBuildingForHVACSystems;
@@ -69,7 +68,7 @@ public class OPT1 extends Problem {
 	synchronized (OPT1.lock) {
 	    // modify the idf according to generated data
 	    for (int i = 0; i < decisionVariables.length; i++) {
-		Double value = (Double) decisionVariables[i].getValue();
+		Double value = decisionVariables[i].getValue();
 		BuildingComponent comp = componentList.get(i);
 		String name = comp.getSelectedComponentName(value.intValue());
 		result.addComponent(name);

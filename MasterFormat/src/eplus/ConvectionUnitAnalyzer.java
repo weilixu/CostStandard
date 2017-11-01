@@ -254,6 +254,7 @@ public class ConvectionUnitAnalyzer {
 	    return convectionUnit.randomDrawTotalCost();
 	}
 
+	@Override
 	public ConvectionUnit clone() {
 	    ConvectionUnit temp = new ConvectionUnit(this.type, this.unitName);
 	    temp.setConvectionUnitCoolingPower(properties[coolingPowerIndex]);

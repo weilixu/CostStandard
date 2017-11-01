@@ -276,6 +276,7 @@ public class FurnaceAnalyzer {
 	    return furnace.randomDrawTotalCost();
 	}
 	
+	@Override
 	public Furnace clone(){
 	    Furnace f = new Furnace(this.type,this.furnaceName);
 	    f.setPower(properties[powerIndex]);

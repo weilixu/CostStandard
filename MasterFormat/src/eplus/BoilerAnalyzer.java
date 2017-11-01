@@ -289,6 +289,7 @@ public class BoilerAnalyzer {
 	    return boiler.randomDrawTotalCost();
 	}
 	
+	@Override
 	public BoilerObject clone(){
 	    BoilerObject bo = new BoilerObject(this.type,this.boilerName);
 	    bo.setSourceType(properties[sourceTypeIndex]);

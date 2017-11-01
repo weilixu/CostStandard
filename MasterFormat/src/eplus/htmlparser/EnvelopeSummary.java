@@ -5,7 +5,7 @@ import org.jsoup.select.Elements;
 
 public class EnvelopeSummary {
     private final int areaIndex =4;
-    private final int orientationIndex = 8;
+    private final int orientationIndex = 9;
     
     private final Document doc;
     private final Elements envelopeTable;

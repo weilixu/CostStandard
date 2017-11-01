@@ -25,7 +25,7 @@ public class TreeBuilder {
 	node = new DefaultMutableTreeNode("MasterFormat");
 
 	try {
-	    document = (Document) builder.build(masterformat);
+	    document = builder.build(masterformat);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}

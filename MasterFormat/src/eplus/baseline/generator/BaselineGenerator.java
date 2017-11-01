@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import baseline.generator.BaselineSetting;
-import baseline.generator.Generator;
 import baseline.idfdata.BaselineInfo;
 import baseline.util.ClimateZone;
 import baseline.util.parallel.BaselineParallel;

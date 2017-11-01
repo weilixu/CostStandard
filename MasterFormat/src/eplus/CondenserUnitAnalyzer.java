@@ -362,6 +362,7 @@ public class CondenserUnitAnalyzer {
 	    return condenserUnit.randomDrawTotalCost();
 	}
 	
+	@Override
 	public CondenserUnit clone(){
 	    CondenserUnit cu = new CondenserUnit(this.type,this.condenserName);
 	    cu.setCapacity(properties[capacityIndex]);

@@ -46,6 +46,14 @@ public class HVACSimple extends AbstractMasterFormatComponent implements
 	eplusBldg = bldg;
     }
     
+    /**
+     * use for getting the available components
+     */
+    public HVACSimple(){
+	selectedComponents = getListAvailableComponent();
+	eplusBldg = null;
+    }
+    
     @Override
     public String getName(){
 	return "hvac";

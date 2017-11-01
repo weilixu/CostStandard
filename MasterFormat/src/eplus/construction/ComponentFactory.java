@@ -64,6 +64,60 @@ public final class ComponentFactory {
 	componentList.add(new DaylightSensor());
 	componentList.add(hvac);
 	componentList.add(new WindowWallRatio("N"));
+	//componentList.add(new WindowWallRatio("S"));
+	componentList.add(new WindowWallRatio("E"));
+	componentList.add(new WindowWallRatio("W"));
+	componentList.add(new PVEnergy("N"));
+	componentList.add(new PVEnergy("S"));
+	componentList.add(new PVEnergy("E"));
+	componentList.add(new PVEnergy("W"));
+	
+	componentList.add(lt);
+	
+	//numerical values
+	//componentList.add(new LightShelf());
+	
+	return componentList;
+    }
+    
+    /**
+     * designed for Scaife Hall
+     * @param bldg
+     * @return
+     */
+    public static List<BuildingComponent> getScaifeHallComponentList(EnergyPlusBuildingForHVACSystems bldg){
+	ArrayList<BuildingComponent> componentList = new ArrayList<BuildingComponent>();
+	
+	//componentList.add(new PVEnergy("N"));
+	componentList.add(new CSLWall());
+	componentList.add(new CSLRoof());
+	componentList.add(new Window());
+	componentList.add(new PVEnergy("S"));
+	componentList.add(new PVEnergy("E"));
+	componentList.add(new PVEnergy("W"));
+	componentList.add(new ShadingControl());
+	componentList.add(new RoofPV());
+	componentList.add(new DaylightSensor());
+	componentList.add(new ScaifeHVAC());
+	
+	return componentList;
+    }
+    
+    public static List<BuildingComponent> getCSLComponentList(EnergyPlusBuildingForHVACSystems bldg){
+	ArrayList<BuildingComponent> componentList = new ArrayList<BuildingComponent>();
+	CSLWall ew = new CSLWall();
+	CSLRoof rf = new CSLRoof();
+	
+	Lighting lt = new Lighting();
+	Window wd = new Window();
+	CSLHVAC hvac = new CSLHVAC(bldg);
+	
+	componentList.add(ew);
+	componentList.add(wd);
+	componentList.add(rf);
+	componentList.add(new DaylightSensor());
+	componentList.add(hvac);
+	componentList.add(new WindowWallRatio("N"));
 	componentList.add(new WindowWallRatio("S"));
 	componentList.add(new WindowWallRatio("E"));
 	componentList.add(new WindowWallRatio("W"));
@@ -75,7 +129,7 @@ public final class ComponentFactory {
 	componentList.add(lt);
 	
 	//numerical values
-	componentList.add(new LightShelf());
+	//componentList.add(new LightShelf());
 	
 	return componentList;
     }
@@ -138,9 +192,55 @@ public final class ComponentFactory {
 	componentList.add(lt);
 	
 	//numerical values
-	componentList.add(new LightShelf());
+	//componentList.add(new LightShelf());
 	
 	return componentList;
+    }
+    
+    public static String[] getListOfComponentsForRetrofit(String system){
+	BuildingComponent bc = null;
+	if(system.equals("Window")){
+	    bc = new Window();
+	}else if(system.equals("Lighting")){
+	    bc = new Lighting();
+	}else if(system.equals("LightShelf")){
+	    bc = new LightShelf();
+	}else if(system.equals("Daylight Sensor")){
+	    bc = new DaylightSensor();
+	}else if(system.equals("PV")){
+	    bc = new PVEnergy("S");
+	}else if(system.equals("Boiler")){
+	    bc = new HeatingUpdate();
+	}else if(system.equals("Chiller")){
+	    bc = new CoolingUpdate();
+	}
+	
+	return bc.getSelectedComponentsForRetrofit();
+    }
+    
+    public static String[] getListOfComponentsForNewConstruction(String system){
+	BuildingComponent bc = null;
+	if(system.equals("Wall")){
+	    bc = new ExteriorWall();
+	}else if(system.equals("Roof")){
+	    bc = new Roof();
+	}else if(system.equals("Window")){
+	    bc = new Window();
+	}else if(system.equals("WindowWallRatio")){
+	    bc = new WindowWallRatio("S");
+	}else if(system.equals("Lighting")){
+	    bc = new Lighting();
+	}else if(system.equals("LightShelf")){
+	    bc = new LightShelf();
+	}else if(system.equals("HVAC")){
+	    bc = new HVACSimple();
+	}else if(system.equals("Daylight Sensor")){
+	    bc = new DaylightSensor();
+	}else if(system.equals("PV")){
+	    bc = new PVEnergy("S");
+	}
+	
+	return bc.getSelectedComponents();
     }
     
     public static int getNumberOfVariable(List<BuildingComponent> componentList){

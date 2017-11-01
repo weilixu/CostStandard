@@ -363,6 +363,7 @@ public class PumpAnalyzer {
 	    return pump.randomDrawTotalCost();
 	}
 	
+	@Override
 	public Pump clone() {
 	    Pump temp = new Pump(this.type, this.pumpName);
 	    temp.setPumpFlowRate(properties[flowRateIndex]);

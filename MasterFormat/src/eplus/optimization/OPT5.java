@@ -64,7 +64,7 @@ public class OPT5 extends Problem {
 	    File folder, int n, int Q, int p) {
 	bldg = building;
 	List<BuildingComponent> componentList = ComponentFactory
-		.getPartialComponentList(bldg);
+		.getScaifeHallComponentList(bldg);
 	originalData = data;
 	analyzeFolder = folder;
 	generationNumForSim = n;
@@ -155,8 +155,7 @@ public class OPT5 extends Problem {
     @Override
     public void evaluate(Solution solution) throws JMException {
 	// set up values
-	List<BuildingComponent> componentList = ComponentFactory
-		.getPartialComponentList(bldg);
+	List<BuildingComponent> componentList = ComponentFactory.getScaifeHallComponentList(bldg);
 	Variable[] decisionVariables = solution.getDecisionVariables();
 	IdfReader copiedData = originalData.cloneIdf();
 	OptResult result = new OptResult();
@@ -200,25 +199,27 @@ public class OPT5 extends Problem {
 
 		    BuildingComponent comp = componentList.get(componentCounter);
 		    if (comp.isIntegerTypeComponent()) {
-			Double value = (Double) decisionVariables[counter]
+			System.out.println(comp.getName());
+			Double value = decisionVariables[counter]
 				    .getValue();
+			System.out.println(comp.getName() + " " + value);
 			
-			//System.out.println(comp.getName());
 			int index = value.intValue();
 			String name = comp.getSelectedComponentName(index);
 			result.addComponent(name);
+			System.out.println(comp.getName() + " " + name);
 			// add value
 			o1Ins.setValue(counter, name);
 			o2Ins.setValue(counter, name);
 
 			comp.writeInEnergyPlus(copiedData, name);
-			//System.out.println("Complete writing comp: " + comp.getName());
+			System.out.println("Complete writing comp: " + comp.getName());
 			counter++;
 			componentCounter++; //count the component;
 		    } else {
 			HashMap<String, Double> property = new HashMap<String, Double>();
 			for (int i = 0; i < comp.getNumberOfVariables(); i++) {
-			    Double value = (Double) decisionVariables[counter]
+			    Double value = decisionVariables[counter]
 				    .getValue();
 			    String propertyName = comp
 				    .getSelectedComponentName(i).split(":")[0];
@@ -286,7 +287,7 @@ public class OPT5 extends Problem {
 		while(counter < decisionVariables.length){
 		    BuildingComponent comp = componentList.get(componentCounter);
 		    if (comp.isIntegerTypeComponent()) {
-			Double value = (Double) decisionVariables[counter].getValue();
+			Double value = decisionVariables[counter].getValue();
 			int index = value.intValue();
 
 			String name = comp.getSelectedComponentName(index);
@@ -297,7 +298,7 @@ public class OPT5 extends Problem {
 			componentCounter ++;
 		    }else{
 			for(int i=0; i<comp.getNumberOfVariables(); i++){
-			    Double value = (Double) decisionVariables[counter].getValue();
+			    Double value = decisionVariables[counter].getValue();
 			    result.addNumericValues(value);
 			    o1Ins.setValue(counter, value);
 			    o2Ins.setValue(counter, value);
@@ -421,7 +422,7 @@ public class OPT5 extends Problem {
 	    }
 	    try {
 		File file = new File(
-			"E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\CSL\\Optimization\\predict"
+			"E:\\02_Weili\\01_Project\\07_Toshiba\\Year 3\\Optimization"
 				+ trainNumber + ".csv");
 		if (!file.exists()) {
 		    file.createNewFile();

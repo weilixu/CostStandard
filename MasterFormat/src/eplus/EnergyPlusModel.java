@@ -7,40 +7,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import baseline.util.BaselineUtils;
 import jmetal.core.Algorithm;
 import jmetal.core.Operator;
 import jmetal.core.Problem;
 import jmetal.core.SolutionSet;
-import jmetal.metaheuristics.nsgaII.NSGAII;
-import jmetal.metaheuristics.nsgaII.NSGAIIMutationAdaptive;
-import jmetal.metaheuristics.nsgaII.pNSGAII;
 import jmetal.metaheuristics.nsgaII.pNSGAIIAdaptive;
 import jmetal.operators.crossover.CrossoverFactory;
 import jmetal.operators.mutation.MutationFactory;
 import jmetal.operators.selection.SelectionFactory;
 import jmetal.util.JMException;
-import jmetal.util.offspring.BitFlipMutationOffspring;
-import jmetal.util.offspring.DifferentialEvolutionOffspring;
-import jmetal.util.offspring.Offspring;
-import jmetal.util.offspring.SinglePointOffSpring;
 import jmetal.util.parallel.IParallelEvaluator;
 import jmetal.util.parallel.MultithreadedEvaluator;
 import eplus.MaterialAnalyzer.Material;
-import eplus.construction.BuildingComponent;
-import eplus.construction.ExteriorWall;
-import eplus.construction.HVACSimple;
-import eplus.construction.Lighting;
-import eplus.construction.Roof;
-import eplus.construction.Window;
 import eplus.htmlparser.EnergyPlusHTMLParser;
 import eplus.htmlparser.ZoneHTMLParser;
-import eplus.optimization.OPT1;
 import eplus.optimization.OPT2;
-import eplus.optimization.OPT3;
-import eplus.optimization.OPT4;
 import eplus.optimization.OPT5;
 import eplus.optimization.OPT6;
+import eplus.optimization.OPT7;
 import masterformat.api.MasterFormat;
 import masterformat.listener.BoilerListener;
 import masterformat.listener.CostTableListener;
@@ -924,10 +908,10 @@ public class EnergyPlusModel {
        int pop = 30;
        int ammMaxEvaluation = 2490;
        int regularEvaluation = 900;
-       //Problem problem = new OPT2(bldg,idfDomain,parentFolder);
+       //Problem problem = new OPT(bldg,idfDomain,parentFolder);
        //System.out.println(parentFolder.getAbsolutePath());
        
-       Problem problem = new OPT6(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
+       Problem problem = new OPT7(bldg,idfDomain,parentFolder,realSimuN,circleDivider,pop);
        int threads = 6;
        IParallelEvaluator parallelEvaluator = new MultithreadedEvaluator(threads);
        //Algorithm algorithm = new pNSGAII(problem, parallelEvaluator);
@@ -941,16 +925,22 @@ public class EnergyPlusModel {
        
 //       // Mutation and Crossover for Real codification 
        parameters = new HashMap<String, Double>();
-       parameters.put("realProbability", 0.9);
-       parameters.put("intProbability", 0.9);
+       //parameters.put("realProbability", 0.9);
+       //parameters.put("intProbability", 0.9);
+       parameters.put("probability",0.9);
        parameters.put("distributionIndex", 20.0);
-       crossover = CrossoverFactory.getCrossoverOperator("MixedSBXSinglePointCrossover", parameters);                   
+       crossover = CrossoverFactory.getCrossoverOperator("SinglePointCrossover", parameters);                   
+
+       //crossover = CrossoverFactory.getCrossoverOperator("MixedSBXSinglePointCrossover", parameters);                   
 
        parameters = new HashMap<String, Double>() ;
-       parameters.put("realProbability", 0.5) ;
-       parameters.put("intProbability", 0.5);
+       //parameters.put("realProbability", 0.5) ;
+       //parameters.put("intProbability", 0.5);
+       parameters.put("probability",0.7);
        parameters.put("distributionIndex", 20.0) ;
-       mutation = MutationFactory.getMutationOperator("MixedBitFlipPolynomialMutation", parameters);                    
+       mutation = MutationFactory.getMutationOperator("BitFlipMutation", parameters);                    
+
+       //mutation = MutationFactory.getMutationOperator("MixedBitFlipPolynomialMutation", parameters);                    
 
        // Selection Operator 
        parameters = null ;

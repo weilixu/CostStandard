@@ -132,7 +132,7 @@
 			<field description = "Gross Rated Heating Capacity" type = "Double/String">autosize</field>
 			<field description = "Rated Heating Capacity Sizing Ratio" type = "Double/String"/>
 			<field description = "Gross Rated Heating COP" type = "Double">3.5484</field>
-			<field description = "Minimum Outdoor Temperature in Heating Mode" type = "Double">-20</field>
+			<field description = "Minimum Outdoor Temperature in Heating Mode" type = "Double">-30</field>
 			<field description = "Maximum Outdoor Temperature in Heating Mode" type = "Double">30</field>
 			<field description = "Heating Capacity Ratio Modifier Function of Low Temperature Curve Name" type = "String">System% VRFHeatCapFT</field>
 			<field description = "Heating Capacity Ratio Boundary Curve Name" type = "String">System% VRFHeatCapFTBoundary</field>
@@ -3369,7 +3369,7 @@
 			<field description = "Name" type = "String">Boiler%</field>
 			<field description = "Fuel Type" type = "String">NaturalGas</field>
 			<field description = "Nominal Capacity" type = "Double or String">autosize</field>
-			<field description = "Nominal Thermal Efficiency" type = "Double">0.8</field>
+			<field description = "Nominal Thermal Efficiency" type = "Double">0.94</field>
 			<field description = "Efficiency Curve Temperature Evaluation Variable" type = "String">LeavingBoiler</field>
 			<field description = "Normalized Boiler Efficiency Curve Name" type = "String">Boiler Efficiency Curve</field>
 			<field description = "Design Water Outlet Temperature" type = "Double">81.0</field>
@@ -3387,7 +3387,7 @@
 		<object description = "Chiller:Electric:EIR" reference = "Plant">
 			<field description = "Name" type = "String">Chiller%</field>
 			<field description = "Reference Capacity" type = "Double or String">autosize</field>
-			<field description = "Reference COP" type = "Double">6.1</field>
+			<field description = "Reference COP" type = "Double">8.4</field>
 			<field description = "Reference Leaving Chilled Water Temperature">6.67</field>
 			<field description = "Reference Entering Condenser Fluid Temperature">29.4</field>
 			<field description = "Reference Chilled Water Flow Rate" type = "Double or String">autosize</field>

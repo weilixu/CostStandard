@@ -501,6 +501,7 @@ public class IdfTreeMap {
 	    return infoList;
 	}
 	
+	@Override
 	public String toString(){
 	    return "Object "+name;
 	}
@@ -678,6 +679,7 @@ public class IdfTreeMap {
 	}
 
 	// clone a new value node
+	@Override
 	public ValueNode clone() {
 	    return new ValueNode(originalAttribute, description);
 	}

@@ -27,13 +27,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-import jmetal.util.JMException;
 import masterformat.listener.CostTableListener;
 import eplus.EnergyPlusModel;
 import eplus.MaterialAnalyzer.Material;
 
 public class MappingPanel extends JPanel implements CostTableListener {
-
+    
+    
+    private final JPanel innerPanel;
     private final JPanel EnergyPlusObjectPanel;
     private final JPanel itemPanel;
     private final JPanel constructionPanel;
@@ -47,6 +48,8 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private final JPanel lightsPanel;
     private final JPanel openingsPanel;
     private final JPanel tablePanel;
+    //private final JPanel optimalPanel;//use for optimizatin panel
+    private final OptimizationPanel optimalPanel;
     private final DefaultTableModel tableModel;
     private final JTable table;
 
@@ -57,7 +60,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
     private final String TOTAL_OP_BUTTON = "Add total Incl O&P Cost to EnergyPlus";
     /*Optimization Related Function*/
     private final JButton optimization;
-    private final String OPT_BUTTON = "Optimize";
+    private final String OPT_BUTTON = "Optimization";
     
     // temp there
     private final JButton writeButton;
@@ -107,7 +110,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	model.addTableListener(this);
 
 	setLayout(new BorderLayout());
-
+	
+	innerPanel = new JPanel(new BorderLayout());
+	
 	itemPanel = new JPanel(new BorderLayout());
 	itemPanel.setBackground(Color.WHITE);
 	EnergyPlusObjectPanel = new JPanel(new BorderLayout());
@@ -324,7 +329,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	EnergyPlusObjectPanel.add(constructionListScrollPane,
 		BorderLayout.CENTER);
 
-	add(EnergyPlusObjectPanel, BorderLayout.WEST);
+	innerPanel.add(EnergyPlusObjectPanel, BorderLayout.WEST);
 
 	tablePanel = new JPanel(new BorderLayout());
 
@@ -347,15 +352,21 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	// tablePanel.setBackground(Color.WHITE);
 	
 	optimization = new JButton(OPT_BUTTON);
+	optimalPanel = new OptimizationPanel(model);
 	optimization.addActionListener(new ActionListener(){
 	    @Override
 	    public void actionPerformed(ActionEvent e){
-		try {
-		    model.BudgetEUIOptimization();
-		} catch (ClassNotFoundException | JMException e1) {
-		    // TODO Auto-generated catch block
-		    e1.printStackTrace();
-		}
+//		try {
+//		    model.BudgetEUIOptimization();
+//		} catch (ClassNotFoundException | JMException e1) {
+//		    // TODO Auto-generated catch block
+//		    e1.printStackTrace();
+//		}
+		
+		innerPanel.removeAll();
+		innerPanel.add(optimalPanel, BorderLayout.CENTER);
+		innerPanel.revalidate();
+		innerPanel.repaint();
 	    }
 	});
 
@@ -446,8 +457,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
 
 	tablePanel.add(buttonPanel, BorderLayout.PAGE_END);
 
-	add(tablePanel, BorderLayout.PAGE_END);
-	add(itemPanel, BorderLayout.CENTER);
+	innerPanel.add(tablePanel, BorderLayout.PAGE_END);
+	innerPanel.add(itemPanel, BorderLayout.CENTER);
+	add(innerPanel, BorderLayout.CENTER);
     }
 
     private void updateConstructions() {
@@ -792,9 +804,9 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	//File file = new File(
 	//	"C:\\Users\\Weili\\Desktop\\New folder (2)\\Scaife Hall.idf");
 	//File file = new File(
-	//	"E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\CSL\\Optimization\\FristAttemp\\CSL.idf");
-	File file = new File(
-		"E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\OneMP\\SecondAttemp_Retrofit\\1MP.idf");
+	//	"E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\CSL\\Optimization\\FifthAttemp\\CSL.idf");
+	File file = new File
+		("E:\\02_Weili\\01_Projects\\07_Toshiba\\Year 3\\Optimization\\sixthlevel\\scaife.idf");
 	EnergyPlusModel model = new EnergyPlusModel(file);
 	// Add content to the window.
 	frame.add(new MappingPanel(model));
@@ -808,6 +820,7 @@ public class MappingPanel extends JPanel implements CostTableListener {
 	// Schedule a job for the event dispatch thread:
 	// creating and showing this application's GUI.
 	javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	    @Override
 	    public void run() {
 		try {
 		    createAndShowGUI();

@@ -265,6 +265,7 @@ public class UnitaryHVACAnalyzer {
 	    return unitary.getCostVector();
 	}
 
+	@Override
 	public Unitary clone() {
 	    Unitary temp = new Unitary(this.type, this.unitaryName);
 	    temp.setUnitaryCoolingPower(properties[coolingPowerIndex]);

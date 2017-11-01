@@ -17,6 +17,7 @@ import jmetal.core.Problem;
 import jmetal.core.Solution;
 import jmetal.core.Variable;
 import jmetal.encodings.solutionType.IntRealSolutionType;
+import jmetal.encodings.solutionType.IntSolutionType;
 import jmetal.util.JMException;
 import ml.util.WekaUtil;
 import weka.classifiers.Classifier;
@@ -63,7 +64,7 @@ public class OPT6 extends Problem{
 	    File folder, int n, int Q, int p) {    
 	bldg = building;
 	List<BuildingComponent> componentList = ComponentFactory
-		.getPartialComponentListForRetrofit(bldg);
+		.getScaifeHallComponentList(bldg);
 	originalData = data;
 	analyzeFolder = folder;
 	generationNumForSim = n;
@@ -108,6 +109,7 @@ public class OPT6 extends Problem{
 		    // System.out.println(comp.getSelectedComponentName(i));
 		    fvNominalVal.addElement(comp.getSelectedComponentName(i));
 		}
+		//System.out.println(comp.getName());
 		Attribute temp = new Attribute(comp.getName(), fvNominalVal);
 		fvO1Attributes.addElement(temp);
 		fvO2Attributes.addElement(temp);
@@ -130,19 +132,17 @@ public class OPT6 extends Problem{
 		    String name = propertyList[0];
 		    Double lower = Double.valueOf(propertyList[1]);
 		    Double higher = Double.valueOf(propertyList[2]);
-		    lowerLimit_[IntegerIndex-1 + NumericIndex] = lower;
-		    upperLimit_[IntegerIndex-1 + NumericIndex] = higher;
+		    lowerLimit_[IntegerIndex + NumericIndex] = lower;
+		    upperLimit_[IntegerIndex + NumericIndex] = higher;
 
 		    Attribute temp = new Attribute(name);
 		    fvO1Attributes.addElement(temp);
 		    fvO2Attributes.addElement(temp);
-		    NumericIndex++;
 		}
 	    }
 	}
 
-	solutionType_ = new IntRealSolutionType(this, IntegerIndex-1,
-		NumericIndex); //need to offset 1
+	solutionType_ = new IntSolutionType(this); //need to offset 1
 
 	/*
 	 * Add class and initiate data
@@ -161,7 +161,7 @@ public class OPT6 extends Problem{
 public void evaluate(Solution solution) throws JMException {
 	// set up values
 	List<BuildingComponent> componentList = ComponentFactory
-		.getPartialComponentListForRetrofit(bldg);
+		.getScaifeHallComponentList(bldg);
 	Variable[] decisionVariables = solution.getDecisionVariables();
 	IdfReader copiedData = originalData.cloneIdf();
 	OptResult result = new OptResult();
@@ -204,26 +204,31 @@ public void evaluate(Solution solution) throws JMException {
 		while (counter < decisionVariables.length) {
 
 		    BuildingComponent comp = componentList.get(componentCounter);
+		    //System.out.println(comp.getName());
 		    
 		    if (comp.isIntegerTypeComponent()) {
-			Double value = (Double) decisionVariables[counter]
+			//System.out.println("Counter " + counter + " " + decisionVariables.length);
+			Double value = decisionVariables[counter]
 				    .getValue();
+			
 			// System.out.println(comp.getName());
 			int index = value.intValue();
 			
 			String name = comp.getSelectedComponentName(index);
+			
 			result.addComponent(name);
 			// add value
 			o1Ins.setValue(counter, name);
 			o2Ins.setValue(counter, name);
-			//System.out.println(comp.getName());
+			
 			comp.writeInEnergyPlus(copiedData, name);
+			//System.out.println("Complete writing");
 			counter++;
 			componentCounter ++; //count the component;
 		    } else {
 			HashMap<String, Double> property = new HashMap<String, Double>();
 			for (int i = 0; i < comp.getNumberOfVariables(); i++) {
-			    Double value = (Double) decisionVariables[counter]
+			    Double value = decisionVariables[counter]
 				    .getValue();
 			    String propertyName = comp
 				    .getSelectedComponentName(i).split(":")[0];
@@ -292,7 +297,7 @@ public void evaluate(Solution solution) throws JMException {
 		while(counter < decisionVariables.length){
 		    BuildingComponent comp = componentList.get(componentCounter);
 		    if (comp.isIntegerTypeComponent()) {
-			Double value = (Double) decisionVariables[counter].getValue();
+			Double value = decisionVariables[counter].getValue();
 			int index = value.intValue();
 
 			String name = comp.getSelectedComponentName(index);
@@ -303,7 +308,7 @@ public void evaluate(Solution solution) throws JMException {
 			componentCounter ++;
 		    }else{
 			for(int i=0; i<comp.getNumberOfVariables(); i++){
-			    Double value = (Double) decisionVariables[counter].getValue();
+			    Double value = decisionVariables[counter].getValue();
 			    result.addNumericValues(value);
 			    o1Ins.setValue(counter, value);
 			    o2Ins.setValue(counter, value);

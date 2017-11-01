@@ -78,6 +78,7 @@ public class Polygon {
 	 * Assume the polygon is convex
 	 * @deprecated
 	 */
+	@Deprecated
 	@SuppressWarnings("unused")
 	private void buildTriangles(){
 		this.triangles = new ArrayList<Triangle>(coords.size()-2);
@@ -100,6 +101,7 @@ public class Polygon {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	@SuppressWarnings("unused")
 	private double computeArea_sum_triangle(){
 		if(!isValid){

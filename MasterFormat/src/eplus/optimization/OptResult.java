@@ -6,6 +6,9 @@ public class OptResult {
 	
 	double firstcost;
 	double operationcost;
+	double pvCost;
+	double hvacCost;
+	double eui;
 	ArrayList<String> componentSelection;
 	ArrayList<Double> numericValueList;
 	boolean regressionMode = false;
@@ -13,8 +16,21 @@ public class OptResult {
 	public OptResult(){
 		firstcost = 0.0;
 		operationcost = 0.0;
+		eui = 0.0;
 		componentSelection = new ArrayList<String>();
 		numericValueList = new ArrayList<Double>();
+	}
+	
+	public void setEUI(double eui){
+	    this.eui = eui;
+	}
+	
+	public void setPVCost(double pv){
+	    pvCost = pv;
+	}
+	
+	public void setHVACCost(double hvac){
+	    hvacCost= hvac;
 	}
 	
 	public void setFirstCost(double first){
@@ -23,6 +39,10 @@ public class OptResult {
 	
 	public void setOperationCost(double operation){
 	    operationcost = operation;
+	}
+	
+	public double getEUI(){
+	    return eui;
 	}
 	
 	public double getFirstCost(){

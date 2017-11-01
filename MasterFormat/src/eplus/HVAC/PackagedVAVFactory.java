@@ -3,8 +3,6 @@ package eplus.HVAC;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.jsoup.nodes.Document;
-
 import eplus.EnergyPlusBuildingForHVACSystems;
 import baseline.hvac.SystemParser;
 import baseline.idfdata.EplusObject;

@@ -5,10 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
 import ifc4javatoolbox.ifc4.ClassInterface;
 import ifc4javatoolbox.ifc4.IfcApplication;
 import ifc4javatoolbox.ifc4.IfcAppliedValue;
@@ -31,7 +28,6 @@ import ifc4javatoolbox.ifc4.IfcNamedUnit;
 import ifc4javatoolbox.ifc4.IfcOwnerHistory;
 import ifc4javatoolbox.ifc4.IfcPersonAndOrganization;
 import ifc4javatoolbox.ifc4.IfcPhysicalQuantity;
-import ifc4javatoolbox.ifc4.IfcPhysicalSimpleQuantity;
 import ifc4javatoolbox.ifc4.IfcQuantityArea;
 import ifc4javatoolbox.ifc4.IfcQuantityCount;
 import ifc4javatoolbox.ifc4.IfcSIPrefix;

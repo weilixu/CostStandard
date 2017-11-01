@@ -279,6 +279,7 @@ public class ElectricalAnalyzer {
 	    return electric.randomDrawTotalCost();
 	}
 	
+	@Override
 	public Electric clone(){
 	    Electric temp = new Electric(this.type, this.electricName);
 	    temp.setPower(properties[totalPowerIndex]);

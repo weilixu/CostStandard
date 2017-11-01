@@ -332,6 +332,7 @@ public class TransparentMaterialAnalyzer {
 	    return material.getCostVector();
 	}
 
+	@Override
 	public TransparentMaterial clone() {
 	    TransparentMaterial temp = new TransparentMaterial(
 		    this.materialName);

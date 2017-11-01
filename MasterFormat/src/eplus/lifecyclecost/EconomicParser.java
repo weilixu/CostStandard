@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
@@ -34,7 +32,7 @@ public class EconomicParser {
 	objects = new HashMap<String, ArrayList<DataObjects>>();
 
 	try {
-	    document = (Document) builder.build(economics);
+	    document = builder.build(economics);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}

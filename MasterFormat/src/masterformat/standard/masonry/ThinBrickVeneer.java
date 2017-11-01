@@ -122,6 +122,7 @@ public class ThinBrickVeneer extends AbstractMasonry {
 	return 0.0;
     }
 
+    @Override
     protected void initializeData() {
 	try {
 	    super.testConnect();

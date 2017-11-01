@@ -153,7 +153,7 @@ public class OPT3 extends Problem {
 
 		// 1.2 modify the idf according to generated data
 		for (int i = 0; i < decisionVariables.length; i++) {
-		    Double value = (Double) decisionVariables[i].getValue();
+		    Double value = decisionVariables[i].getValue();
 		    BuildingComponent comp = componentList.get(i);
 		    int index = value.intValue();
 		    String name = comp.getSelectedComponentName(index);
@@ -211,7 +211,7 @@ public class OPT3 extends Problem {
 		// o2Ins = o2TrainSet.instance(0);
 		// 2.2 give design values to the instance
 		for (int i = 0; i < decisionVariables.length; i++) {
-		    Double value = (Double) decisionVariables[i].getValue();
+		    Double value = decisionVariables[i].getValue();
 		    BuildingComponent comp = componentList.get(i);
 
 		    int index = value.intValue();

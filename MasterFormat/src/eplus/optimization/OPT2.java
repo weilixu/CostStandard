@@ -38,7 +38,7 @@ public class OPT2 extends Problem {
 	// componentList = list;
 	bldg = building;
 	List<BuildingComponent> componentList = ComponentFactory
-		.getFullComponentList(bldg);
+		.getPartialComponentListForRetrofit(bldg);
 	numberOfVariables_ = componentList.size();
 	numberOfObjectives_ = 2; // budget and eui
 	numberOfConstraints_ = 0;
@@ -65,7 +65,7 @@ public class OPT2 extends Problem {
     @Override
     public void evaluate(Solution solution) throws JMException {
 	List<BuildingComponent> componentList = ComponentFactory
-		.getFullComponentList(bldg);
+		.getPartialComponentListForRetrofit(bldg);
 	Variable[] decisionVariables = solution.getDecisionVariables();
 	IdfReader copiedData = originalData.cloneIdf();
 	OptResult result = new OptResult();
@@ -79,7 +79,7 @@ public class OPT2 extends Problem {
 	synchronized (OPT2.lock) {
 	    // modify the idf according to generated data
 	    for (int i = 0; i < decisionVariables.length; i++) {
-		Double value = (Double) decisionVariables[i].getValue();
+		Double value = decisionVariables[i].getValue();
 		BuildingComponent comp = componentList.get(i);
 		String name = comp.getSelectedComponentName(value.intValue());
 		result.addComponent(name);

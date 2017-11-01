@@ -163,7 +163,7 @@ public class Lighting extends AbstractMasterFormatComponent
 			}
 			Double cost = Double.parseDouble(power) * floorArea
 				/ resultSet.getDouble("POWER")
-				* resultSet.getDouble("materialcost");
+				* resultSet.getDouble("materialcost") / 3;//adjust for 1MP
 			// 3. insert cost object to eplus
 			String[] values = { lightName + " Cost", "", "Lights",
 				lightName, "", cost + "", "", "", "", "", "", "", "" };

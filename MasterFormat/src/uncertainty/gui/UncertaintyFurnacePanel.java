@@ -38,6 +38,7 @@ public class UncertaintyFurnacePanel extends JPanel implements FurnaceListener{
 	add(editorView, BorderLayout.CENTER);
     }
     
+    @Override
     public String getName(){
 	return furnace;
     }

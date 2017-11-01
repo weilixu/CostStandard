@@ -268,7 +268,7 @@ public class LightsPanel extends JPanel implements TreeSelectionListener{
 
    		@Override
    		public void actionPerformed(ActionEvent e) {
-   		    String data = (String) inputField.getText();
+   		    String data = inputField.getText();
    		    userInputMap.put(input, data);
    		    model.setElectricalUserInput(userInputMap, lightsName);
    		    disPlayOptions();

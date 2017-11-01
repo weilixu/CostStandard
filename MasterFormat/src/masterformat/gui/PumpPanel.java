@@ -267,7 +267,7 @@ public class PumpPanel extends JPanel implements TreeSelectionListener{
 
   		@Override
   		public void actionPerformed(ActionEvent e) {
-  		    String data = (String) inputField.getText();
+  		    String data = inputField.getText();
   		    userInputMap.put(input, data);
   		    userInputs = model.getPumpUserInputs(pumpName);
   		    model.setPumpUserInput(userInputMap, pumpName);

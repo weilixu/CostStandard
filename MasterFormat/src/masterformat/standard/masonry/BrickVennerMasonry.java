@@ -130,6 +130,7 @@ public class BrickVennerMasonry extends AbstractMasonry {
      * first level filter point to the second level filter and then point to the
      * array of calculated cost
      */
+    @Override
     protected void initializeData() {
 	try {
 	    super.testConnect();

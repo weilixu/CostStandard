@@ -140,7 +140,6 @@ public class Insulation extends AbstractMasterFormatComponent implements Buildin
 
     @Override
     public String getName() {
-	// TODO Auto-generated method stub
 	return "Insulation";
     }
 
@@ -204,7 +203,7 @@ public class Insulation extends AbstractMasterFormatComponent implements Buildin
     @Override
     public void writeInEnergyPlus(IdfReader reader, String component) {
 	String materialType = component.split(";")[0];
-	System.out.println(materialType);
+	//System.out.println(materialType);
 	if(!materialType.equals("NONE")){
 	    try{
 		//1. setup connections
@@ -239,7 +238,7 @@ public class Insulation extends AbstractMasterFormatComponent implements Buildin
 		Set<String> names = tempList.keySet();
 		for(String name: names){
 		    ArrayList<ValueNode> info = tempList.get(name);
-		    if(info.get(0).getAttribute().equals("Project wall")){
+		    if(info.get(0).getAttribute().equalsIgnoreCase("Project Wall")){
 			info.get(2).setAttribute(materialName);
 		    }
 		}

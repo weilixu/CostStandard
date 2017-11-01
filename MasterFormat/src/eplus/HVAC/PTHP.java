@@ -10,7 +10,6 @@ import org.jsoup.select.Elements;
 
 import baseline.idfdata.EplusObject;
 import baseline.idfdata.thermalzone.ThermalZone;
-import baseline.log.GenerationLog;
 import eplus.EnergyPlusBuildingForHVACSystems;
 
 public class PTHP implements HVACSystem{

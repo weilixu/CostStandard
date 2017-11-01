@@ -662,6 +662,7 @@ public class MaterialAnalyzer {
 	    return material.getCostVector();
 	}
 
+	@Override
 	public Material clone() {
 	    Material temp = new Material(this.materialName);
 	    temp.setFloorArea(properties[floorAreaIndex]);

@@ -8,10 +8,8 @@ import java.util.Set;
 
 import org.jsoup.nodes.Document;
 
-import eplus.EnergyPlusBuildingForHVACSystems;
 import eplus.IdfReader;
 import eplus.IdfReader.ValueNode;
-import eplus.HVAC.HVACSystem;
 import masterformat.api.AbstractMasterFormatComponent;
 
 public class Window extends AbstractMasterFormatComponent implements

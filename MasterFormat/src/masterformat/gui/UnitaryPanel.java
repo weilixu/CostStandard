@@ -264,7 +264,7 @@ public class UnitaryPanel extends JPanel implements TreeSelectionListener{
 
    		@Override
    		public void actionPerformed(ActionEvent e) {
-   		    String data = (String) inputField.getText();
+   		    String data = inputField.getText();
    		    userInputMap.put(input, data);
    		    model.setUnitaryUserInput(userInputMap, unitaryName);
    		    disPlayOptions();

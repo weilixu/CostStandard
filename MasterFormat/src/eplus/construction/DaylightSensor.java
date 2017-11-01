@@ -113,8 +113,8 @@ public class DaylightSensor extends AbstractMasterFormatComponent
 		    ArrayList<ValueNode> nodes = daylightSensors.get(element);
 		    for (ValueNode vn : nodes) {
 			if (vn.getDescription().equalsIgnoreCase(
-				"Fraction of Zone Controlled by First Reference Point")) {
-			    vn.setAttribute("1");
+				"Availability Schedule Name")) {
+			    vn.setAttribute("On");
 			} else if (vn.getDescription()
 				.equalsIgnoreCase("Zone Name")) {
 			    zoneName = vn.getAttribute();
@@ -147,8 +147,8 @@ public class DaylightSensor extends AbstractMasterFormatComponent
 		ArrayList<ValueNode> nodes = daylightSensors.get(element);
 		for (ValueNode vn : nodes) {
 		    if (vn.getDescription().equalsIgnoreCase(
-			    "Fraction of Zone Controlled by First Reference Point")) {
-			vn.setAttribute("0");
+			    "Availability Schedule Name")) {
+			vn.setAttribute("Off");
 		    }
 		}
 	    }
@@ -198,8 +198,7 @@ public class DaylightSensor extends AbstractMasterFormatComponent
 
     @Override
     public String[] getSelectedComponentsForRetrofit() {
-	// TODO Auto-generated method stub
-	return null;
+	return selectedComponents;
     }
 
 }

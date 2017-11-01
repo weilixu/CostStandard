@@ -190,7 +190,7 @@ public class EnergyPlusHTMLParser {
 			"Annual Building Utility Performance Summary%Site and Source Energy")
 		.get(0).getElementsByTag("td");
 	for (int i = 0; i < energyTable.size(); i++) {
-	    if (energyTable.get(i).text().equalsIgnoreCase("Total Site Energy")) {
+	    if (energyTable.get(i).text().equalsIgnoreCase("Net Site Energy")) {
 		return Double.parseDouble(energyTable.get(i + 2).text());
 	    }
 	}
@@ -211,6 +211,8 @@ public class EnergyPlusHTMLParser {
     }
     
     public double getBudget() {
+	double cost = 0.0;
+	try{
 	Elements costTable = doc
 		.getElementsByAttributeValue("tableID",
 			"Component Cost Economics Summary%Construction Cost Estimate Summary")
@@ -220,7 +222,10 @@ public class EnergyPlusHTMLParser {
 		return Double.parseDouble(costTable.get(i + 2).text());
 	    }
 	}
-	return 0.0;
+	}catch(IndexOutOfBoundsException e){
+	    cost = 0.0; // if no retrofit - cost = 0.0
+	}
+	return cost;
     }
     
     

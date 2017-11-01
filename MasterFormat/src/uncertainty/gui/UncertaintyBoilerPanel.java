@@ -6,15 +6,7 @@ import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeSelectionModel;
-
 import masterformat.listener.BoilerListener;
-import masterformat.tree.TreeBuilder;
-import masterformat.tree.TreeNode;
 import eplus.EnergyPlusModel;
 
 public class UncertaintyBoilerPanel extends JPanel implements BoilerListener{

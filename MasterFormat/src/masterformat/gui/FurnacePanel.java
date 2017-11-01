@@ -9,7 +9,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -76,6 +75,7 @@ public class FurnacePanel extends JPanel implements FurnaceListener{
 	//processStatuView();
     }
     
+    @Override
     public String getName(){
 	return furnace;
     }
@@ -177,7 +177,7 @@ public class FurnacePanel extends JPanel implements FurnaceListener{
 
  		@Override
  		public void actionPerformed(ActionEvent e) {
- 		    String data = (String)inputField.getText();
+ 		    String data = inputField.getText();
  		    userInputMap.put(input, data);  
  		    model.setFurnaceUserInput(userInputMap,furnace);
  		    processStatuView();

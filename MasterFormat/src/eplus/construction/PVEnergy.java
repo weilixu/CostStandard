@@ -118,6 +118,7 @@ public class PVEnergy extends AbstractMasterFormatComponent
     @Override
     public void writeInEnergyPlus(IdfReader reader, String component) {
 	// this component is supposedly the pv product name
+	System.out.println(orientation + " " + component);
 	if (!component.equals("NONE")) {
 	    totalPower = 0;
 	    try {
@@ -165,6 +166,7 @@ public class PVEnergy extends AbstractMasterFormatComponent
 			if (ZoneHTMLParser.getSurfaceOrientation(surfaceName)
 				.equals(orientation)) {
 			    currentConstruction = info.get(2).getAttribute();
+			    //System.out.println(surfaceName);
 			    info.get(2).setAttribute(constructionName + "_"+orientation);
 			    surfaces.add(surfaceName);
 			}
@@ -241,6 +243,7 @@ public class PVEnergy extends AbstractMasterFormatComponent
 		
 		// 2. start creating generator:photovoltaic object for each
 		// surface in surfaces list
+		//System.out.println(surfaces.size());
 		for (int i = 0; i < surfaces.size(); i++) {
 		    Double numModule = ZoneHTMLParser
 			    .getSurfaceArea(surfaces.get(i)) / activeArea;
@@ -273,6 +276,8 @@ public class PVEnergy extends AbstractMasterFormatComponent
 		int powerOutputOffset = 3;
 		int availScheOffset = 4;
 		int powerRatioOffset = 5;
+		
+		//System.out.println("Surface size = " + surfaces.size());
 
 		int numPV = 0;
 		for (int i = 0; i < surfaces.size(); i++) {
@@ -374,8 +379,7 @@ public class PVEnergy extends AbstractMasterFormatComponent
 
     @Override
     public String[] getSelectedComponentsForRetrofit() {
-	// TODO Auto-generated method stub
-	return null;
+	return selectedComponents;
     }
 
 }

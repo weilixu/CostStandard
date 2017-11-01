@@ -7,10 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,7 +15,6 @@ import org.jsoup.select.Elements;
 
 import baseline.idfdata.thermalzone.DesignBuilderThermalZone;
 import baseline.idfdata.thermalzone.ThermalZone;
-import eplus.IdfReader.ValueNode;
 import eplus.optimization.OptResult;
 import eplus.optimization.OptResultSet;
 
@@ -153,13 +149,16 @@ public class EnergyPlusBuildingForHVACSystems {
 	int row = optResults.getResultSet().size();
 
 	try {
+	    //FileWriter writer = new FileWriter(
+	    //	    "E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\CSL\\Optimization\\output.txt");
 	    FileWriter writer = new FileWriter(
-		    "E:\\02_Weili\\02_ResearchTopic\\PhD Case Study\\OneMP\\output.txt");
+		    "E:\\02_Weili\\01_Projects\\07_Toshiba\\Year 3\\Optimization\\output.txt");
 	    for (int i = 0; i < row; i++) {
 		OptResult r = optResults.getResult(i);
 		writer.append(i + "@");
 		writer.append(r.getOperationCost() + "@");
 		writer.append(r.getFirstCost() + "@");
+		writer.append(r.getEUI() + "@");
 		for (int j = 0; j < r.getComponentLength(); j++) {
 		    writer.append(r.getComponent(j));
 		    writer.append("@");

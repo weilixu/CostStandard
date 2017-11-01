@@ -155,7 +155,7 @@ public class OPT4 extends Problem {
 
 		// 1.2 modify the idf according to generated data
 		for (int i = 0; i < decisionVariables.length; i++) {
-		    Double value = (Double) decisionVariables[i].getValue();
+		    Double value = decisionVariables[i].getValue();
 		    BuildingComponent comp = componentList.get(i);
 		    //System.out.println(comp.getName());
 		    int index = value.intValue();
@@ -215,7 +215,7 @@ public class OPT4 extends Problem {
 		// o2Ins = o2TrainSet.instance(0);
 		// 2.2 give design values to the instance
 		for (int i = 0; i < decisionVariables.length; i++) {
-		    Double value = (Double) decisionVariables[i].getValue();
+		    Double value = decisionVariables[i].getValue();
 		    BuildingComponent comp = componentList.get(i);
 
 		    int index = value.intValue();

@@ -330,6 +330,7 @@ public class FanAnalyzer {
 	    return fan.randomDrawTotalCost();
 	}
 	
+	@Override
 	public Fan clone() {
 	    Fan temp = new Fan(this.type, this.fanName);
 	    temp.setFlowRate(properties[flowRateIndex]);

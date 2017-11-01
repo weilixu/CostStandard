@@ -104,7 +104,7 @@ public class HeatingUpdate extends AbstractMasterFormatComponent
 		for (ValueNode vn : nodes) {
 		    if (vn.getDescription()
 			    .equalsIgnoreCase("Nominal Thermal Efficiency")) {
-			vn.setAttribute("0.95");
+			vn.setAttribute("0.98");
 		    }
 		}
 	    }
@@ -114,28 +114,48 @@ public class HeatingUpdate extends AbstractMasterFormatComponent
     @Override
     public double getComponentCost(Document doc) {
 
-	Elements zoneList = doc
+	boolean hasReplaced = false;
+	Elements plantList = doc
 		.getElementsByAttributeValue("tableID",
-			"HVAC Sizing Summary%Zone Heating")
+			"Equipment Summary%Central Plant")
 		.get(0).getElementsByTag("tr");
-	Double load = 0.0;
-	for (int i = 1; i < zoneList.size(); i++) {
-	    Element ele = zoneList.get(i);
 
-	    load = load + Double
-		    .parseDouble(ele.getElementsByTag("td").get(2).text());
-	}
-
-	int index = 0;
-	Double numBoilers = Double.MAX_VALUE;
-	for (int j = 0; j < capacityArray.length; j++) {
-	    Double num = Math.ceil(load / capacityArray[j]);
-	    if (num < numBoilers && num > 1) {
-		numBoilers = num;
-		index = j;
+	for (int j = 1; j < plantList.size(); j++) {
+	    Element plant = plantList.get(j);
+	    if (plant.getElementsByTag("td").get(0).text().contains("BOILER")) {
+		if (plant.getElementsByTag("td").get(3).text().equals("0.98")) {
+		    hasReplaced = true;
+		}
 	    }
 	}
-	return numBoilers * costArray[index];
+
+	if (hasReplaced) {
+	    Elements zoneList = doc
+		    .getElementsByAttributeValue("tableID",
+			    "HVAC Sizing Summary%Zone Heating")
+		    .get(0).getElementsByTag("tr");
+	    Double load = 0.0;
+	    for (int i = 1; i < zoneList.size(); i++) {
+		Element ele = zoneList.get(i);
+
+		load = load + Double
+			.parseDouble(ele.getElementsByTag("td").get(2).text());
+	    }
+
+	    int index = 0;
+	    Double numBoilers = Double.MAX_VALUE;
+	    for (int j = 0; j < capacityArray.length; j++) {
+		Double num = Math.ceil(load / capacityArray[j]);
+		if (num < numBoilers && num >= 1) {
+		    numBoilers = num;
+		    index = j;
+		}
+	    }
+	    return numBoilers * costArray[index];
+	} else {
+	    return 0.0;
+	}
+
     }
 
     @Override

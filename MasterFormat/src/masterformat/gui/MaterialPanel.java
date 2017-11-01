@@ -173,7 +173,7 @@ public class MaterialPanel extends JPanel implements TreeSelectionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    String data = (String)inputField.getText();
+		    String data = inputField.getText();
 		    userInputMap.put(input, data);  
 		    userInputs = model.getConstructionUserInputs(constructionName, index);
 		    model.setConstructionUserInput(userInputMap, constructionName, index);

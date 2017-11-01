@@ -10,7 +10,6 @@ import org.jsoup.nodes.Document;
 
 import eplus.IdfReader;
 import eplus.IdfReader.ValueNode;
-import eplus.HVAC.HVACSystem;
 import masterformat.api.AbstractMasterFormatComponent;
 
 public class ExteriorWall extends AbstractMasterFormatComponent implements
